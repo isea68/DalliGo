@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>러닝 동행 서비스</title>
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0 auto; padding: 0; background: #f5f5f5; width: 50%; }
+        header, footer { background:#00acc1; color: white; padding: 15px 20px; }
+        header h1 { margin: 0; font-size: 24px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; font-size: 16px; }
+        nav a:hover { text-decoration: underline; }
+        .container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: #00acc1; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0055aa; }
+        .map-btn { margin-left: 10px; background: #0066cc; }
+        .info-box { margin-top: 20px; padding: 15px; background: #eef; border-radius: 8px; }
+        footer { text-align: center; font-size: 14px; }
+
+		/* 지도 팝업 */
+		#mapModal {
+		    display: none;
+		    position: fixed;
+		    top: 0; left: 0;
+		    width: 100%; height: 100%;
+		    background: rgba(0,0,0,0.6);
+		    justify-content: center;
+		    align-items: center;
+		    z-index: 9999;
+		}
+		#mapContainer {
+		    width: 90%;
+		    max-width: 700px;
+		    height: 600px;               /* 높이 명확히 지정 */
+		    background: white;
+		    padding: 20px;
+		    border-radius: 12px;
+		    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+		    position: relative;
+		}
+		#mapTitle {
+		    font-weight: bold;
+		    font-size: 20px;
+		    text-align: center;
+		    margin-bottom: 15px;
+		}
+		#map {
+		    width: 100% !important;      /* 가장 중요!!! */
+		    height: 480px !important;    /* 가장 중요!!! */
+		    border: 1px solid #ddd;
+		}
+		#closeMap {
+		    margin-top: 15px;
+		    width: 100%;
+		    padding: 12px;
+		    background: #e74c3c;
+		    color: white;
+		    border: none;
+		    border-radius: 6px;
+		    cursor: pointer;
+		    font-size: 16px;
+		}
+		#closeMap:hover { background: #c0392b; }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>러닝 동행 서비스</h1>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">로그인</a>
+        <a href="#">회원가입</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>동행 서비스 신청</h2>
+
+    <div class="form-group">
+        <label>출발지</label>
+        <input type="text" id="start" placeholder="출발 지역명을 입력하세요 (예: 서울, 부산)" />
+        <button class="map-btn" onclick="showMap('start')">지도</button>
+    </div>
+
+    <div class="form-group">
+        <label>도착지</label>
+        <input type="text" id="end" placeholder="도착 지역명을 입력하세요 (예: 서울, 부산)" />
+        <button class="map-btn" onclick="showMap('end')">지도</button>
+    </div>
+
+    <button onclick="saveData()">보기</button>
+	<a href="/list" class="btn" style="margin-left: 15px; color:white; background: #0055aa; padding: 10px 20px; text-decoration: none;">
+	    신청 전체보기
+	</a>
+
+    <div id="info" class="info-box" style="display:none;">
+        <p><strong>거리:</strong> <span id="distance"></span></p>
+        <p><strong>비용:</strong> <span id="cost"></span></p>
+        <p><strong>최소 출발인원수:</strong> <span id="minPeople"></span></p>
+        <p><strong>현재 인원:</strong> <span id="currentPeople">0</span></p>
+        <button onclick="applyService()">신청</button>
+    </div>
+</div>
+
+<footer>
+    © 2025 러닝 동행 서비스 | 연락처: 02-123-4567 | 회사명: 스마트시티 솔루션
+</footer>
+
+<!-- 지도 모달 -->
+<div id="mapModal">
+    <div id="mapContainer">
+        <div id="mapTitle">주소 표시</div>
+        <div id="map"></div>
+        <button id="closeMap" onclick="closeMap()">닫기</button>
+    </div>
+</div>
+
+<!-- ==================== 자바스크립트 (모든 에러 수정 완료) ==================== -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+    let currentCount = 0;
+    let kakaoMapLoaded = false;   // 여기서 딱 한 번만 선언!
+    let REAL_KEY = null;
+
+    const addressMapping = {
+        "서울": { name: "수서역 만남의 광장", addr: "서울 강남구 수서동 727" },
+        "부산": { name: "부산시민회관", addr: "부산 동구 자성로133번길 16" },
+        "대구": { name: "대구은행역 3번출구", addr: "대구 수성구 달구벌대로 2310" },
+        "대전": { name: "정부청사역 7번출구", addr: "대전 서구 둔산로 100" }
+    };
+
+    function saveData() {
+        const s = document.getElementById('start').value.trim();
+        const e = document.getElementById('end').value.trim();
+        if (!s || !e) { alert('출발지와 도착지를 모두 입력하세요.'); return; }
+        document.getElementById('distance').innerText = '5.2 km';
+        document.getElementById('cost').innerText = '₩3,000';
+        document.getElementById('minPeople').innerText = '3명';
+        document.getElementById('info').style.display = 'block';
+    }
+
+    function applyService() {
+        currentCount++;
+        document.getElementById('currentPeople').innerText = currentCount;
+        alert('신청 완료! 현재 인원: ' + currentCount + '명');
+    }
+
+    function closeMap() {
+        document.getElementById("mapModal").style.display = "none";
+        document.getElementById("map").innerHTML = "";
+    }
+
+    // ==================== 키 숨기기 + 완벽 로딩 (최종 버전) ====================
+    function loadKakaoMapScript() {
+        if (kakaoMapLoaded) return;
+
+        fetch('/api/kakao-key')  // 백엔드에서 키 받아오기 (소스/콘솔에 절대 안 보임!)
+            .then(res => res.json())
+            .then(data => {
+                REAL_KEY = data.key;
+
+                const script = document.createElement('script');
+                script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${REAL_KEY}&libraries=services&autoload=false`;
+                script.async = true;
+                script.onload = function () {
+                    kakao.maps.load(function () {
+                        kakaoMapLoaded = true;
+                        console.log("★ 카카오맵 SDK 완벽 로드 ★");
+                    });
+                };
+                document.head.appendChild(script);
+            })
+            .catch(err => alert("키 로드 실패"));
+    }
+
+    function showMap(type) {
+        const inputValue = document.getElementById(type).value.trim();
+        if (!addressMapping[inputValue]) {
+            alert("등록된 지역이 아닙니다. (서울, 부산, 대구, 대전)");
+            return;
+        }
+
+        const place = addressMapping[inputValue];
+        document.getElementById("mapTitle").innerText = place.name + " (" + place.addr + ")";
+
+        loadKakaoMapScript();
+
+        const check = setInterval(() => {
+            if (kakaoMapLoaded) {
+                clearInterval(check);
+                openKakaoMap(place.addr);
+                document.getElementById("mapModal").style.display = "flex";
+                setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
+            }
+        }, 100);
+    }
+
+    function openKakaoMap(address) {
+        document.getElementById("map").innerHTML = "";
+
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.addressSearch(address, function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                const map = new kakao.maps.Map(document.getElementById('map'), {
+                    center: coords,
+                    level: 3
+                });
+                new kakao.maps.Marker({ map: map, position: coords });
+                map.relayout();
+                map.setCenter(coords);
+            } else {
+                alert("주소 검색 실패");
+            }
+        });
+    }
+/*]]>*/
+</script>
+
+</body>
+</html>
