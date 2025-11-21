@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대회 일정 상세</title>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background-color: #f4f7f9;
+    color: #333;
+}
+header {
+    background-color: #00acc1;
+    color: white;
+    padding: 15px 50px;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+}
+.container {
+    padding: 30px 20px;
+    max-width: 900px;
+    margin: auto;
+}
+.card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 25px;
+    margin-bottom: 25px;
+}
+.card h2 {
+    margin-top: 0;
+    font-size: 1.8em;
+}
+.card p {
+    margin: 5px 0;
+}
+.card ul {
+    padding-left: 20px;
+}
+.card a {
+    color: #00acc1;
+    text-decoration: none;
+}
+.card a:hover {
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>대회 일정 상세</h1>
+</header>
+
+<div class="container" id="marathon-list">
+    <!-- JS로 카드 렌더링 -->
+</div>
+
+<script>
+// 예시 JSON 데이터
+const marathonData = [
+  {
+    "name": "2025 서울 라이프 마라톤",
+    "date": "2025-11-22",
+    "location": "서울 상암 평화의 공원 평화광장",
+    "distance": ["하프 21.0975km", "10km", "5km"],
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr/races/ (고러닝 사이트 참조)" ,
+    "weather": {
+      "temp": "약 5 ~ 12°C (11월 서울 평균 추정)",
+      "condition": "가을 / 쾌적 (예상)"
+    }
+  },
+  {
+    "name": "2025 스포츠서울 하프 마라톤",
+    "date": "2025-11-30",
+    "location": "서울 광화문 → 여의도 (여의도공원 쪽)",
+    "distance": ["하프 21.0975km", "10km"],
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr/races/622/",  // 고러닝 대회 페이지  
+    "weather": {
+      "temp": "약 5 ~ 11°C (예상)",
+      "condition": "가을 → 겨울 전환기 느낌 (추정)"
+    }
+  },
+  {
+    "name": "2025 8회 서울평화마라톤",
+    "date": "2025-11-23",
+    "location": "서울 신정교 하부 육상트랙구장",
+    "distance": ["10km", "5km"],
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr/races/625/",
+    "weather": {
+      "temp": "약 5 ~ 12°C",
+      "condition": "선선 / 가벼운 바람 가능성 (추정)"
+    }
+  },
+  {
+    "name": "2025 서울시민건강마라톤",
+    "date": "2025-11-09",
+    "location": "서울 올림픽공원 송파여성축구장",
+    "distance": ["10km", "5km", "5km 가족 단체전"],
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "http://www.songparunsportal.com",  
+    "weather": {
+      "temp": "약 8 ~ 14°C (11월 중순 서울 예상)",
+      "condition": "맑거나 부분적으로 흐림 (예상)"
+    }
+  },
+  {
+    "name": "2025 설레임 RUN",
+    "date": "2025-08-31",
+    "location": "서울 상암 월드컵공원 평화의 광장",
+    "distance": ["5km"],  // 고러닝에 5km로 나옴 :contentReference[oaicite:0]{index=0}  
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr/races/545/",
+    "weather": {
+      "temp": "약 26 ~ 32°C (8월 말 여름 서울, 추정)",
+      "condition": "무더움 가능, 습할 수 있음 (예상)"
+    }
+  },
+  {
+    "name": "2025 시즌마감 마라톤",
+    "date": "2025-12-13",
+    "location": "경기 씨사이드파크",
+    "distance": ["하프 21.0975km", "10km", "5km"],
+    "fee": ["참가비 고러닝 / 42195race.com 참조"],
+    "organizer_url": "https://42195race.com",  // 고러닝에도 대회 정보 있음 :contentReference[oaicite:1]{index=1}  
+    "weather": {
+      "temp": "약 2 ~ 8°C (12월 경기도, 추정)",
+      "condition": "추운 겨울 느낌, 바람 있을 수 있음 (예상)"
+    }
+  },
+  {
+    "name": "2025 지구런 : 더 피스로드",
+    "date": "2025-05-31",
+    "location": "서울 여의도공원 문화의 마당",
+    "distance": ["10km", "5km"],  // 고러닝에 10km / 5km로 있음 :contentReference[oaicite:2]{index=2}  
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr",  
+    "weather": {
+      "temp": "약 18 ~ 25°C (5월 말 서울 예상)",
+      "condition": "봄, 쾌적함 (예상)"
+    }
+  },
+  {
+    "name": "2025 한강 벚꽃마라톤",
+    "date": "2025-03-30",
+    "location": "서울 상암 월드컵공원 평화광장 (한강)",
+    "distance": ["하프 21.0975km", "10km", "5km"],
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr/races/",  
+    "weather": {
+      "temp": "약 8 ~ 15°C (3월 말 서울 평균 추정)",
+      "condition": "벚꽃 시즌, 맑거나 약간 흐림 (예상)"
+    }
+  },
+  {
+    "name": "2025 수원국제하프마라톤",
+    "date": "2025-03-02",
+    "location": "경기 수원, 수원종합운동장 일대",
+    "distance": ["하프 21.0975km", "10km", "5km"],
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr/races/",  
+    "weather": {
+      "temp": "약 4 ~ 12°C (3월 초 경기 지역 예상)",
+      "condition": "봄, 쌀쌀할 수 있음 (예상)"
+    }
+  },
+  {
+    "name": "2025 제9회 포항철강 마라톤",
+    "date": "2025-06-15",
+    "location": "포항 영일대 해수욕장 주변, 경북",
+    "distance": ["10km", "5km", "학생 5km"],  // 고러닝 정보에 있음 :contentReference[oaicite:3]{index=3}  
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr",  
+    "weather": {
+      "temp": "약 22 ~ 30°C (6월, 경북 해안가 예상)",
+      "condition": "더울 수 있음, 바람이나 습기 가능성 (예상)"
+    }
+  },
+  {
+    "name": "2025 철원 DMZ 국제평화마라톤",
+    "date": "2025-09-21",
+    "location": "강원 철원군 고석정 일대",
+    "distance": ["풀 42.195km", "하프 21.0975km", "10km", "5.5km"],  // 고러닝 정보에 있음 :contentReference[oaicite:4]{index=4}  
+    "fee": ["참가비 고러닝 참조"],
+    "organizer_url": "https://gorunning.kr",  
+    "weather": {
+      "temp": "약 15 ~ 23°C (9월 말 강원 북부, 추정)",
+      "condition": "가을, 선선함 + 약간 바람 가능 (예상)"
+    }
+  }
+]
+;
+
+// 렌더링 함수
+const container = document.getElementById('marathon-list');
+
+marathonData.forEach(event => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+        <h2>${event.name}</h2>
+        <p><strong>날짜:</strong> ${event.date}</p>
+        <p><strong>장소:</strong> ${event.location}</p>
+        <p><strong>거리:</strong></p>
+        <ul>${event.distance.map(d => `<li>${d}</li>`).join('')}</ul>
+        <p><strong>참가비:</strong></p>
+        <ul>${event.fee.map(f => `<li>${f}</li>`).join('')}</ul>
+        <p><strong>주관 기관:</strong> <a href="${event.organizer_url}" target="_blank">${event.organizer_url}</a></p>
+        <p><strong>예상 날씨:</strong> ${event.weather.temp} / ${event.weather.condition}</p>
+    `;
+
+    container.appendChild(card);
+});
+</script>
+
+</body>
+</html>

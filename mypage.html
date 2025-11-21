@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마이페이지 - RunMates</title>
+<style>
+:root {
+  --primary: #00acc1;
+  --bg: #f6f9fb;
+  --card: #ffffff;
+  --text: #222;
+  --sub: #666;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  background: var(--primary);
+  padding: 15px 28px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 18px;
+  font-weight: 500;
+}
+nav a.active {
+  font-weight: 700;
+  border-bottom: 2px solid white;
+}
+.page-container {
+  max-width: 1100px;
+  margin: 35px auto;
+  padding: 0 18px;
+}
+/* 레이아웃 */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 25px;
+}
+/* 좌측 사이드 메뉴 */
+.sidebar {
+  background: var(--card);
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  height: fit-content;
+}
+.sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+.sidebar a {
+  display: block;
+  padding: 10px 0;
+  color: var(--sub);
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+.sidebar a:hover {
+  color: var(--primary);
+}
+/* 메인 카드 영역 */
+.card {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--primary);
+  font-size: 1.4rem;
+}
+.info-row {
+  margin: 10px 0;
+  font-size: 1.05rem;
+  color: var(--sub);
+}
+.list li {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+.btn {
+  padding: 10px 15px;
+  background: var(--primary);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+.btn:hover {
+  background: #008fa1;
+}
+.logout {
+  background: #ff7043;
+}
+.logout:hover {
+  background: #e3562c;
+}
+@media(max-width:900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>RunMates</h1>
+  <nav>
+    <a href="index.html">홈</a>
+    <a href="events.html">대회 일정</a>
+    <a href="friends.html">러닝 친구</a>
+    <a href="community.html">커뮤니티</a>
+    <a href="mypage.html" class="active">마이페이지</a>
+  </nav>
+</header>
+
+<div class="page-container">
+  <div class="layout">
+
+    <!-- 사이드 메뉴 -->
+    <aside class="sidebar">
+      <h3>내 메뉴</h3>
+      <a href="#profile">프로필 정보</a>
+      <a href="#upcoming">참여 예정 대회</a>
+      <a href="#history">완료한 대회</a>
+      <a href="#settings">환경 설정</a>
+      <a href="#logout">로그아웃</a>
+    </aside>
+
+    <!-- 메인 내용 -->
+    <main>
+      <div class="card" id="profile">
+        <h2>프로필 정보</h2>
+        <p class="info-row"><strong>이름 :</strong> 홍길동</p>
+        <p class="info-row"><strong>아이디 :</strong> runningKing</p>
+        <p class="info-row"><strong>이메일 :</strong> runner@example.com</p>
+        <button class="btn">정보 수정</button>
+      </div>
+
+      <div class="card" id="upcoming">
+        <h2>참여 예정 대회</h2>
+        <ul class="list">
+          <li>서울 마라톤 — 2026-03-15</li>
+          <li>한강 하프 마라톤 — 2026-01-25</li>
+        </ul>
+      </div>
+
+      <div class="card" id="history">
+        <h2>완료한 대회</h2>
+        <ul class="list">
+          <li>부산 러닝페스티벌 — 2025-05-03</li>
+        </ul>
+      </div>
+
+      <div class="card" id="settings">
+        <h2>환경 설정</h2>
+        <p class="info-row">알림 : ON</p>
+        <p class="info-row">언어 : 한국어</p>
+      </div>
+
+      <div class="card" id="logout">
+        <h2>로그아웃</h2>
+        <button class="btn logout">로그아웃</button>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마이페이지 - RunMates</title>
+<style>
+:root {
+  --primary: #00acc1;
+  --bg: #f6f9fb;
+  --card: #ffffff;
+  --text: #222;
+  --sub: #666;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+header {
+  background: var(--primary);
+  padding: 15px 28px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 18px;
+  font-weight: 500;
+}
+nav a.active {
+  font-weight: 700;
+  border-bottom: 2px solid white;
+}
+.page-container {
+  max-width: 1100px;
+  margin: 35px auto;
+  padding: 0 18px;
+}
+/* 레이아웃 */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 25px;
+}
+/* 좌측 사이드 메뉴 */
+.sidebar {
+  background: var(--card);
+  padding: 22px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  height: fit-content;
+}
+.sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+.sidebar a {
+  display: block;
+  padding: 10px 0;
+  color: var(--sub);
+  text-decoration: none;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+.sidebar a:hover {
+  color: var(--primary);
+}
+/* 메인 카드 영역 */
+.card {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: var(--primary);
+  font-size: 1.4rem;
+}
+.info-row {
+  margin: 10px 0;
+  font-size: 1.05rem;
+  color: var(--sub);
+}
+.list li {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+.btn {
+  padding: 10px 15px;
+  background: var(--primary);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+.btn:hover {
+  background: #008fa1;
+}
+.logout {
+  background: #ff7043;
+}
+.logout:hover {
+  background: #e3562c;
+}
+@media(max-width:900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>RunMates</h1>
+  <nav>
+    <a href="index.html">홈</a>
+    <a href="events.html">대회 일정</a>
+    <a href="friends.html">러닝 친구</a>
+    <a href="community.html">커뮤니티</a>
+    <a href="mypage.html" class="active">마이페이지</a>
+  </nav>
+</header>
+
+<div class="page-container">
+  <div class="layout">
+
+    <!-- 사이드 메뉴 -->
+    <aside class="sidebar">
+      <h3>내 메뉴</h3>
+      <a href="#profile">프로필 정보</a>
+      <a href="#upcoming">참여 예정 대회</a>
+      <a href="#history">완료한 대회</a>
+      <a href="#settings">환경 설정</a>
+      <a href="#logout">로그아웃</a>
+    </aside>
+
+    <!-- 메인 내용 -->
+    <main>
+      <div class="card" id="profile">
+        <h2>프로필 정보</h2>
+        <p class="info-row"><strong>이름 :</strong> 홍길동</p>
+        <p class="info-row"><strong>아이디 :</strong> runningKing</p>
+        <p class="info-row"><strong>이메일 :</strong> runner@example.com</p>
+        <button class="btn">정보 수정</button>
+      </div>
+
+      <div class="card" id="upcoming">
+        <h2>참여 예정 대회</h2>
+        <ul class="list">
+          <li>서울 마라톤 — 2026-03-15</li>
+          <li>한강 하프 마라톤 — 2026-01-25</li>
+        </ul>
+      </div>
+
+      <div class="card" id="history">
+        <h2>완료한 대회</h2>
+        <ul class="list">
+          <li>부산 러닝페스티벌 — 2025-05-03</li>
+        </ul>
+      </div>
+
+      <div class="card" id="settings">
+        <h2>환경 설정</h2>
+        <p class="info-row">알림 : ON</p>
+        <p class="info-row">언어 : 한국어</p>
+      </div>
+
+      <div class="card" id="logout">
+        <h2>로그아웃</h2>
+        <button class="btn logout">로그아웃</button>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+</body>
+</html>
