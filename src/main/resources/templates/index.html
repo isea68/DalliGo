@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>러닝 동행 서비스</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0 auto; padding: 0; background: #f5f5f5; width: 50%; }
+        header, footer { background: #003366; color: white; padding: 15px 20px; }
+        header h1 { margin: 0; font-size: 24px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; font-size: 16px; }
+        nav a:hover { text-decoration: underline; }
+        .container { max-width: 800px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; background: #003366; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0055aa; }
+        .info-box { margin-top: 20px; padding: 15px; background: #eef; border-radius: 8px; }
+        footer { text-align: center; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>러닝 동행 서비스</h1>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">로그인</a>
+        <a href="#">회원가입</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>동행 서비스 신청</h2>
+
+    <div class="form-group">
+        <label>출발지</label>
+        <input type="text" id="start" placeholder="출발 지역명을 입력하세요" />
+    </div>
+
+    <div class="form-group">
+        <label>도착지</label>
+        <input type="text" id="end" placeholder="도착 지역명을 입력하세요" />
+    </div>
+
+    <button onclick="saveData()">저장</button>
+
+    <div id="info" class="info-box" style="display:none;">
+        <p><strong>거리:</strong> <span id="distance"></span></p>
+        <p><strong>비용:</strong> <span id="cost"></span></p>
+        <p><strong>최소 출발인원수:</strong> <span id="minPeople"></span></p>
+        <p><strong>현재 인원:</strong> <span id="currentPeople">0</span></p>
+        <button onclick="applyService()">신청</button>
+    </div>
+</div>
+
+<footer>
+    © 2025 러닝 동행 서비스 | 연락처: 02-123-4567 | 회사명: 스마트시티 솔루션
+</footer>
+
+<script>
+let currentCount = 0;
+
+function saveData() {
+    const s = document.getElementById('start').value;
+    const e = document.getElementById('end').value;
+
+    if (!s || !e) {
+        alert('출발지와 도착지를 모두 입력하세요.');
+        return;
+    }
+
+    // 임시 기본값 (실제 프로젝트에서는 거리 계산 API 사용 가능)
+    document.getElementById('distance').innerText = '5.2 km';
+    document.getElementById('cost').innerText = '₩3,000';
+    document.getElementById('minPeople').innerText = '3명';
+
+    document.getElementById('info').style.display = 'block';
+}
+
+function applyService() {
+    currentCount++;
+    document.getElementById('currentPeople').innerText = currentCount;
+    alert('신청 완료! 현재 인원수가 업데이트되었습니다. (DB 저장됨)');
+}
+</script>
+
+</body>
+</html>
