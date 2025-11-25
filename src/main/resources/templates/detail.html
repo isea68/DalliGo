@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>대회 일정 상세</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			margin: 0;
+			background-color: #f4f7f9;
+			color: #333;
+		}
+
+		header {
+			background-color: #00acc1;
+			color: white;
+			padding: 15px 50px;
+			text-align: center;
+		}
+
+		header h1 {
+			margin: 0;
+		}
+
+		.container {
+			padding: 30px 20px;
+			max-width: 900px;
+			margin: auto;
+		}
+
+		.card {
+			background-color: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+			padding: 25px;
+			margin-bottom: 25px;
+		}
+
+		.card h2 {
+			margin-top: 0;
+			font-size: 1.8em;
+		}
+
+		.card p {
+			margin: 5px 0;
+		}
+
+		.card ul {
+			padding-left: 20px;
+		}
+
+		.card a {
+			color: #00acc1;
+			text-decoration: none;
+		}
+
+		.card a:hover {
+			text-decoration: underline;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div th:replace="fragment/header :: headerDiv"></div>
+	<h1>대회 일정 상세</h1>
+	<div class="container" id="marathon-list">
+		<!-- JS로 카드 렌더링 -->
+	</div>
+
+	<div id="marathon-list">
+		<div class="card" th:each="event : ${events}">
+			<h2 th:text="${event.title}">대회명</h2>
+			<p><strong>날짜:</strong> <span
+					th:text="${#temporals.format(event.startDate, 'yyyy-MM-dd')}">2025-01-01</span>
+			</p>
+			<p><strong>장소:</strong> <span th:text="${event.location}">장소</span></p>
+			<p><strong>거리:</strong></p>
+			<ul>
+				<li th:text="${event.distance}">거리</li>
+			</ul>
+			<p><strong>주관 기관:</strong>
+				<a th:href="${event.regURL}" target="_blank" th:text="${event.org}">주관 기관</a>
+			</p>
+			<p><strong>예상 날씨:</strong>
+				<span th:text="${event.weather}">날씨 정보</span>
+			</p>
+		</div>
+	</div>
+
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.human.DalliGO.dao.DetailDAO">
+	<resultMap id="DetailResult" type="com.human.DalliGO.vo.DetailVO">
+		<!-- mapping  수동으로 하면 됩니다-->
+		<id property="id" column="id" />  <!-- 기본키 -->
+		<result property="title" column="title"/> <!-- 일반컬럼-->
+		<result property="location" column="location"/>
+		<result property="startDate" column="start_date"/>
+		<result property="endDate" column="end_date"/>
+		<result property="distance" column="distance"/>
+		<result property="weather" column="weather"/>
+		<result property="org" column="org"/>
+		<result property="regURL" column="reg_url"/>
+		<result property="description" column="description"/>
+		<result property="total" column="total"/>
+		<result property="inDate" column="in_date"/>
+	
+	</resultMap>
+		
+	<select id="selectAll" 	resultMap="DetailResult">
+		select * 
+		from event
+		order by in_date 		
+	</select>	
+</mapper>
+
+
+
+
+
+
+
+
+

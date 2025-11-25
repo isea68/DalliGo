@@ -1,0 +1,43 @@
+<div th:fragment="headerDiv">
+	<style>
+		/* 헤더 */
+				header {
+					background-color: #00acc1;
+					color: white;
+					padding: 15px 50px;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					position: sticky;
+					top: 0;
+					z-index: 1000;
+				}
+
+				header h1 {
+					margin: 0;
+				}
+
+				nav a {
+					color: white;
+					text-decoration: none;
+					margin-left: 25px;
+					font-weight: 500;
+					transition: color 0.3s;
+				}
+
+				nav a:hover {
+					color: #e0f7fa;
+				}
+
+	</style>
+	<header>
+			<h1>DalliGO</h1>
+			<nav>
+				<a th:href="@{/}">홈</a>
+				<a th:href="@{/detail}">대회 일정</a>
+				<a href="#">러닝 친구</a>
+				<a href="#">커뮤니티</a>
+				<a href="#" style="font-weight:600;">마이페이지</a>
+			</nav>
+		</header>		
+</div>
