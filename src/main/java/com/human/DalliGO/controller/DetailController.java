@@ -21,5 +21,10 @@ public class DetailController {
 		List<DetailVO> events = detailService.selectAll();
 		model.addAttribute("events", events);
 		return "detail";
+		//코드수정~~~~
+	}
+	
+	public void test() {
+		
 	}
 }
