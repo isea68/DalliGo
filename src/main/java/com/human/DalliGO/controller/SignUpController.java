@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.human.DalliGO.service.SignUPService;
+import com.human.DalliGO.service.UserService;
 import com.human.DalliGO.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SignUpController {
 
-	private final SignUPService signUPService;
+	private final UserService userService;
 
 	@GetMapping("/signup")
 	public String postSignup() {
@@ -25,7 +25,7 @@ public class SignUpController {
 
 	@PostMapping("/signup")
 	public String postSignup(@ModelAttribute("user") UserVO user, Model model) { //
-		signUPService.insert(user);
+		userService.insert(user);
 		return "redirect:/"; // 가입 후 메인(혹은 로그인)으로 리다이렉트
 	}
 
