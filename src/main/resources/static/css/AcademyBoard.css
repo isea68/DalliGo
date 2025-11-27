@@ -1,0 +1,114 @@
+   body {
+      height: 100vh;
+   }
+
+   .tab ul {
+      display: flex;
+      justify-content: space-between;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      border: 1px solid #441111;
+   }
+
+   .tab li {
+      margin-right: 10px;
+   }
+
+   .tab li.on a {
+      font-weight: bold;
+      color: #127e5d;
+   }
+
+   .tab_content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding-bottom: 40px;
+      
+   }
+
+
+.tab_con_item {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;   /* 카드 테두리 */
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+}
+
+/* 카드 내용 감싸는 컨테이너 */
+.tab_con_item a {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 이미지 */
+.tab_con_item img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* 텍스트 영역 */
+.card_info {
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding: 10px;   /* 이미지와 text 사이 간격 */
+    border-top: 1px solid #eee;  /* 카드 안에서 텍스트 구분선 optional */
+}
+
+
+
+   .display-table {
+      width: 900px;  /* 카드와 탭이 공유하는 폭*/
+      margin: 0 auto; /* 화면 가운데 정렬*/
+   }
+   .tab {
+      border: 1px solid #ccc;
+      margin-bottom: 30px;
+
+   }
+   .tab li {
+      border-right: 1px solid #ccc;
+      padding: 15px 25px;
+      text-align: center;
+   }
+
+   .tab li:last-child {
+      border-right: none;
+   }
+
+ .mbtn  {
+   display: flex;
+   justify-content: flex-end;
+   gap: 10px;
+   margin-top: 0px;
+   margin-bottom: 20px;
+   padding-top: 10px;
+ }
+
+ .mbtn button {
+   padding: 8px 14px;
+   font-size: 14px;
+   border: 0.5px solid #bbb;
+   border-radius: 6px;
+
+   background: white;
+   cursor: pointer;
+ }
+ .mbtn button :hover{
+   background: #127e5d;
+ }
+
+ h2 {
+    font-size:  28px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+ }
