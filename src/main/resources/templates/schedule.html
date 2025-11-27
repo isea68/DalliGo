@@ -112,9 +112,9 @@
 	</div>
 	<div class="sort-container">
 		<span class="sort-label">정렬</span>
-		<a th:href="@{|/detail?sort=desc|}" th:classappend="${sort} == 'desc' ? ' active' : ''" class="sort-btn">최신순</a>
+		<a th:href="@{|/schedule?sort=desc|}" th:classappend="${sort} == 'desc' ? ' active' : ''" class="sort-btn">최신순</a>
 
-		<a th:href="@{|/detail?sort=asc|}" th:classappend="${sort} == 'asc' ? ' active' : ''" class="sort-btn">오래된순</a>
+		<a th:href="@{|/schedule?sort=asc|}" th:classappend="${sort} == 'asc' ? ' active' : ''" class="sort-btn">오래된순</a>
 	</div>
 
 	<div id="marathon-list">

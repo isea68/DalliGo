@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
-public class DetailVO {
+public class ScheduleVO {
 	private int id;
 	private String title;
 	private String location;

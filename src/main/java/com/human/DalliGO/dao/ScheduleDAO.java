@@ -8,21 +8,21 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.human.DalliGO.vo.DetailVO;
+import com.human.DalliGO.vo.ScheduleVO;
 
 @Repository
-public class DetailDAO {
+public class ScheduleDAO {
 
     @Autowired
     private SqlSession sqlSession;
-    private static final String MAPPER="com.human.DalliGO.dao.DetailDAO";
+    private static final String MAPPER="com.human.DalliGO.dao.ScheduleDAO";
 
-    public List<DetailVO> selectAll(){
+    public List<ScheduleVO> selectAll(){
         return sqlSession.selectList(MAPPER + ".selectAll");
     }
 
     // order은 "ASC" 또는 "DESC" (대소문자 상관없음)
-    public List<DetailVO> selectAllOrderByStartDate(String order) {
+    public List<ScheduleVO> selectAllOrderByStartDate(String order) {
         Map<String, Object> param = new HashMap<>();
         param.put("order", order);
         return sqlSession.selectList(MAPPER + ".selectAllOrderByStartDate", param);
