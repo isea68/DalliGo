@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+	<link rel ="stylesheet" href="/css/trainingBoard.css">
+
+</head>
+
+<body>
+
+    <header> 러닝수강하러 오신것을 환영합니다 !</header>
+
+    <main>
+        <div class="container">
+            <div class="left">
+                <div class="left-Top">
+                    <table>
+                        <tr>
+                            <td>Home</td>
+                        </tr>                        
+                        <tr>
+                            <td>Goods SHOP</td>
+                        </tr>
+                        <tr>
+                            <td>러닝대회</td>
+                        </tr>
+                        <tr>
+                            <td>게시판</td>
+                        </tr>
+                        <tr>
+                            <td> <a href="/tutorials">러닝 Tutorials</a></td>
+                        </tr>
+
+                    </table>
+
+                </div>
+                <div class="Trainer-login" >
+                    <h3> 강좌 등록</h3>
+                   <button type="submit" class="login-btn" onclick="location.href='/login'">  로그인</button>
+                   <button type="submit" class="Register-btn" onclick="location.href='/trainerRegister'">회원가입</button>
+
+                </div>
+
+            </div>
+            <div class="right">
+                <div class="table-section">
+                    <table class="table">
+                        <tr>
+                            <td>No</td>
+                            <td>강좌명</td>
+                            <td>강사</td>
+                            <td>Level</td>
+                            <td>기간/시간</td>
+							<td>장소</td>
+							<td>수강료</td>
+                            <td>신청/정원</td>
+                            <td>수강신청</td>
+                        </tr>
+                        <tr th:each="course:${course}">
+                            <td th:text="${course.courseId}"> </td>
+                            <td th:text="${course.title}"> </td>
+                            <td th:text="${course.trainerId}"> </td>
+                            <td th:text="${course.level}"> </td>
+							<td th:text="${course.startDate+'-'+course.endDate}"></td>
+							<td th:text="${course.location}"> </td>
+							<td th:text="${course.price}"> 원</td>	
+							<td th:text="${course.capacity}"> </td>
+                            <td><input type="checkbox" class="open-modal"> </td>
+                        </tr>                       
+                    </table>
+                </div>
+                <div class="trainer-history">
+                    <table class="trainer-card">
+                        <tr>
+                            <td class="photo-box"><img src="./be.png" width="100px" height="100px"></a></td>
+                        </tr>
+                        <tr>
+                            <td> 홍길동
+                                <ul>
+                                    <li> 특기 : 근육달리기</li>
+                                    <li> 경력 : 런닝 20년차 </li>
+                                    <li> 수상경력 : 수원화성마라톤 1등</li>
+
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="trainer-card">
+                        <tr>
+                            <td class="photo-box"><img src="./ra.png" width="100px" height="100px"></a></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                이순신
+                                <ul>
+                                    <li>특기 : 달리면서 살빼기</li>
+                                    <li>경력 : 런닝 10년차</li>
+                                    <li>수상 : 한강마라톤 2등</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="trainer-card">
+                        <tr>
+                            <td class="photo-box"><img src="./ma.png" width="100" height="100"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                임꺽정
+                                <ul>
+                                    <li>특기 : 장장거리</li>
+                                    <li>경력 : 런닝 5년차</li>
+                                    <li>수상 : 춘천마라톤 3등</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+
+        </div>
+    </main>
+</body>
+
+<div id="check-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>수강신청 확인</h3>
+        <p> 이 강좌를 신청하시겠습니까?</p>
+        <button>확인</button>
+    
+    </div>
+</div>
+
+</html>
+
+<script>
+
+ const modal = document.getElementById("check-modal");
+ const checkboxes = document.querySelectorAll(".open-modal");
+ const closeBtn =document.querySelector(".close");
+
+ checkboxes.forEach (cb=>{
+    cb.addEventListener("click", function(){
+        modal.style.display ="flex";
+        cb.checked =false;
+
+    }) ;
+ });
+ 
+ closeBtn.onclick =function() {
+    modal.style.display ="none";
+ }
+
+window.onclick =function(event) {
+    if(event.target ===modal){
+        modal.style.display ="none"
+    }
+};
+
+
+
+
+</script>

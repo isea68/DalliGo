@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <link rel ="stylesheet" href="/css/AcademyBoard.css">
+</head>
+
+
+<body>
+
+   <h2>프로그램 소개</h2>
+   <div class="mbtn">
+      <button type="submit" class="mbtn" onclick="location.href='/'">Home</button>
+      <button type="submit" class="mbtn" onclick="location.href='/login'">로그인 </button>
+      <button type="button" class="mbtn" onclick="location.href='/trainerRegister'">회원가입</button>
+   </div>
+
+   <div class="display-table">
+      <div class="tab" >
+         <ul>
+            <li class="on" data-type="special">원데이 러닝 </a></li>
+            <li data-type="short"> 1:1 개인러닝 </li>
+            <li data-type="long"> 일반 러닝 </li>
+            <li data-type="oneday"> 러닝 자세교정 </li>
+            <li> <a href=""> 전체보기 </a></li>
+         </ul>
+      </div>
+
+
+      <div class="tab_content">
+
+         <div class="tab_con_item" data-category="special" th:each ="courses:${course}">
+            <a href="/AcademyDetail.html?id=id_s1">
+               <img src="/img_run_s/ma_s1.GIF">
+               <div class="card_info">
+                  <span th:text="${courses.}">title</span>
+                  <span>(location)</span>
+                  <span>startDate</span>
+                  <span>price</span>
+               </div>
+            </a>
+         </div> <!---Top card div-->
+
+      </div> <!--tab_content-->
+   </div>
+
+</body>
+
+</html>
+<script>
+   //탭클릭+ 해당 카테고리만 보이기
+   document.querySelectorAll('.tab li').forEach(tab => {
+      tab.addEventListener('click', () => {
+         const type = tab.dataset.type;
+
+         //디자인 변경
+
+         //    document.querySelectorAll('.tab il').forEach (t=>t.classList.remove('on'));
+         //      tab.classList.add('on');
+
+         //카드 필터링
+         document.querySelectorAll('.tab_con_item').forEach(item => {
+            if (type === item.dataset.category) {
+               item.style.display = "block";
+            } else {
+               item.style.display = "none";
+            }
+         });
+      });
+   });
+
+   //모든 카드선택
+   document.querySelectorAll('.tab_con_item').forEach(card => {
+      card.addEventListener('click', () => {
+         const detail = card.querySelector('.card_detail');
+
+         //다른 카드 열려있으면 닫기
+         document.querySelectorAll('.card_detail').forEach(dd => {
+            if (dd !== detail) dd.style.display = 'none';
+         });
+
+         //현재 카드 상세정보 토글
+         if (detail.style.display === 'block') {
+            detail.style.display = 'none';
+         } else {
+            detail.style.display = 'block'
+         }
+
+      });
+   });
+
+
+
+   document.querySelectorAll('.tab_con_item').forEach(card => {
+      card.style.display = 'block';       // 카드 보이기
+      const info = card.querySelector('.card_info');
+      if (info) info.style.display = 'flex';
+      const img = card.querySelector('img');
+      if (img) img.style.display = 'block';
+
+      const detail = card.querySelector('.card_detail');
+      if (detail) detail.style.display = 'none';
+   });
+
+
+
+
+</script>

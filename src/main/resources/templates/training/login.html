@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <link rel="stylesheet"  href ="/css/login.css">
+</head>
+
+<body>
+    <div class="signup-btn">
+        <!-- 우측 상단 회원가입 버튼 -->
+        <button type="submit" onclick="location.href='/trainerRegister'">회원가입</button>
+    </div>
+
+    <div class="container">
+        <h2>로그인</h2>
+
+        <form action="/login" method="post">
+            <input type="text" name="trainerId" placeholder="ID" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" >로그인</button>
+        </form>
+    </div>
+</body>
+
+</html>
