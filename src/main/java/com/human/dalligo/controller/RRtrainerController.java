@@ -29,7 +29,7 @@ public class RRtrainerController {
 	      return "/training/trainerRegister";
 	  }
 	  
-	  @GetMapping("/login")
+	  @GetMapping("/rlogin")
 	  public String getlogin() {
 	      return "/training/login";	  }
 	  
@@ -55,12 +55,12 @@ public class RRtrainerController {
 		  
 		  //4. 서비스/DAO 호출해서 DB저장	  
 		  trainerservice.insert(trainervo);	  
-		  return "redirect:/login";
+		  return "redirect:/rlogin";
 	  } 
 	  
 	  
 	  
-	  @PostMapping("/login")
+	  @PostMapping("/rlogin")
 	  public String postlogin(@ModelAttribute RRtrainerVO trainervo, HttpSession session) {  
 		  
 		  RRtrainerVO loginvo = trainerservice.select(trainervo);
@@ -68,7 +68,7 @@ public class RRtrainerController {
 			  session.setAttribute("trainerPk", loginvo.getId());
 			  return "redirect:/course";
 		  }else {
-			  return "redirect:/login?error";
+			  return "redirect:/rlogin?error";
 		  }     
 	  }
 	  

@@ -8,14 +8,13 @@
    <link rel ="stylesheet" href="/css/AcademyBoard.css">
 </head>
 
-
 <body>
 
    <h2>프로그램 소개</h2>
    <div class="mbtn">
-      <button type="submit" class="mbtn" onclick="location.href='/'">Home</button>
-      <button type="submit" class="mbtn" onclick="location.href='/login'">로그인 </button>
-      <button type="button" class="mbtn" onclick="location.href='/trainerRegister'">회원가입</button>
+      <button type="submit"  onclick="location.href='/'">Home</button>
+      <button type="button"  id="rloginBtn">로그인 </button>
+      <button type="button"  onclick="location.href='/trainerRegister'">회원가입</button>
    </div>
 
    <div class="display-table">
@@ -32,80 +31,81 @@
 
       <div class="tab_content">
 
-         <div class="tab_con_item" data-category="special" >
+         <div class="tab_con_item" th:each="course:${course}"  data-category="special" >
             <a href="/AcademyDetail.html?id=id_s1">
-               <img src="/img_run_s/ma_s1.GIF">
+               <img th:src="${course.prPhotoUrl}">
                <div class="card_info">
-                  <span> title </span>
-                  <span>(location)</span>
-                  <span>startDate</span>
-                  <span>price</span>
+                  <span th:text="${course.title}"> </span>
+                  <span th:text="'('+${course.location}+')'"></span>
+                  <span th:text="${course.startDate}"></span>
+                  <span th:text="${course.price}">원</span>
                </div>
             </a>
          </div> <!---Top card div-->
 
       </div> <!--tab_content-->
    </div>
+   
+   <!--로그인 모달-->
+<div id="rloginModal" class="modal">
+	<div class="modal-content">
+		<span class="close">&times;</span>
+		<h3> 로그인</h3>
+		<form action="" method="post">
+			<label for="trainerId">ID</label>
+			<input type="text" id="trainerId" name="trainerId" required>
+			<label for="password">Password</label>
+			<input type="password" id="password" name="password" required>
+			<button type="submit">로그인</button>
+		</form>
+
+	</div>
+</div>
+
+
+
+<script>
+    // 탭
+    const tabs = document.querySelectorAll('.tab li');
+    const cards = document.querySelectorAll('.tab_con_item');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('on'));
+            tab.classList.add('on');
+            const type = tab.dataset.type;
+            cards.forEach(card => {
+                if (!type || card.dataset.category === type) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // 모달
+    const rloginBtn = document.getElementById("rloginBtn");
+    const rloginModal = document.getElementById("rloginModal");
+    const rloginClose = rloginModal.querySelector(".close");
+
+    rloginBtn.addEventListener("click", () => {
+        rloginModal.style.display = "flex";
+    });
+
+    rloginClose.addEventListener("click", () => {
+        rloginModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === rloginModal) rloginModal.style.display = "none";
+    });
+</script>
+
 
 </body>
-
 </html>
-<script>
-   //탭클릭+ 해당 카테고리만 보이기
-   document.querySelectorAll('.tab li').forEach(tab => {
-      tab.addEventListener('click', () => {
-         const type = tab.dataset.type;
 
-         //디자인 변경
+   
+   
 
-         //    document.querySelectorAll('.tab il').forEach (t=>t.classList.remove('on'));
-         //      tab.classList.add('on');
-
-         //카드 필터링
-         document.querySelectorAll('.tab_con_item').forEach(item => {
-            if (type === item.dataset.category) {
-               item.style.display = "block";
-            } else {
-               item.style.display = "none";
-            }
-         });
-      });
-   });
-
-   //모든 카드선택
-   document.querySelectorAll('.tab_con_item').forEach(card => {
-      card.addEventListener('click', () => {
-         const detail = card.querySelector('.card_detail');
-
-         //다른 카드 열려있으면 닫기
-         document.querySelectorAll('.card_detail').forEach(dd => {
-            if (dd !== detail) dd.style.display = 'none';
-         });
-
-         //현재 카드 상세정보 토글
-         if (detail.style.display === 'block') {
-            detail.style.display = 'none';
-         } else {
-            detail.style.display = 'block'
-         }
-
-      });
-   });
-
-
-
-   document.querySelectorAll('.tab_con_item').forEach(card => {
-      card.style.display = 'block';       // 카드 보이기
-      const info = card.querySelector('.card_info');
-      if (info) info.style.display = 'flex';
-      const img = card.querySelector('img');
-      if (img) img.style.display = 'block';
-
-      const detail = card.querySelector('.card_detail');
-      if (detail) detail.style.display = 'none';
-   });
-
-
-
-
-</script>

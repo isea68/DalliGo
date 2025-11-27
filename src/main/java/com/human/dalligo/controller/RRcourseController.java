@@ -31,8 +31,8 @@ public class RRcourseController {
   @GetMapping("/")
   public String getTrain(Model model) {
 	  
-	  List<RRcourseVO> course = courseservice.selectList();
-	  model.addAttribute("course", course);	  
+	  List<RRcourseVO> traincourse = courseservice.selectList();
+	  model.addAttribute("course", traincourse);	  
       return "/training/AcademyBoard";
   }  
 
@@ -54,7 +54,7 @@ public class RRcourseController {
 	  System.out.println("trId:"+trId);
 	  
 	  if(trId==null) {
-		  return "redirect:/login";
+		  return "redirect:/rlogin";
 	  }
 	  
 	  
