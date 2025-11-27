@@ -18,11 +18,20 @@ public class UserCheckController {
         this.userDAO = userDAO;
     }
 
+    // 아이디 중복 체크
     @GetMapping("/checkUserId")
     public Map<String,Object> checkUserId(@RequestParam("userId") String userId) {
-        System.out.println("[DEBUG] /checkUserId called with userId=" + userId);
-        boolean exists = userDAO.existsByUserId(userId);
-        System.out.println("[DEBUG] exists = " + exists);
+        boolean exists = userDAO.getUserByUserId(userId) != null;        
+        Map<String,Object> resp = new HashMap<>();
+        resp.put("available", !exists);
+        
+        return resp;
+    }
+
+    // 닉네임 중복 체크 (아이디 체크와 동일 구조)
+    @GetMapping("/checkNickName")
+    public Map<String,Object> checkNickname(@RequestParam("nickName") String nickname) {
+        boolean exists = userDAO.getUserByNickName(nickname) != null;        
         Map<String,Object> resp = new HashMap<>();
         resp.put("available", !exists);
         return resp;

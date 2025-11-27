@@ -22,27 +22,15 @@ public class UserDAO {
         sqlSession.insert(MAPPER + ".insert", uservo);
     }
 
-    // 아이디로 유저 조회
+    // 아이디로 조회
     public UserVO getUserByUserId(String userId) {
-        System.out.println("[DEBUG] UserDAO.getUserByUserId called with userId = " + userId);
-        Map<String,Object> param = new HashMap<>();
-        param.put("userId", userId);
-        UserVO user = sqlSession.selectOne(MAPPER + ".getUserByUserId", param);
-        System.out.println("[DEBUG] UserDAO.getUserByUserId returned = " + user);
-        return user;
+        return sqlSession.selectOne(MAPPER + ".getUserByUserId", userId);
     }
 
-    // ================== 아이디 존재 여부 ==================
-    public boolean existsByUserId(String userId) {
-        return getUserByUserId(userId) != null;
+    // 닉네임으로 조회 (아이디와 동일하게 String 사용)
+    public UserVO getUserByNickName(String nickName) {
+        return sqlSession.selectOne(MAPPER + ".getUserByNickName", nickName);
     }
 
-    // ================== 닉네임 존재 여부 ==================
-    public boolean existsByNickName(String nickName) {
-        Map<String,Object> param = new HashMap<>();
-        param.put("nickName", nickName);
-        return sqlSession.selectOne(MAPPER + ".getUserByNickName", param) != null;
-    }
-    
-    
+
 }
