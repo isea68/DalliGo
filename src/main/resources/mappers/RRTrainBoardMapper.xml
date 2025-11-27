@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.RRtrainingDAO">
+
+	<resultMap id="userMap" type="com.human.dalligo.vo.UserInfoVO">
+		<id property="id" column="id" />  <!--기본키-->
+		<result property="userId" column="user_id" />
+		<result property="password" column="password" />
+		<result property="name" column="name" />
+		<result property="nickName" column="nick_name" />
+		<result property="address" column="address" />
+		<result property="phone" column="phone" />
+		<result property="isAdmin" column="is_admin" />
+	</resultMap>
+
+
+	<resultMap id="trainerMap" type="com.human.dalligo.vo.RRtrainerVO">
+		<id property="id" column="id" />  <!--기본키-->
+		<result property="trainerId" column="trainer_id" />
+		<result property="password" column="password" />
+		<result property="name" column="name" />
+		<result property="photoUrl" column="photo_url" />
+		<result property="history" column="history" />
+	</resultMap>
+
+
+	<resultMap id="courseMap" type="com.human.dalligo.vo.RRcourseVO">
+		<id property="id" column="id" />  <!--기본키-->
+		<result property="trainerId" column="trainer_id" />
+		<result property="title" column="title" />
+		<result property="startDate" column="start_date" javaType="java.time.LocalDate" />
+		<result property="selectDay" column="select_day" />
+		<result property="location" column="location" />
+		<result property="supportItem" column="support_item" />
+		<result property="price" column="price" />
+		<result property="duration" column="duration" />
+		<result property="prPhotoUrl" column="prphoto_url" />
+		<result property="capacity" column="capacity" />
+	</resultMap>
+	
+		<resultMap id="cardimageMap" type="com.human.dalligo.vo.RRcardImageVO">
+		<id property="id" column="id" />  <!--기본키-->
+		<result property="cardId" column="card_id" />
+		<result property="imageUrl" column="image_url" />
+	</resultMap>
+
+
+	<insert id="insert" parameterType="com.human.dalligo.vo.RRtrainerVO">
+		insert into rrtrainer(trainer_id, password, name, photo_url,history)
+		values(#{trainerId}, #{password}, #{name}, #{photoUrl},#{history})
+	</insert>
+
+	<insert id="insertcourse" parameterType="com.human.dalligo.vo.RRcourseVO"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into rrcourse(trainer_id,title,start_date,select_day,location,support_item,price,duration, prphoto_url, capacity)
+		values(#{trainerId},#{title},#{startDate},#{selectDay},#{location},#{supportItem},#{price},#{duration},#{prPhotoUrl},#{capacity})
+	</insert>
+
+	<select id="getBySelectId" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO">
+		select *
+		from rrtrainer
+		where trainer_id= #{trainerId}
+
+	</select>
+
+	<select id="selectAllcourse" resultMap="courseMap">
+		select * from rrcourse;
+
+	</select>
+
+
+</mapper>
+
+

@@ -1,0 +1,47 @@
+
+    .card_detail {
+        display: block;
+
+    }
+
+    .detail_in,
+    .down_left {
+        display: flex;
+    }
+
+    .img_box, .up_left {
+        width: 200px;
+        height: auto;
+    }
+
+    .text_box {
+        font-size: 10px;
+    }
+
+    .text_pr {
+        padding-left: 20px;
+    }
+    .detail_in {
+        display: flex;
+        padding-top: 50px;
+        padding-left: 20px;
+    }
+    .up_right,.up_left
+  
+     {
+         flex: 1;
+        padding-left:10px;
+   
+    }
+
+   
+    .down_right, .down_left
+     {
+         flex: 1;
+        padding-left:10px;
+   
+    }
+
+    .up_right{
+        flex-wrap: wrap;
+    }
