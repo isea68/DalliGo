@@ -1,10 +1,10 @@
-package com.human.DalliGO.controller;
+package com.human.dalligo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.human.DalliGO.vo.UserVO;
+import com.human.dalligo.vo.UserVO;
 
 import jakarta.servlet.http.HttpSession;
 

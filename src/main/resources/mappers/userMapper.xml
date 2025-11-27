@@ -3,10 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.human.DalliGO.dao.UserDAO">
+<mapper namespace="com.human.dalligo.dao.UserDAO">
 
     <!-- UserVO와 DB 컬럼 매핑 -->
-    <resultMap id="DetailResult" type="com.human.DalliGO.vo.UserVO">
+    <resultMap id="DetailResult" type="com.human.dalligo.vo.UserVO">
         <id property="id" column="id" />
         <result property="userId" column="user_id"/>
         <result property="password" column="password"/>
@@ -18,14 +18,19 @@
     </resultMap>
 
     <!-- 회원가입 -->
-    <insert id="insert" parameterType="com.human.DalliGO.vo.UserVO" useGeneratedKeys="true" keyProperty="id">
-        insert into user
-        values (default, #{userId}, #{password}, #{name}, #{nickName}, #{address}, #{phone}, default)
+    <insert id="insert" parameterType="com.human.dalligo.vo.UserVO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user
+        VALUES (default, #{userId}, #{password}, #{name}, #{nickName}, #{address}, #{phone}, default)
     </insert>
 
     <!-- 로그인용: userId로 조회 -->
     <select id="getUserByUserId" parameterType="string" resultMap="DetailResult">
         SELECT * FROM user WHERE user_id = #{userId}       
+    </select>
+
+    <!-- 닉네임 중복 확인: nickName으로 조회 -->
+    <select id="getUserByNickName" parameterType="string" resultMap="DetailResult">
+        SELECT * FROM user WHERE nick_name = #{nickName}       
     </select>
 
 </mapper>

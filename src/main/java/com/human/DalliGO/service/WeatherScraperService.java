@@ -1,4 +1,4 @@
-package com.human.DalliGO.service;
+package com.human.dalligo.service;
 
 import java.time.LocalDateTime;
 

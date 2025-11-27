@@ -1,4 +1,4 @@
-package com.human.DalliGO.vo;
+package com.human.dalligo.vo;
 
 import lombok.Data;
 

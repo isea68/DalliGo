@@ -1,8 +1,9 @@
-package com.human.DalliGO.service;
+package com.human.dalligo.service;
 
 import org.springframework.stereotype.Service;
-import com.human.DalliGO.dao.UserDAO;
-import com.human.DalliGO.vo.UserVO;
+
+import com.human.dalligo.dao.UserDAO;
+import com.human.dalligo.vo.UserVO;
 
 import lombok.RequiredArgsConstructor;
 

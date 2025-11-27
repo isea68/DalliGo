@@ -1,4 +1,4 @@
-package com.human.DalliGO.controller;
+package com.human.dalligo.controller;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.human.DalliGO.service.ScheduleService;
-import com.human.DalliGO.vo.ScheduleVO;
+import com.human.dalligo.service.ScheduleService;
+import com.human.dalligo.vo.ScheduleVO;
 
 import lombok.RequiredArgsConstructor;
 

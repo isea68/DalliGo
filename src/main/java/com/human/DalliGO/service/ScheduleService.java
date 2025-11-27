@@ -1,11 +1,11 @@
-package com.human.DalliGO.service;
+package com.human.dalligo.service;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.human.DalliGO.dao.ScheduleDAO;
-import com.human.DalliGO.vo.ScheduleVO;
+import com.human.dalligo.dao.ScheduleDAO;
+import com.human.dalligo.vo.ScheduleVO;
 
 import lombok.RequiredArgsConstructor;
 

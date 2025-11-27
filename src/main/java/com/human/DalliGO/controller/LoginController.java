@@ -1,4 +1,4 @@
-package com.human.DalliGO.controller;
+package com.human.dalligo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.human.DalliGO.service.UserService;
-import com.human.DalliGO.vo.UserVO;
+import com.human.dalligo.service.UserService;
+import com.human.dalligo.vo.UserVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
