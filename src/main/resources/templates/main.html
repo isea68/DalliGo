@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>DalliGO(달리는 친구들)</title>
+	<style>
+		/* 전체 스타일 */
+		body {
+			margin: 0;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+			background-color: #f4f7f9;
+			color: #333;
+		}
+
+
+		/* Hero 섹션 */
+		.hero {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 50px;
+			background:
+				linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+				url('./images/running.jpg') no-repeat center center/cover;
+			color: white;
+			min-height: 450px;
+		}
+
+		.hero-text {
+			max-width: 55%;
+		}
+
+		.hero-text h2 {
+			font-size: 3em;
+			margin: 0 0 15px 0;
+			text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+		}
+
+		.hero-text p {
+			font-size: 1.2em;
+			text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+		}
+
+		/* 로그인 박스 */
+		.login-box {
+			max-width: 300px;
+			background-color: rgba(255, 255, 255, 0.95);
+			padding: 25px;
+			border-radius: 12px;
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+			color: #333;
+			text-align: center;
+		}
+
+		.login-box h3 {
+			margin-top: 0;
+			margin-bottom: 15px;
+			color: #00acc1;
+		}
+
+		.login-box input {
+			width: 90%;
+			padding: 10px;
+			margin: 8px 0;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 1em;
+		}
+
+		.login-box button {
+			width: 95%;
+			padding: 10px;
+			margin-top: 10px;
+			background-color: #00acc1;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			font-size: 1em;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		.login-box button:hover {
+			background-color: #00838f;
+		}
+
+		.login-box .social-login {
+			margin-top: 10px;
+		}
+
+		.login-box .social-login button {
+			width: 45%;
+			margin: 5px 2%;
+			background-color: #ff7043;
+		}
+
+		.login-box .social-login button:hover {
+			background-color: #f4511e;
+		}
+
+		/* 기능 카드 섹션 */
+		.features {
+			display: flex;
+			justify-content: center;
+			flex-wrap: wrap;
+			padding: 50px 20px;
+			gap: 25px;
+		}
+
+		.card {
+			background-color: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+			width: 300px;
+			padding: 25px;
+			text-align: center;
+			transition: transform 0.3s, box-shadow 0.3s;
+		}
+
+		.card:hover {
+			transform: translateY(-7px);
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+		}
+
+		.card h3 {
+			margin-top: 0;
+			font-size: 1.5em;
+		}
+
+		.card p {
+			font-size: 1em;
+			margin: 15px 0;
+		}
+
+		.card button {
+			padding: 10px 20px;
+			border: none;
+			border-radius: 6px;
+			background-color: #00acc1;
+			color: white;
+			cursor: pointer;
+			transition: background 0.3s;
+		}
+
+		.card button:hover {
+			background-color: #00838f;
+		}
+
+		/* 푸터 */
+		footer {
+			background-color: #00acc1;
+			color: white;
+			text-align: center;
+			padding: 20px 0;
+			margin-top: 50px;
+		}
+
+		/* 반응형 */
+		@media(max-width: 992px) {
+			.hero {
+				flex-direction: column;
+				align-items: center;
+				text-align: center;
+			}
+
+			.hero-text {
+				max-width: 100%;
+				margin-bottom: 20px;
+			}
+
+			.login-box {
+				max-width: 100%;
+			}
+		}
+
+		@media(max-width: 768px) {
+			nav a {
+				margin-left: 15px;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div th:replace="fragment/header :: headerDiv"></div>
+
+	<section class="hero">
+		<div class="hero-text">
+			<h2>달리기로 친구를 만나다</h2>
+			<p>마라톤, 하프, 러닝 이벤트 정보를 한눈에</p>
+		</div>
+
+		<div class="login-box">
+		    <!-- 로그인 전 -->
+		    <div th:if="${loginUser} == null">
+		        <h3>로그인</h3>
+		        <form th:action="@{/login}" method="post">
+		            <input type="text" name="userId" placeholder="아이디">
+		            <input type="password" name="password" placeholder="비밀번호">
+		            <button type="submit">로그인</button>
+		        </form>
+		        <a th:href="@{/signup}"><button>회원 가입</button></a>
+		        <p th:if="${error}" th:text="${error}" style="color:red; margin-top:10px;"></p>
+		    </div>
+
+		    <!-- 로그인 후 -->
+		    <div th:if="${loginUser} != null">
+		        <h3 th:text="'안녕하세요, ' + ${loginUser.nickName} + '님!'">안녕하세요, 사용자님!</h3>
+		        <a th:href="@{/mypage}"><button>마이페이지</button></a>
+		        <a th:href="@{/logout}"><button style="background-color:#f4511e;">로그아웃</button></a>
+		    </div>
+		</div>
+	</section>
+
+	<section class="features">
+		<div class="card">
+			<h3>마라톤 일정</h3>
+			<p>2026년 주요 마라톤과 러닝 이벤트 확인</p>
+			<a th:href="@{/schedule}">
+				<button>자세히 보기</button>
+			</a>
+		</div>
+		<div class="card">
+			<h3>러닝 친구 찾기</h3>
+			<p>같이 달릴 친구를 찾아보세요</p>
+			<button>친구 찾기</button>
+		</div>
+		<div class="card">
+			<h3>커뮤니티</h3>
+			<p>러너들과 경험과 팁을 공유하세요</p>
+			<button>커뮤니티 참여</button>
+		</div>
+	</section>
+
+	<footer>
+		&copy; 2025 RunMates. All rights reserved.
+	</footer>
+	<script src="data.js"></script>
+	<script>
+		// 카드 렌더링
+		const featureCards = document.getElementById('feature-cards');
+
+		marathonData.forEach(event => {
+			const card = document.createElement('div');
+			card.className = 'card';
+			card.innerHTML = `
+        <h3>${event.name}</h3>
+        <p>${event.date} / ${event.location}</p>
+        <button onclick="viewDetails(${event.id})">자세히 보기</button>
+    `;
+			featureCards.appendChild(card);
+		});
+
+
+		function viewDetails(id) {
+
+			window.location.href = `details.html?id=${id}`;
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>게시글 작성</title>
+</head>
+<style>
+	#mainboard {
+		display: flex;
+		justify-content: flex-start;
+		margin-bottom: 40px;
+	}
+
+	#main-back {
+		margin-top: 25px;
+	}
+
+	#main-back:hover {
+		transform: scale(1.05);
+		cursor: pointer;
+	}
+
+	#main-title {
+		padding-left: 20%;
+		font-size: 100px;
+	}
+
+	#posting-box {
+		display: flex;
+		flex-direction: column;
+	}
+
+	#select {
+		width: 30%;
+		height: 50px;
+		font-size: 25px;
+		margin-bottom: 10px;
+		border-radius: 10px;
+	}
+
+	#title {
+		height: 50px;
+		margin-bottom: 20px;
+		font-size: 25px;
+		border-radius: 10px;
+	}
+
+	#content {
+		height: 500px;
+		font-size: 20px;
+		margin-bottom: 20px;
+		border-radius: 10px;
+	}
+
+	#file-box {
+		margin-bottom: 20px;
+	}
+
+	#upload-button {
+		display: flex;
+		justify-content: flex-end;
+		margin: 20px;
+	}
+
+	.upload-button {
+		width: 150px;
+		height: 100px;
+		border: none;
+		border-radius: 15px;
+		font-size: 50px;
+		font-weight: 700;
+		background-color: #00acc1;
+		color: white;
+	}
+
+	.upload-button:hover {
+		transform: scale(1.02);
+		cursor: pointer;
+	}
+</style>
+
+<body>
+	<!-- 메인보드 -->
+	<div id="mainboard">
+		<div id="main-back" onclick="history.back()">
+			<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
+				class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
+				<path
+					d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1" />
+			</svg>
+		</div>
+		<div id="main-title">게시글 작성</div>
+	</div>
+
+	<!-- 게시글 작성 부분-->
+	<form action="/community/post/upload" method="post" enctype="multipart/form-data">
+	<div id="posting-box">
+			<!-- 카테고리 선택 -->
+			<select id="select" name="category">
+				<option value="category">카테고리</option>
+				<option value="info">러닝정보/노하우</option>
+				<option value="review">대회정보/후기</option>
+				<option value="recommend">러닝코스추천</option>
+				<option value="mate">러닝메이트/소모임</option>
+				<option value="useditem">중고거래</option>
+				<option value="trainshare">훈련일지/목표공유</option>
+				<option value="qa">Q&A/자유게시판</option>
+			</select>
+
+			<!-- 제목입력란 -->
+			<input id="title" placeholder="제목을 입력해주세요." name="title">
+
+			<!-- 내용입력란 -->
+			<textarea name="content" id="content" placeholder="건전하고 활기찬 커뮤니티를 위해 다음 유형의 게시물 작성 시 삭제될 수 있습니다.
+
+        - 욕설, 비속어, 성적 모욕 등 불쾌감을 일으킬 수 있는 내용
+        - 공격적, 차별적인 내용 또는 허위사실 유표"></textarea>
+
+			<!-- 파일 업로드 -->
+			<table id="file-box">
+				<tr>
+					<td class="posting-files">
+						<input class="files" type="file" accept="image/*" name="files" multiple>
+					</td>
+				</tr>
+				<tr>
+					<td class="posting-files">
+						<input class="files" type="file" accept="video/*" name="files" multiple>
+					</td>
+				</tr>
+			</table>
+
+	</div>
+
+	<!-- 저장 버튼 -->
+	<div id="upload-button">
+		<button type="submit" onclick="return validateCategory()" class="upload-button">올리기</button>
+	</div>
+	</form>
+
+</body>
+
+</html>
+<script>
+	function validateCategory(){
+		const category = document.getElementById("select").value;
+		
+		if(category === "category"){
+			alert("카테고리를 선택하세요.");
+			return false;	
+		}
+		
+		return true;
+	}
+</script>

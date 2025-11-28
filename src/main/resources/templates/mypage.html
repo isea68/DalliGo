@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - DalliGO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #00acc1;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        h2 {
+            margin-top: 0;
+            color: #00acc1;
+        }
+        p {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #00acc1;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background-color: #00838f;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>DalliGO 마이페이지</h1>
+    </header>
+
+    <div class="container">
+        <h2 th:text="'안녕하세요, ' + ${nickName} + '님!'">안녕하세요, 사용자님!</h2>
+        <p><strong>아이디:</strong> <span th:text="${userId}">userId</span></p>
+        <p><strong>이름:</strong> <span th:text="${name}">홍길동</span></p>
+        <p><strong>주소:</strong> <span th:text="${address}">서울시</span></p>
+        <p><strong>전화번호:</strong> <span th:text="${phone}">010-0000-0000</span></p>
+        <p><strong>관리자 여부:</strong> <span th:text="${isAdmin == 1 ? '관리자' : '일반 사용자'}">일반 사용자</span></p>
+
+        <a th:href="@{/}" class="btn">메인으로 돌아가기</a>
+        <a th:href="@{/logout}" class="btn" style="background-color: #f4511e;">로그아웃</a>
+    </div>
+</body>
+</html>

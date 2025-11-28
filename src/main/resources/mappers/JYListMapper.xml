@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.human.dalligo.dao.JYListDAO">
+	
+	<resultMap id="ListResult" type="com.human.dalligo.vo.JYListVO">
+		<!-- 수동으로 Mapping 처리 -->
+		<id property="id" column="id"/>
+		<result property="nickName" column="nick_name"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="countLikes" column="count_likes"/>
+		<result property="countComments" column="count_comments"/>
+		<result property="inDate" column="in_date"/>
+	</resultMap>
+	
+	<select id="selectAll" resultMap="ListResult">
+	 	SELECT p.id, p.title, p.content, p.in_date, u.nick_name FROM post p JOIN user u ON p.user_id = u.id
+	 	ORDER BY p.in_date DESC
+	</select>
+	
+	<!-- 전체 게시물 조회 (페이징용) -->
+	<select id="selectByPage" parameterType="map" resultMap="ListResult">
+		SELECT p.id, p.title, p.content, p.in_date, u.nick_name FROM post p JOIN user u ON p.user_id = u.id
+		ORDER BY p.in_date DESC
+		LIMIT #{pageSize} OFFSET #{offset}
+	</select>
+	
+	<select id="countList" resultType="int">
+		SELECT COUNT(*) FROM post
+	</select>
+	
+	<!-- 카테고리별 게시물 조회 (페이징용) -->
+	<select id="selectAllByCategory" parameterType="map" resultMap="ListResult">
+		SELECT p.id, p.title, p.content, p.in_date, u.nick_name
+		FROM post p JOIN user u ON p.user_id = u.id
+		WHERE p.category = #{category}
+		ORDER BY p.in_date DESC
+		LIMIT #{pageSize} OFFSET #{offset}
+	</select>
+	
+	<select id="countByCategory" parameterType="String" resultType="int">
+		SELECT COUNT(*) FROM post WHERE category = #{category}
+	</select>
+	
+</mapper>

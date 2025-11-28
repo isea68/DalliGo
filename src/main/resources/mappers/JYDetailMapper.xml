@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.human.dalligo.dao.JYDetailDAO">
+	<resultMap id="ResultDetail" type="com.human.dalligo.vo.JYDetailVO">
+		<id property="id" column="id"/>
+		<result property="nickName" column="nick_name"/>
+		<result property="inDate" column="in_date"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>
+		<result property="countLikes" column="count_likes"/>
+		<result property="countComments" column="count_comments"/>
+		
+	</resultMap>
+	
+	<select id="selectOne" parameterType="int" resultMap="ResultDetail">
+		SELECT p.id, u.nick_name, p.in_date, p.title, p.content FROM post p JOIN user u ON p.user_id = u.id
+		WHERE p.id = #{id}
+	</select>
+	
+	<delete id="delete" parameterType="Integer">
+		DELETE FROM post where id = #{id}
+	</delete>
+	
+	<select id="select_files" parameterType="Integer" resultType="com.human.dalligo.vo.FileVO">
+		SELECT id, post_id as postId, original_name as originalName, saved_name as savedName
+		FROM post_files WHERE post_id = #{id}
+	</select>
+
+</mapper>
