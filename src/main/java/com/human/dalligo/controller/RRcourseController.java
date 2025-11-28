@@ -2,7 +2,12 @@ package com.human.dalligo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.human.dalligo.service.RRcourseService;
+import com.human.dalligo.service.RRtrainerService;
 import com.human.dalligo.vo.RRcourseVO;
+import com.human.dalligo.vo.RRtrainerVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +32,14 @@ import lombok.RequiredArgsConstructor;
 public class RRcourseController {
 	
  private final  RRcourseService courseservice;
+ private final RRtrainerService trainerservice;
 	
 	
 	
-  @GetMapping("/academy")
-  public String getTrain(Model model) {
-	  
-	  List<RRcourseVO> traincourse = courseservice.selectList();
-	  model.addAttribute("course", traincourse);	  
+  @GetMapping("/")
+  public String getTrain(Model model) {	  
+	  List<RRcourseVO> courses = courseservice.selectList();
+	  model.addAttribute("courses", courses);	  
       return "/training/AcademyBoard";
   }  
 
@@ -41,6 +48,51 @@ public class RRcourseController {
   public String getcourse() {
       return "/training/course";
   } 
+  
+  @GetMapping("/training/AcademyDetail")    
+  public String gettrainingDetail(@RequestParam("id") int id, Model model) {
+	  
+	  //1.강좌 정보갖고 오기
+	  RRcourseVO courseId = courseservice.selectById(id) ;
+	  
+	  //2.강좌정보에서 TrainerId 조회
+	  int trainerId =courseId.getTrainerId();
+	  
+	  //3.트레이너 정보 조회	  
+	  RRtrainerVO trainervo =trainerservice.select(trainerId);    
+	  if (trainervo==null) {	
+		  System.out.println("조회 트레이너 없음");
+	  }else {
+		  System.out.println("조회강좌:"+trainervo);
+	  }
+	  
+	  
+	  // LocalDateTime으로 반환(DB에서 가져온 값이 javj.util.Date면 toInstant 후 변환)
+	  LocalDateTime dt =courseId.getStartDate();
+	  
+	  //월
+	  String monStr =dt.getMonthValue()+"월";
+	  
+	  //요일
+	  String[] weekdays = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
+	  String dayStr = weekdays[dt.getDayOfWeek().getValue()-1]+"요일";
+	  
+	  //시간 (오전/오후 포함)
+	  DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("a h시",Locale.KOREAN);
+	  String timeStr =dt.format(timeFormat);
+	  
+	  model.addAttribute("trainervo", trainervo);	  
+	  model.addAttribute("monStr", monStr);
+	  model.addAttribute("dayStr", dayStr);
+	  model.addAttribute("timeStr", timeStr);
+	  model.addAttribute("cId", courseId);
+	  
+	  return "/training/AcademyDetail";
+  }
+  
+  
+  
+  
   
   @PostMapping("/course")
   public String postcourse(@ModelAttribute RRcourseVO coursevo, 

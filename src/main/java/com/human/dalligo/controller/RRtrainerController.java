@@ -61,10 +61,10 @@ public class RRtrainerController {
 	  
 	  
 	  @PostMapping("/rlogin")
-	  public String postlogin(@ModelAttribute RRtrainerVO trainervo, HttpSession session) {  
+	  public String postlogin(@ModelAttribute RRtrainerVO trainervo , HttpSession session) {  
 		  
-		  RRtrainerVO loginvo = trainerservice.select(trainervo);
-		  if(loginvo!=null) { //로그인성공-->세션에 trainerId 저장 (setAttribute)
+		  RRtrainerVO loginvo = trainerservice.selectForLogin(trainervo);
+		  if(loginvo!=null) { //로그인성공-->세션에 id(pk) 저장 
 			  session.setAttribute("trainerPk", loginvo.getId());
 			  return "redirect:/course";
 		  }else {

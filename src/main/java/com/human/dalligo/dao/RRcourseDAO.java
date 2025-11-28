@@ -20,7 +20,14 @@ public class RRcourseDAO {
 	}
 	
 	public List<RRcourseVO> selectAll(){
-		List<RRcourseVO> course=sqlsession.selectList(Mapper+".selectAllcourse");
+		List<RRcourseVO> courses=sqlsession.selectList(Mapper+".selectAllcourse");
+		return courses;
+	}
+	
+	public RRcourseVO selectById(Integer id) {
+		RRcourseVO course = sqlsession.selectOne(Mapper+".selectById",id);
 		return course;
 	}
+	
+	
 }

@@ -21,10 +21,14 @@ public class RRcourseService {
 	}
 	            
 	public List<RRcourseVO> selectList() {
-		List<RRcourseVO> course=coursedao.selectAll();		
-		return  course;
+		List<RRcourseVO> courses=coursedao.selectAll();	
+		return  courses;
 		
 	}
 	
+	public RRcourseVO selectById(Integer id) {
+		RRcourseVO course = coursedao.selectById(id);
+		return course;
+	}
 
 }
