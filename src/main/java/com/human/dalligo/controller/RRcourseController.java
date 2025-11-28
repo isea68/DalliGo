@@ -28,7 +28,7 @@ public class RRcourseController {
 	
 	
 	
-  @GetMapping("/")
+  @GetMapping("/academy")
   public String getTrain(Model model) {
 	  
 	  List<RRcourseVO> traincourse = courseservice.selectList();
