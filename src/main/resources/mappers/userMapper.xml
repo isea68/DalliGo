@@ -29,5 +29,17 @@
     <select id="getUserByNickName" parameterType="string" resultMap="DetailResult">
         SELECT * FROM user WHERE nick_name = #{nickName}       
     </select>
+	 <update id="updateUser" parameterType="com.human.dalligo.vo.UserVO">
+        UPDATE user
+        SET password = #{password},
+            name = #{name},
+            nick_name = #{nickName},
+            address = #{address},
+            phone = #{phone}
+        WHERE user_id = #{userId}
+    </update>
 
+    <delete id="deleteUser" parameterType="string">
+        DELETE FROM user WHERE user_id = #{userId}
+    </delete>
 </mapper>

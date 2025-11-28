@@ -12,7 +12,7 @@ public class ScheduleVO {
 	private LocalDateTime startDate;
 	private LocalDateTime endDate;
 	private String distance;
-	private String weather;
+	private int price;
 	private String org;
 	private String regURL;
 	private String description;

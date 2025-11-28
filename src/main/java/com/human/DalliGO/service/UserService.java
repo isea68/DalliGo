@@ -11,17 +11,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserDAO userDAO;
+	 private final UserDAO userDAO;
 
-    public void insert(UserVO user) {
-        userDAO.insert(user);
-    }
+	    public void insert(UserVO user) {
+	        userDAO.insert(user);
+	    }
 
-    public UserVO login(String userId, String password) {
-        UserVO user = userDAO.getUserByUserId(userId);
-        if(user != null && user.getPassword().equals(password)) {        	
-            return user;
-        }
-        return null;
-    }
+	    public UserVO login(String userId, String password) {
+	        UserVO user = userDAO.getUserByUserId(userId);
+	        if (user != null && user.getPassword().equals(password)) {
+	            return user;
+	        }
+	        return null;
+	    }
+
+	    public UserVO getUserByUserId(String userId) {
+	        return userDAO.getUserByUserId(userId);
+	    }
+
+
+	    public void updateUser(UserVO user) {
+	        userDAO.updateUser(user);
+	    }
+
+	    public void deleteUser(String userId) {
+	        userDAO.deleteUser(userId);
+	    }
 }

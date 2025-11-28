@@ -11,11 +11,11 @@
         <result property="startDate" column="start_date"/>
         <result property="endDate" column="end_date"/>
         <result property="distance" column="distance"/>
-        <result property="weather" column="weather"/>
         <result property="org" column="org"/>
         <result property="regURL" column="reg_url"/>
         <result property="description" column="description"/>
         <result property="total" column="total"/>
+        <result property="price" column="price"/>
         <result property="inDate" column="in_date"/>
     </resultMap>
 
@@ -29,7 +29,7 @@
     <!-- 동적 정렬: ${order} 에 ASC 또는 DESC 들어감 -->
     <select id="selectAllOrderByStartDate" parameterType="map" resultMap="DetailResult">
         SELECT
-            id, title, location, start_date, end_date, distance, weather, org, reg_url, description, in_date, total
+            id, title, location, start_date, end_date, distance, price, org, reg_url, description, in_date, total
         FROM event
         ORDER BY start_date ${order}
     </select>
