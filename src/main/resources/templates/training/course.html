@@ -102,16 +102,25 @@
 			<input type="text" class="text" name="title" placeholder="강좌명">
 
 			<label for="start_date">강습 시작일</label>
-			<input type="date" id="startDate" name="startDate" class="text">
+			<input type="datetime-local" id="startDate" name="startDate" class="text">
 
 			<input type="text" class="text" name="selectDay" list="day" placeholder="평일반,주말반">
 			<datalist id="day">
 				<option>평일반</option>
 				<option>주말반</option>
 			</datalist>
+			
+			<input type="text" class="text" name="eduType" list="edutype" placeholder="원데이러닝,개인러닝,일반러닝,자세교정">
+						<datalist id="edutype">
+							<option>원데이 러닝</option>
+							<option>1:1 개인러닝</option>
+							<option>일반 러닝</option>
+							<option>러닝 자세교정</option>
+						</datalist>
 
 			<input type="text" class="text" name="duration" placeholder="훈련시간">
-			<input type="text" class="text" name="location" placeholder="훈련장소">
+			<input type="text" class="text" name="location" placeholder="도시">
+			<input type="text" class="text" name="place" placeholder="훈련장소">
 			<input type="text" class="text" name="supportItem" placeholder="제공사항">
 
 			<div class="field">

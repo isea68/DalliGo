@@ -36,7 +36,7 @@ public class RRcourseController {
 	
 	
 	
-  @GetMapping("/")
+  @GetMapping("/academy")
   public String getTrain(Model model) {	  
 	  List<RRcourseVO> courses = courseservice.selectList();
 	  model.addAttribute("courses", courses);	  
@@ -125,7 +125,7 @@ public class RRcourseController {
 	  
 	  //DB에 저장
 	  courseservice.insert(coursevo);      
-	  return "redirect:/";
+	  return "redirect:/academy";
   }      
   
 
