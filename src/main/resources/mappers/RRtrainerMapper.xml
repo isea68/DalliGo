@@ -17,13 +17,26 @@
 		insert into rrtrainer(trainer_id, password, name, photo_url,history)
 		values(#{trainerId}, #{password}, #{name}, #{photoUrl},#{history})
 	</insert>
+	
+	<select id="selectAll" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO" >
+		select * from rrtrainer;
+	
+	</select>
 
 
-	<select id="getBySelectId" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO">
+	<select id="getBySelectId" resultMap="trainerMap" parameterType="Integer" >
 		select *
 		from rrtrainer
-		where trainer_id= #{trainerId}
-
+		where id= #{id}
+		
+	</select>
+	
+	<select id="selectForLogin" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO">
+		
+		select * 		
+		from rrtrainer	
+		where trainer_id = #{trainerId}
+	
 	</select>
 
 
