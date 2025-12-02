@@ -31,7 +31,8 @@ public class RRtrainerController {
 	  
 	  @GetMapping("/rlogin")
 	  public String getlogin() {
-	      return "/training/login";	  }
+	      return "/training/login";	  
+	      }
 	  
 	  
 	  

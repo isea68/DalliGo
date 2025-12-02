@@ -43,14 +43,12 @@ public class RRcourseController {
       return "/training/AcademyBoard";
   }  
 
-  
-  @GetMapping("/course")
-  public String getcourse() {
-      return "/training/course";
-  } 
+
   
   @GetMapping("/training/AcademyDetail")    
-  public String gettrainingDetail(@RequestParam("id") int id, Model model) {
+  public String gettrainingDetail(@RequestParam("id") int id,
+		  							HttpSession session,
+		  							Model model) {	    
 	  
 	  //1.강좌 정보갖고 오기
 	  RRcourseVO courseId = courseservice.selectById(id) ;
@@ -66,6 +64,9 @@ public class RRcourseController {
 		  System.out.println("조회강좌:"+trainervo);
 	  }
 	  
+	  //4.트레이너의 히스토리 데이터를 '|'기준으로 분리해서 정렬하기 위한 작업
+	  String[] historyList = trainervo.getHistory()!=null? trainervo.getHistory().split("\\|") :new String[0];
+			  
 	  
 	  // LocalDateTime으로 반환(DB에서 가져온 값이 javj.util.Date면 toInstant 후 변환)
 	  LocalDateTime dt =courseId.getStartDate();
@@ -75,26 +76,29 @@ public class RRcourseController {
 	  
 	  //요일
 	  String[] weekdays = {"월요일","화요일","수요일","목요일","금요일","토요일","일요일"};
-	  String dayStr = weekdays[dt.getDayOfWeek().getValue()-1]+"요일";
+	  String dayStr = weekdays[dt.getDayOfWeek().getValue()-1];
 	  
 	  //시간 (오전/오후 포함)
 	  DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("a h시",Locale.KOREAN);
 	  String timeStr =dt.format(timeFormat);
 	  
-	  model.addAttribute("trainervo", trainervo);	  
+	  model.addAttribute("historyList", historyList);
+	  model.addAttribute("tvo", trainervo);	  
 	  model.addAttribute("monStr", monStr);
 	  model.addAttribute("dayStr", dayStr);
 	  model.addAttribute("timeStr", timeStr);
 	  model.addAttribute("cId", courseId);
-	  
 	  return "/training/AcademyDetail";
-  }
+  } 
   
   
+  @GetMapping("/course")  // Get--> 주로 화면열기/폼 보여주기
+  public String getcourse() {
+      return "/training/course";
+  } 
   
   
-  
-  @PostMapping("/course")
+  @PostMapping("/course") //post--> 폼전송/데이터 저장
   public String postcourse(@ModelAttribute RRcourseVO coursevo, 
 		  					HttpSession session,
 		  					@RequestParam("prPhotoFile") MultipartFile prPhotoFile
@@ -106,9 +110,7 @@ public class RRcourseController {
 	  System.out.println("trId:"+trId);
 	  
 	  if(trId==null) {
-		  return "redirect:/rlogin";
-	  }
-	  
+		  return "redirect:/rlogin";	  }	  
 	  
 	  //VO에다 trainerId 셋팅
 	  coursevo.setTrainerId(trId); 

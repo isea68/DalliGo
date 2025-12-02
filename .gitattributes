@@ -1,3 +1,53 @@
 /gradlew text eol=lf
 *.bat text eol=crlf
 *.jar binary
+
+# =======================================
+# 기본: 모든 텍스트 파일 줄바꿈을 LF로 통일
+# =======================================
+* text=auto eol=lf
+
+# =======================================
+# 자바/스프링 관련
+# =======================================
+*.java text eol=lf
+*.xml  text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.properties text eol=lf
+*.gradle text eol=lf
+*.md text eol=lf
+
+# =======================================
+# Shell / Script  # 윈도우 배치 파일은 CRLF로 씀
+# =======================================
+*.sh text eol=lf
+*.bat text eol=crlf  
+
+# =======================================
+# Web Front-end 파일들
+# =======================================
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+
+# =======================================
+# 이미지/바이너리 파일 (diff 금지)
+# =======================================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+
+# =======================================
+# Eclipse / IntelliJ 설정 파일
+# (개인 설정 아님 → 텍스트 취급)
+# =======================================
+*.project text eol=lf
+*.classpath text eol=lf
+*.settings/* text eol=lf
+.idea/* text eol=lf
+
