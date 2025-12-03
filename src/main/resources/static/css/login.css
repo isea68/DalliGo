@@ -1,0 +1,56 @@
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 300px;
+            margin: 100px auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .signup-btn {
+            top: 50px;
+            right: 470px;
+            text-decoration: none;
+            padding: 5px 10px;
+            background-color: #1ae7a3;
+            color: white;
+            border-radius: 5px;
+            font-size: 15px;
+            width: 100px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            margin: 8px 0;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 14px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0b7dda;
+        }

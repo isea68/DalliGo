@@ -1,0 +1,113 @@
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    line-height: 60px;
+    z-index: 1000;
+}
+
+.container {
+    display: flex;  
+    gap: 50px;
+    width: 100%;
+    height: calc(100vh - 60px);
+}
+
+.trainer-history {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.trainer-card {
+    border: 1px solid #ccc;
+    gap: 10px;
+    width: 200px;
+}
+
+.left {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+main {
+    margin-top: 100px;
+}
+
+table, td, tr {
+	
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 8px;
+    text-align: center;
+}
+
+.trainer-history ul {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.photo-box {
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.photo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 300px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.Trainer-login {
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+

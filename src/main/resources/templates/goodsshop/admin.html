@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>관리자 - 달리Go</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			padding: 20px;
+			background-color: #f5f5f5;
+		}
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+		}
+
+		#logoname {
+			font-size: 28px;
+			font-weight: bold;
+		}
+
+		#floatingAddBtn {
+			padding: 10px 15px;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-weight: bold;
+		}
+
+		#floatingAddBtn:hover {
+			background-color: #005ec4;
+		}
+
+		#goodsContainer {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 20px;
+		}
+
+		.goodsCard {
+			width: 23%;
+			background-color: #fff;
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 10px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+		}
+
+		.goodsCard img {
+			width: 120px;
+			height: 120px;
+			object-fit: cover;
+			border-radius: 5px;
+			margin-bottom: 10px;
+		}
+
+		.goodsCard p,
+		.goodsCard span {
+			margin: 3px 0;
+			font-size: 14px;
+		}
+
+		.admin-btn {
+			margin: 5px 5px 0 0;
+			padding: 5px 10px;
+			cursor: pointer;
+			border: none;
+			border-radius: 5px;
+			font-weight: bold;
+			font-size: 13px;
+		}
+
+		.edit-btn {
+			background-color: #ffc107;
+			color: white;
+		}
+
+		.edit-btn:hover {
+			background-color: #e0a800;
+		}
+
+		.delete-btn {
+			background-color: #dc3545;
+			color: white;
+		}
+
+		.delete-btn:hover {
+			background-color: #c82333;
+		}
+
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1000;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			justify-content: center;
+			align-items: center;
+		}
+
+		.modal-content {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 10px;
+			width: 400px;
+			position: relative;
+		}
+
+		.close {
+			position: absolute;
+			top: 10px;
+			right: 15px;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		.close:hover {
+			color: red;
+		}
+
+		.modal-input {
+			width: 100%;
+			padding: 8px;
+			margin-bottom: 12px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+		}
+
+		.modal-btn {
+			padding: 10px 15px;
+			cursor: pointer;
+			border: none;
+			border-radius: 5px;
+			font-weight: bold;
+			background-color: #007bff;
+			color: white;
+		}
+
+		.modal-btn:hover {
+			background-color: #005ec4;
+		}
+	</style>
+</head>
+
+<body>
+	<header>
+		<h2>관리자</h2>
+		<div th:replace="fragments/header :: headerDiv"></div>
+		<button id="floatingAddBtn">상품 등록</button>
+	</header>
+
+
+	<form th:action="@{/store/admin/topGoods}" method="post" onsubmit="return topGoodsAlert();">
+		<div style="margin-bottom:20px;">
+			<label>TOP1:
+				<select name="top1">
+					<option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" th:text="${goods.goodsName}"
+						th:selected="${goods.topRank == 1}">상품명</option>
+				</select>
+			</label>
+
+			<label>TOP2:
+				<select name="top2">
+					<option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" th:text="${goods.goodsName}"
+						th:selected="${goods.topRank == 2}">상품명</option>
+				</select>
+			</label>
+
+			<label>TOP3:
+				<select name="top3">
+					<option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" th:text="${goods.goodsName}"
+						th:selected="${goods.topRank == 3}">상품명</option>
+				</select>
+			</label>
+			<button type="submit" class="modal-btn" style="margin-top:20px;">TOP 상품 적용</button>
+		</div>
+
+
+		<div id="goodsContainer">
+			<!-- 상품 반복 출력 -->
+			<div class="goodsCard" th:each="goods : ${goodsList}">
+				<img th:src="${goods.goodsImage}" alt="상품 이미지">
+				<p><strong>이름:</strong> <span th:text="${goods.goodsName}"></span></p>
+				<p><strong>브랜드:</strong> <span th:text="${goods.goodsBrand}"></span></p>
+				<p><strong>가격:</strong> <span
+						th:text="${#numbers.formatDecimal(goods.goodsPrice,0,'COMMA',0,'POINT')} + '원'"></span></p>
+				<p><strong>수량:</strong> <span th:text="${goods.goodsQuantity}"></span></p>
+				<p><strong>태그:</strong> <span th:text="${goods.goodsTag}"></span></p>
+				<p><strong>설명:</strong> <span th:text="${goods.goodsInfo}"></span></p>
+
+				<!-- 수정 버튼 -->
+				<button type="button" class="admin-btn edit-btn" th:data-id="${goods.goodsId}"
+					th:data-name="${goods.goodsName}" th:data-brand="${goods.goodsBrand}"
+					th:data-price="${goods.goodsPrice}" th:data-quantity="${goods.goodsQuantity}"
+					th:data-tag="${goods.goodsTag}" th:data-image="${goods.goodsImage}"
+					th:data-info="${goods.goodsInfo}" onclick="openEditModal(this)">수정</button>
+
+				<!-- 삭제 버튼 (form 중첩 제거) -->
+				<button type="button" class="admin-btn delete-btn"
+					th:onclick="'if(confirm(\'정말 삭제하시겠습니까?\')) location.href=\'/admin/delete?goodsId=' + ${goods.goodsId} + '\';'">
+					삭제
+				</button>
+			</div>
+		</div>
+
+
+	</form>
+
+	<!-- 상품 등록 모달 -->
+	<div id="addModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="closeAddModal()">&times;</span>
+			<h2>상품 등록</h2>
+			<form id="addForm" th:action="@{/store/admin/add}" method="post">
+				<input type="text" name="goodsName" class="modal-input" placeholder="상품 이름" required>
+				<input type="text" name="goodsBrand" class="modal-input" placeholder="브랜드" required>
+				<input type="number" name="goodsPrice" class="modal-input" placeholder="가격" min="0" required>
+				<input type="number" name="goodsQuantity" class="modal-input" placeholder="수량" min="0" required>
+				<input type="text" name="goodsTag" class="modal-input" placeholder="태그">
+				<input type="text" name="goodsImage" class="modal-input" placeholder="이미지 URL">
+				<textarea name="goodsInfo" class="modal-input" placeholder="상품 설명"></textarea>
+				<button type="submit" class="modal-btn">등록</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- 상품 수정 모달 -->
+	<div id="editModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="closeEditModal()">&times;</span>
+			<h2>상품 수정</h2>
+			<form id="editForm" th:action="@{/store/admin/update}" method="post">
+				<input type="hidden" name="goodsId" id="editGoodsId">
+				<input type="text" name="goodsName" id="editGoodsName" class="modal-input" placeholder="상품 이름" required>
+				<input type="text" name="goodsBrand" id="editGoodsBrand" class="modal-input" placeholder="브랜드" required>
+				<input type="number" name="goodsPrice" id="editGoodsPrice" class="modal-input" placeholder="가격" min="0"
+					required>
+				<input type="number" name="goodsQuantity" id="editGoodsQuantity" class="modal-input" placeholder="수량"
+					min="0" required>
+				<input type="text" name="goodsTag" id="editGoodsTag" class="modal-input" placeholder="태그">
+				<input type="text" name="goodsImage" id="editGoodsImage" class="modal-input" placeholder="이미지 URL">
+				<textarea name="goodsInfo" id="editGoodsInfo" class="modal-input" placeholder="상품 설명"></textarea>
+				<button type="submit" class="modal-btn">수정</button>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		const addModal = document.getElementById("addModal");
+		const editModal = document.getElementById("editModal");
+		const floatingAddBtn = document.getElementById("floatingAddBtn");
+
+		floatingAddBtn.addEventListener("click", () => {addModal.style.display = "flex";});
+
+		function closeAddModal() {addModal.style.display = "none";}
+		function closeEditModal() {editModal.style.display = "none";}
+
+		function openEditModal(btn) {
+			editModal.style.display = "flex";
+			document.getElementById("editGoodsId").value = btn.dataset.id;
+			document.getElementById("editGoodsName").value = btn.dataset.name;
+			document.getElementById("editGoodsBrand").value = btn.dataset.brand;
+			document.getElementById("editGoodsPrice").value = btn.dataset.price;
+			document.getElementById("editGoodsQuantity").value = btn.dataset.quantity;
+			document.getElementById("editGoodsTag").value = btn.dataset.tag;
+			document.getElementById("editGoodsImage").value = btn.dataset.image;
+			document.getElementById("editGoodsInfo").value = btn.dataset.info;
+		}
+
+		window.addEventListener("click", (e) => {
+			if (e.target === addModal) closeAddModal();
+			if (e.target === editModal) closeEditModal();
+		});
+		function topGoodsAlert() {
+			alert("TOP 상품이 적용되었습니다!");
+			return true; // form 제출 계속 진행
+		}
+	</script>
+
+</body>
+
+</html>
