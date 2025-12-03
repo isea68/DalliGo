@@ -1,8 +1,6 @@
 package com.human.dalligo.dao;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +17,8 @@ public class JYListDAO {
 
     private static final String MAPPER = "com.human.dalligo.dao.JYListDAO";
 
-    public List<JYListVO> getListByCategory(String category) {
-        return sqlSession.selectList(MAPPER + ".selectAllByCategory", category);
-    }
-
-    public List<JYListVO> getListAll() {
+    // 전체 조회
+    public List<JYListVO> getListAll(String category, String search) {
         return sqlSession.selectList(MAPPER + ".selectAll");
     }
     
@@ -31,28 +26,14 @@ public class JYListDAO {
     public JYPostVO getListById(int id) {
         return sqlSession.selectOne(MAPPER + ".selectOneById", id);
     }
-
-    public List<JYListVO> findListByPage(int offset, int pageSize) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("offset", offset);
-        params.put("pageSize", pageSize);
-        return sqlSession.selectList(MAPPER + ".selectByPage", params);
-    }
-
-    public int countList() {
-        return sqlSession.selectOne(MAPPER + ".countList");
-    }
     
-    // 카테고리별 게시물 조회 (페이징)
-	public List<JYListVO> findListByCategoryPage(String category, int offset, int pageSize) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("category", category);
-		params.put("offset", offset);
-		params.put("pageSize", pageSize);
-		return sqlSession.selectList(MAPPER + ".selectAllByCategory", params);
+    // 카테고리별 조회
+	public List<JYListVO> getListByCategory(String category) {
+		return sqlSession.selectList(MAPPER + ".selectAllByCategory", category);
 	}
-
-	public int countByCategory(String category) {
-		return sqlSession.selectOne(MAPPER + ".countByCategory", category);
+	
+	// 검색어 조회
+	public List<JYListVO> getListBySearch(String search) {
+		return sqlSession.selectList(MAPPER + ".selectAllBySearch", search);
 	}
 }

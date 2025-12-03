@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<id property="id" column="id"/>
 	<result property="category" column="category"/>
 	<result property="title" column="title"/>
-	<result property="userId" column="user_id"/>
+	<result property="userFk" column="user_fk"/>
 	<result property="content" column="content"/>
 	<result property="inDate" column="in_date"/>
 	</resultMap>
@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<insert id="insert" parameterType="com.human.dalligo.vo.JYPostVO"
 			useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO post (category, title, content) VALUES(#{category}, #{title}, #{content})
+		INSERT INTO post (category, user_fk, title, content) VALUES(#{category}, #{userFk}, #{title}, #{content})
 	</insert>
 	
 	<select id="selectOneById" parameterType="int" resultMap="PostResult">
@@ -29,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		WHERE id = #{id}
 	</update>
 	
-	<insert id="insertFiles" parameterType="com.human.dalligo.vo.FileVO">
+	<insert id="insertFiles" parameterType="com.human.dalligo.vo.JYFileVO">
 		INSERT INTO post_files VALUES (default, #{postId}, #{originalName}, #{savedName})
 	</insert>
 </mapper>

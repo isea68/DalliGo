@@ -15,10 +15,13 @@
 
 	#main-back {
 		margin-top: 25px;
+		text-decoration: none;
+		color: black;
 	}
 
 	#main-back:hover {
 		transform: scale(1.05);
+		cursor: pointer;
 	}
 
 	#main-title {
@@ -217,28 +220,6 @@
 		cursor: pointer;
 	}
 
-	#more-button {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.more-button {
-		width: 200px;
-		height: 50px;
-		font-size: 25px;
-		margin: 10%;
-		border-radius: 10px;
-		border: none;
-		background-color: #00acc1;
-		color: white;
-	}
-
-	.more-button:hover {
-		transform: scale(1.02);
-		cursor: pointer;
-	}
-
 	footer {
 		display: flex;
 		justify-content: center;
@@ -250,28 +231,31 @@
 
 	<!-- 메인보드 -->
 	<div id="mainboard">
-		<div id="main-back" onclick="history.back()">
+		<a id="main-back" th:href="@{/community/list(category=${category}, search=${search})}">
 			<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
 				class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
 				<path
 					d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1" />
 			</svg>
-		</div>
+		</a>
 		<div id="main-title">커뮤니티</div>
 	</div>
 
 	<!-- 게시글 자세히 보기-->
 	<div class="detail-box">
+		
 		<div class="list-header">
 			<div class="list-username" th:text="'러너: ' + ${detail.nickName} + ' 님'">러너: 오늘도달려 님</div>
 			<div class="list-date" th:text="${#temporals.format(detail.inDate, 'yyyy-MM-dd')}">2025.11.18</div>
 		</div>
 
-		<div class="list-button">
-			<a class="button-detail" th:href="@{/community/modify/{id}(id=${detail.id})}">수정</a>
-			<a class="button-detail" th:href="@{/community/delete/{id}(id=${detail.id})}"
-				onclick=" return confirm('정말 삭제하시겠습니까?')">삭제</a>
-		</div>
+		<th:block th:if="${loginUser != null and loginUser.userId == detail.userId}">
+			<div class="list-button">
+				<a class="button-detail" th:href="@{/community/update/{id}(id=${detail.id})}">수정</a>
+				<a class="button-detail" th:href="@{/community/delete/{id}(id=${detail.id})}"
+					onclick=" return confirm('정말 삭제하시겠습니까?')">삭제</a>
+			</div>
+		</th:block>
 
 		<div class="list-title" th:text="${detail.title}">오늘 10km 완주했어요!</div>
 
@@ -320,13 +304,10 @@
 							th:src="@{/community/file/download(savedName=${filevo.savedName})}" />
 
 					</td>
-				<tr th:each="filevo : ${detail.fileList}">
 					<td>
 						<a th:href="@{/community/file/download(savedName=${filevo.savedName})}"
 							th:text="${filevo.originalName}"></a>
 					</td>
-				</tr>
-
 				</tr>
 			</table>
 		</div>
@@ -335,51 +316,41 @@
 
 	<!-- 좋아요, 댓글 부분 -->
 	<div class="reaction">
-		<div class="likes">🤍 좋아요</div>
-		<div class="comment">💬 댓글</div>
+		<!-- 좋아요 -->
+		<div class="likes" id="like-btn">
+			<span class="heart" th:text="${isLikeByUser} ? '❤️' : '🤍'">🤍 좋아요</span>
+			<span id="like-count" th:text="${countLikes > 0} ? ${countLikes} : '좋아요'"></span>
+		</div>
+		<!-- 댓글 -->
+		<div class="comment" id="comment-btn">💬 댓글</div>
 	</div>
 
 	<!-- 댓글 목록 -->
-	<div class="comment-box">
-		<div class="comment-header">
-			<div class="comment-username">현명한 런닝화</div>
-			<div class="comment-date">2025.11.19</div>
-		</div>
+	<div id="comment-container" class="comment-container">
+		<div class="comment-box" th:each="item : ${commentList}">
+			<div class="comment-header">
+				<div class="comment-username" th:text="${item.nickName}">현명한 런닝화</div>
+				<div class="comment-date" th:text="${#temporals.format(item.inDate, 'yyyy-MM-dd')}">2025.11.19</div>
+			</div>
 
-		<div class="comment-text">수고 많으셨습니다!!</div>
+			<div class="comment-text" th:text="${item.content}">수고 많으셨습니다!!</div>
 
-		<div class="comment-button">
-			<button class="button-detail">수정</button>
-			<button class="button-detail">삭제</button>
-			</button>
-		</div>
-	</div>
-
-	<div class="comment-box">
-		<div class="comment-header">
-			<div class="comment-username">현명한 런닝화</div>
-			<div class="comment-date">2025.11.19</div>
-		</div>
-
-		<div class="comment-text">수고 많으셨습니다!!</div>
-
-		<div class="comment-button">
-			<button class="button-detail">수정</button>
-			<button class="button-detail">삭제</button>
-			</button>
+			<div class="comment-button">
+				<th:block th:if="${loginUser != null and loginUser.userId == item.userId}">
+					<button type="button" class="button-detail button-mod" th:data-id="${item.id}">수정</button>
+					<button type="button" class="button-detail button-del" th:data-id="${item.id}"> 삭제</button>
+					</button>
+				</th:block>
+			</div>
 		</div>
 	</div>
-
-	<!-- 더보기 버튼 -->
-	<div id="more-button">
-		<button class="more-button">댓글 더보기</button>
-	</div>
-	<hr>
 
 	<!-- 댓글달기 모달창 -->
 	<div id="modal" class="modal">
 		<div id="insert-comment">
-			<input id="input-comment" placeholder="댓글을 남겨주세요">
+			<input type="hidden" id="postId" name="postId" th:value="${detail.id}"> <!-- 좋아요, 댓글용 postId-->
+			<input type="hidden" id="commentId" value=""> <!-- 수정용 commentId -->
+			<input id="input-comment" name="content" placeholder="댓글을 남겨주세요">
 			<button id="insert-button">게시</button>
 		</div>
 	</div>
@@ -394,20 +365,163 @@
 </body>
 
 </html>
+
 <script>
-	const modal = document.getElementById('modal');
+	document.addEventListener('DOMContentLoaded', () => {
+		// 좋아요, 댓글에서 쓸 공통 게시글 번호
+		const postId = parseInt(document.getElementById('postId').value, 10);
+		
+		//좋아요 버튼
+		const likeBtn = document.getElementById('like-btn');
+		const heart = likeBtn.querySelector('.heart');
+		const likeCountSpan = document.getElementById('like-count');
 
-	document.getElementsByClassName('comment')[0].addEventListener('click', () => {
-		modal.style.display = 'block';
-	})
+		likeBtn.addEventListener('click', async () => {
+			try{
+				const response = await fetch(`/community/post/${postId}/like`, { method: "POST" });
+				const data = await response.json(); // { liked: true/false, count: 숫자 }
+				
+				// 하트색 바꾸기
+				if(data.liked){
+					heart.innerText = '❤️'; // 빨간 하트
+				}else {
+					heart.innerText = '🤍'; // 빈 하트
+				}commentBtn
+				
+				// 좋아요 수도 함께 갱신
+				likeCountSpan.innerText = data.count;
+			}catch (err) {
+				console.error(err);
+				alert("좋아요 처리 중 요류가 발생했습니다.");
+			}
+		});
 
-	document.getElementById('modal').addEventListener('click', (e) => {
-		if (e.target === modal) {
-			modal.style.display = 'none';
+		// 댓글 등록, 수정, 삭제
+		const modal = document.getElementById('modal');
+		const commentBtn = document.querySelector('.reaction .comment'); // 댓글 버튼 선택
+		const insertBtn = document.getElementById('insert-button');
+		const inputComment = document.getElementById('input-comment');
+		const commentContainer = document.getElementById('comment-container');
+
+		let editingCommentId = null; // null이면 새 댓글, 숫자면 수정 중
+
+		// 댓글 클릭 시 모달창 열기
+		if (commentBtn) {
+			commentBtn.addEventListener('click', () => {
+				modal.style.display = 'block';
+				inputComment.value = '';
+				editingCommentId = null; // 새 댓글 모드
+			});
+		}
+
+		// 모달 배경 클릭 시 닫기
+		modal.addEventListener('click', (e) => {
+			if (e.target === modal) {
+				modal.style.display = 'none';
+				inputComment.value = '';
+				editingCommentId = null;
+			}
+		});
+
+		// 댓글 등록 / 수정
+		insertBtn.addEventListener('click', async () => {
+			const content = inputComment.value.trim();
+			if (!content) return alert('댓글을 입력하세요.');
+
+			try {
+				let response, comment;
+
+				if (editingCommentId) {
+					response = await fetch(`/community/modComment/${editingCommentId}`, {
+						method: 'PUT',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({content})
+					});
+					if (!response.ok) throw new Error('수정 실패');
+
+					comment = await response.json();
+
+					// 화면 갱신
+					const commentBox = commentContainer.querySelector(`[data-comment-id="${editingCommentId}"]`);
+					commentBox.querySelector('.comment-text').innerText = comment.content;
+
+				} else {
+					// 새 댓글 등록
+					response = await fetch('/community/uploadComment', {
+						method: 'POST',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({postId, content})
+					});
+					const data = await response.json(); // 서버에서 받은 JSON
+					if (!response.ok) throw new Error(data.message || '댓글 등록 실패');
+
+					comment = data;
+
+					// 화면에 추가
+					const commentBox = document.createElement('div');
+					commentBox.classList.add('comment-box');
+					commentBox.setAttribute('data-comment-id', comment.id);
+					commentBox.innerHTML = `
+										<div class="comment-header">
+											<div class="comment-username">${comment.nickName}</div>
+											<div class="comment-date">${comment.inDate}</div>
+										</div>
+										<div class="comment-text">${comment.content}</div>
+										<div class="comment-button">
+											<button type="button" class="button-detail button-mod" data-id="${comment.id}">수정</button>
+											<button type="button" class="button-detail button-del" data-id="${comment.id}">삭제</button>
+										</div>
+										`;
+
+					commentContainer.prepend(commentBox); // 맨 위에 추가
+				}
+
+				// 입력 필드 초기화 및 모달 닫기
+				inputComment.value = '';
+				modal.style.display = 'none';
+				editingCommentId = null;
+
+			} catch (err) {
+				console.error(err);
+				alert(editingCommentId ? '댓글 수정 중 오류가 발생했습니다.' : '댓글 등록 중 오류가 발생했습니다');
+			}
+		});
+
+		// 수정, 삭제 이벤트 위임
+		if (commentContainer) {
+			commentContainer.addEventListener('click', async (e) => {
+				const target = e.target;
+
+				// 삭제
+				if (target.classList.contains('button-del')) {
+					e.preventDefault();
+					const commentId = parseInt(target.dataset.id, 10); // 문자열을 숫자로 변환
+					if (!confirm('정말 삭제하시겠습니까?')) return;
+
+					fetch(`/community/delComment/${commentId}`, {method: 'DELETE'})
+						.then(response => {
+							if (!response.ok) throw new Error('삭제 실패');
+							target.closest('.comment-box').remove();
+						})
+						.catch(err => {
+							console.error(err);
+							alert('댓글 삭제 중 오류가 발생했습니다.');
+						});
+				}
+
+				// 수정
+				if (target.classList.contains('button-mod')) {
+					e.preventDefault();
+					const commentBox = target.closest('.comment-box');
+					const commentId = parseInt(target.dataset.id, 10);
+					const currentText = commentBox.querySelector('.comment-text').innerText;
+
+					// 모달 열고 기존 내용 넣기
+					modal.style.display = 'block';
+					inputComment.value = currentText;
+					editingCommentId = commentId; // 수정 모드
+				}
+			})
 		}
 	});
-
-	document.getElementById('insert-button').addEventListener('click', () => {
-		modal.style.display = 'none';
-	})
 </script>

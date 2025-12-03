@@ -10,8 +10,8 @@ public class JYPostVO {
 	private int id;
 	private String category;
 	private String title;
-	private int userId;
+	private int userFk;
 	private String content;
 	private LocalDateTime inDate;
-	private List<FileVO> fileList;
+	private List<JYFileVO> fileList;
 }

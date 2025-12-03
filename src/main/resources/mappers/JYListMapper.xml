@@ -16,33 +16,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="inDate" column="in_date"/>
 	</resultMap>
 	
+	<sql id="postListSelect">
+	    p.id,
+	    p.title,
+	    p.content,
+	    p.in_date,
+	    u.nick_name,
+	    (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS count_likes,
+	    (SELECT COUNT(*) FROM post_comments WHERE post_id = p.id) AS count_comments
+	</sql>
+
+	<!-- 전체 게시글 조회 -->
 	<select id="selectAll" resultMap="ListResult">
-	 	SELECT p.id, p.title, p.content, p.in_date, u.nick_name FROM post p JOIN user u ON p.user_id = u.id
+	 	SELECT 
+	 		<include refid="postListSelect"/> 
+	 	FROM post p JOIN user u ON p.user_fk = u.id
 	 	ORDER BY p.in_date DESC
 	</select>
-	
-	<!-- 전체 게시물 조회 (페이징용) -->
-	<select id="selectByPage" parameterType="map" resultMap="ListResult">
-		SELECT p.id, p.title, p.content, p.in_date, u.nick_name FROM post p JOIN user u ON p.user_id = u.id
-		ORDER BY p.in_date DESC
-		LIMIT #{pageSize} OFFSET #{offset}
-	</select>
-	
-	<select id="countList" resultType="int">
-		SELECT COUNT(*) FROM post
-	</select>
-	
-	<!-- 카테고리별 게시물 조회 (페이징용) -->
-	<select id="selectAllByCategory" parameterType="map" resultMap="ListResult">
-		SELECT p.id, p.title, p.content, p.in_date, u.nick_name
-		FROM post p JOIN user u ON p.user_id = u.id
+
+	<!-- 카테고리 별 게시글 조회 -->
+	<select id="selectAllByCategory" parameterType="String" resultMap="ListResult">
+		SELECT 
+			<include refid="postListSelect"/> 
+		FROM post p JOIN user u ON p.user_fk = u.id
 		WHERE p.category = #{category}
 		ORDER BY p.in_date DESC
-		LIMIT #{pageSize} OFFSET #{offset}
 	</select>
-	
-	<select id="countByCategory" parameterType="String" resultType="int">
-		SELECT COUNT(*) FROM post WHERE category = #{category}
+
+	<!-- 검색어 게시글 조회 -->
+	<select id="selectAllBySearch" parameterType="String" resultMap="ListResult">
+		SELECT 
+			<include refid="postListSelect"/> 
+		FROM post p JOIN user u ON p.user_fk = u.id
+		WHERE p.title LIKE CONCAT ('%', #{search}, '%')
+		OR p.content LIKE CONCAT ('%', #{search}, '%')
+		OR u.nick_name LIKE CONCAT ('%', #{search}, '%')
+		ORDER BY p.in_date DESC
 	</select>
 	
 </mapper>

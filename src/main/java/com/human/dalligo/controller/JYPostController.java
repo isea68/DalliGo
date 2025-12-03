@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.human.dalligo.service.JYPostService;
+import com.human.dalligo.vo.JSUserVO;
 import com.human.dalligo.vo.JYPostVO;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 
@@ -31,10 +33,15 @@ public class JYPostController {
 	
 	@PostMapping("/post/upload")
 	public String getPostUpload(@ModelAttribute JYPostVO postvo,
-								@RequestParam(value="files", required=false)
-								List<MultipartFile> files){
+								@RequestParam(value="files", required=false) List<MultipartFile> files,
+								HttpSession session){
+		
+		// 세션에 저장된 userFk를 postvo에 세팅
+		JSUserVO loginUser = (JSUserVO) session.getAttribute("loginUser");
+		postvo.setUserFk(loginUser.getId());
+		
 		postservice.insert(postvo, files);
-		System.out.println(postvo.toString());
+		
 		return "redirect:/community/list";
 	}
 	

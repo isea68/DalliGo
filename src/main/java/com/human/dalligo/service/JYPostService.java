@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.human.dalligo.dao.JYPostDAO;
-import com.human.dalligo.util.FileUtils;
-import com.human.dalligo.vo.FileVO;
+import com.human.dalligo.util.JYFileUtils;
+import com.human.dalligo.vo.JYFileVO;
 import com.human.dalligo.vo.JYPostVO;
 
 import ch.qos.logback.core.util.FileUtil;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JYPostService {
 
-    private final FileUtils fileUtils;
+    private final JYFileUtils fileUtils;
 	
 	private final JYPostDAO postdao;
 	
@@ -38,7 +38,7 @@ public class JYPostService {
 					String originalName = file.getOriginalFilename();
 					String saveName = fileUtils.saveFile(file);
 					
-					FileVO filevo = new FileVO();
+					JYFileVO filevo = new JYFileVO();
 					filevo.setPostId(postId);
 					filevo.setOriginalName(originalName);
 					filevo.setSavedName(saveName);

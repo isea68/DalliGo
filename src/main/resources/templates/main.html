@@ -238,28 +238,7 @@
 	<footer>
 		&copy; 2025 RunMates. All rights reserved.
 	</footer>
-	<script src="data.js"></script>
-	<script>
-		// 카드 렌더링
-		const featureCards = document.getElementById('feature-cards');
 
-		marathonData.forEach(event => {
-			const card = document.createElement('div');
-			card.className = 'card';
-			card.innerHTML = `
-        <h3>${event.name}</h3>
-        <p>${event.date} / ${event.location}</p>
-        <button onclick="viewDetails(${event.id})">자세히 보기</button>
-    `;
-			featureCards.appendChild(card);
-		});
-
-
-		function viewDetails(id) {
-
-			window.location.href = `details.html?id=${id}`;
-		}
-	</script>
 </body>
 
 </html>
