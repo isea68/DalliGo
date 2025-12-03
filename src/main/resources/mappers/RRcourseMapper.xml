@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.RRcourseDAO">
+
+
+	<resultMap id="courseMap" type="com.human.dalligo.vo.RRcourseVO">
+		<id property="id" column="id" />  <!--기본키-->
+		<result property="trainerId" column="trainer_id" />
+		<result property="title" column="title" />
+		<result property="startDate" column="start_date" javaType="java.time.LocalDateTime" />
+		<result property="selectDay" column="select_day" />
+		<result property="location" column="location" />
+		<result property="place" column="place" />
+		<result property="supportItem" column="support_item" />
+		<result property="price" column="price" />
+		<result property="duration" column="duration" />
+		<result property="prPhotoUrl" column="prphoto_url" />
+		<result property="capacity" column="capacity" />
+		<result property="eduType" column="edu_type" />
+	</resultMap>
+	
+
+	<insert id="insertcourse" parameterType="com.human.dalligo.vo.RRcourseVO"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into rrcourse(trainer_id,title,start_date,select_day,location,place,support_item,price,duration, prphoto_url, capacity,edu_type)
+		values(#{trainerId},#{title},#{startDate},#{selectDay},#{location},#{place},#{supportItem},#{price},#{duration},#{prPhotoUrl},#{capacity},#{eduType})
+	</insert>
+
+
+	<select id="selectAllcourse" resultMap="courseMap">
+		select * from rrcourse;
+	</select>
+	
+	<select id="selectById" resultMap="courseMap">
+		select * from rrcourse where id=#{id}
+	
+	</select>
+
+
+</mapper>
+
+

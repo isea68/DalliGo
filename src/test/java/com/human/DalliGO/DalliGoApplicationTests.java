@@ -1,4 +1,4 @@
-package com.human.DalliGO;
+package com.human.dalligo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
