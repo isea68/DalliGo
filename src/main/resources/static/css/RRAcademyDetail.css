@@ -1,0 +1,99 @@
+
+	
+	 .card_detail {
+	      display: block;
+
+	  }
+
+	.up_right,
+	.up_left  {
+	     flex: 1;
+	    padding-left:10px;   
+	}
+
+	  .down_left {
+	      display: flex;
+	  }
+
+	 .down_right, 
+	 .down_left  {
+	      flex: 1;
+	     padding-left:10px;
+
+	 }
+
+	  .img_box, .up_left {
+	      width: 200px;
+	      height: auto;
+	  }
+
+
+	  .text_pr {
+	      padding-left: 20px;
+	  }
+
+	  .detail_in {
+	      display: flex;
+	      padding-top: 50px;
+	      padding-left: 20px;
+	  }
+
+
+
+	  .up_right{
+	      flex-wrap: wrap;
+	  }
+
+	/*수강내역 모달*/
+
+	/*모달전체 배경*/
+
+	.modal {
+		display: none;/*기본숨김*/
+		position: fixed;
+		z-index: 1000;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,0.5);
+		justify-content: center;
+		align-items: center;
+	}
+
+	/*모달 내부 내용*/
+	.modal-content {
+		background-color: #fff;
+		padding: 20px;
+		border-radius: 8px;
+		width: 400px;
+		max-width: 90%;
+		text-align: center;
+		box-shadow: 0 4px 8px rgba(0,0,0,0.2);	
+		
+	}
+
+	/*x버튼*/
+	.modal .close {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+		font-size: 20px;
+		cursor: pointer;
+		
+	}
+
+	/*확인버튼*/
+	#modalConfirm {
+	 margin-top: 15px;
+	 padding: 8px 20px;
+	 font-size: 16px;
+	 cursor: pointer;	
+		}
+
+
+	
+
+	
+	
+	

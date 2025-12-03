@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title> 런닝 과정 등록 </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 300px;
+            margin: 100px auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .signup-btn {
+            position: absolute;
+            top: 50px;
+            right: 470px;
+            text-decoration: none;
+            padding: 5px 10px;
+            background-color: #1ae7a3;
+            color: white;
+            border-radius: 5px;
+            font-size: 15px;
+            width: 60px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="text"],
+        [type="date"] {
+            border-radius: 10px;
+            margin: 8px 0;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+         input[type="number"]
+        {
+            width: 110px;
+            border-radius: 10px;
+            margin: 8px 0;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        button[type="submit"] {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 14px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0b7dda;
+        }
+
+     .row {
+
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+     }
+     .field {
+        display: flex;
+        align-items: center;
+     }
+
+    </style>
+</head>
+<body>
+
+	<!-- 우측 상단 회원가입 버튼 -->
+	<a href="/academy" class="signup-btn"> 수강게시판 </a>
+
+
+	<div class="container">
+		<h2>런닝 과정 등록</h2>
+
+		<form action="/course" 
+		 	method="post"
+			enctype="multipart/form-data">
+
+			<input type="text" class="text" name="title" placeholder="강좌명">
+
+			<label for="start_date">강습 시작일</label>
+			<input type="datetime-local" id="startDate" name="startDate" class="text">
+
+			<input type="text" class="text" name="selectDay" list="day" placeholder="평일반,주말반">
+			<datalist id="day">
+				<option>평일반</option>
+				<option>주말반</option>
+			</datalist>
+			
+			<input type="text" class="text" name="eduType" list="edutype" placeholder="원데이러닝,개인러닝,일반러닝,자세교정">
+						<datalist id="edutype">
+							<option>원데이 러닝</option>
+							<option>1:1 개인러닝</option>
+							<option>일반 러닝</option>
+							<option>러닝 자세교정</option>
+						</datalist>
+
+			<input type="text" class="text" name="duration" placeholder="훈련시간">
+			<input type="text" class="text" name="location" placeholder="도시">
+			<input type="text" class="text" name="place" placeholder="훈련장소">
+			<input type="text" class="text" name="supportItem" placeholder="제공사항">
+
+			<div class="field">
+				<input type="number" class="text" name="capacity" placeholder="수강정원">
+				<span>명</span>
+			</div>
+			<div class="field">
+				<input type="number" class="text" name="price" placeholder="수강료">
+				<span>원</span>
+			</div>
+			<!--사진 업로드-->
+			<input type="file" class="text" name="prPhotoFile" accept="image/*" placeholder="강습광고사진">
+
+			<button type="submit">등록</button>
+		</form>
+	</div>
+</body>
+
+</html>

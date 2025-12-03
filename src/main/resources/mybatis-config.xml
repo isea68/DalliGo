@@ -6,6 +6,7 @@
 <configuration>
     <settings>
         <!-- SQL 실행 로그 콘솔에 출력 -->
-        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>        
+
     </settings>
 </configuration>

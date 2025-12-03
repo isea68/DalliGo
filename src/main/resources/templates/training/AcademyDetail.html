@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AcademyDetail</title>
+	
+<link rel="stylesheet" href="/css/RRAcademyDetail.css"> 
+	
+</head>
+
+<style>
+	 .card_detail {
+	      display: block;
+
+	  }
+
+	.up_right,
+	.up_left  {
+	     flex: 1;
+	    padding-left:10px;   
+	}
+
+	  .down_left {
+	      display: flex;
+	  }
+
+	 .down_right, 
+	 .down_left  {
+	      flex: 1;
+	     padding-left:10px;
+
+	 }
+
+	  .img_box, .up_left {
+	      width: 200px;
+	      height: auto;
+	  }
+
+
+	  .text_pr {
+	      padding-left: 20px;
+	  }
+
+	  .detail_in {
+	      display: flex;
+	      padding-top: 50px;
+	      padding-left: 20px;
+	  }
+
+
+
+	  .up_right{
+	      flex-wrap: wrap;
+	  }
+
+	/*수강내역 모달*/
+
+	/*모달전체 배경*/
+
+	.modal {
+		display: none;/*기본숨김*/
+		position: fixed;
+		z-index: 1000;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	/*모달 내부 내용*/
+	.modal-content {
+		position: relative;
+		background-color: #fff;
+		padding: 20px;
+		border-radius: 8px;
+		width: 400px;
+		max-width: 90%;
+		text-align: center;
+		box-shadow: 0 4px 8px rgba(0,0,0,0.2);	
+		
+	}
+
+	/*x버튼*/
+	.modal .close {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+		font-size: 20px;
+		cursor: pointer;
+		
+	}
+
+	/*확인버튼*/
+	#modalConfirm {
+	 margin-top: 15px;
+	 padding: 8px 20px;
+	 font-size: 16px;
+	 cursor: pointer;	
+		}
+
+.enroll-content {
+	text-align: left;
+}	
+
+
+</style>
+
+
+<body>
+
+	<div class="card_detail" th:attr="data-id=${cId.id}">
+
+		<div class="detail_in">
+			<div class="up_left">
+				<img th:src="${cId.prPhotoUrl}">
+			</div>
+
+			<div class="up_right">
+				<span>
+
+					<h3 th:text="${cId.title + '(' +cId.location+ ')' + cId.selectDay }"> </h3>
+					<h3 th:text="${cId.startDate +'/'+ cId.price+'원'}"> </h3>
+					<button type="button" id="enrollBtn">수강신청</button>
+				</span>
+
+				<!--모달배경-->
+				<div id="enrollModal" class="modal" style="display: none">
+					<!--모달내용-->
+					<div class="modal-content">
+						<span class="close">&times;</span> <!--X 버튼으로 닫기-->
+				<!--	<h2 th:text="${user.name}"> 님 신청은 다음과 같습니다. </h2>-->		
+						<h2 > 유느님 신청은 다음과 같습니다. </h2>							
+						<div class="enroll-content">									
+							<p>신청과정 : <span th:text ="${cId.title}"></span> </p>
+							<p>트레이너 : <span th:text ="${tvo.name+'강사님'}"> </span>	</p>
+							<p>수강시작 : <span th:text ="${cId.startDate}"> </span></p>	
+							<p>수강장소 : <span th:text ="${cId.place}"></span> </p>	
+							<p>수강료 : <span th:text ="${cId.price+'원'}"></span></p>	
+							</div>						
+						<button id="modalConfirm">확인</button>
+					</div>
+				</div> 	<!--모달배경-->
+				
+			</div>
+		</div>
+
+		<div class="detail_in">
+			<div class="down_left">
+				<div class="img_box">
+					<img th:src="${tvo.photoUrl}">
+				</div>
+				<div class="text_pr">
+
+					<h3 th:text="${tvo.name}"> </h3>
+
+					<ul>
+						<li th:each="item : ${historyList}" th:text="${item}">
+						</li>
+					</ul>
+
+
+
+				</div>
+
+			</div>
+
+			<div class="down_right">
+				<div class="text_pr">
+					<p>
+					<h1 th:text=${cId.location}></h1>
+					</p>
+					<p>
+					<h1 th:text="${cId.title}"></h1>
+					</p>
+
+					<p>훈련시간 : <span th:text="${dayStr}+'  '+${timeStr}"></span>~ </p>
+					<p>훈련장소 :<span th:text="${cId.location}"></span></p>
+					<p>제공사항 : <span th:text="${cId.supportItem}"></span></p>
+
+				</div>
+			</div>
+		</div>
+	</div> <!--card_detail-->
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			//버튼, 모달, 닫기버튼, 확인버튼 가져오기
+			const enrollBtn = document.getElementById("enrollBtn");
+			const modal = document.getElementById("enrollModal");
+			const closeBtn = document.querySelector(".close");
+			const confirmBtn = document.getElementById("modalConfirm");
+
+			//클릭시 모달보이기
+			enrollBtn.addEventListener("click", () => {
+				modal.style.display = "flex"
+			})
+
+
+			closeBtn.addEventListener("click", () => {
+				modal.style.display = "none";
+			});
+
+			// 3) 확인 버튼 클릭 시 모달 닫고 화면 돌아가기
+			confirmBtn.addEventListener("click", () => {
+				modal.style.display = "none";
+				window.location.href = "/academy"; // 원하는 홈페이지 주소로 이동
+			});
+
+			// 4) 모달 배경 클릭 시 닫기
+			window.addEventListener("click", (e) => {
+				if (e.target == modal) {
+					modal.style.display = "none";
+				}
+			});
+		});
+
+	</script>
+
+
+
+</body>
+
+</html>

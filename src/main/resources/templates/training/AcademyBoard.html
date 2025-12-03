@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <link rel ="stylesheet" href="/css/RRAcademyBoard.css">
+</head>
+
+<body>
+
+   <h2>프로그램 소개</h2>
+   <div class="mbtn">
+      <button type="submit"  onclick="location.href='/'">Home</button>
+      <button type="button"  id="rloginBtn">로그인 </button>
+      <button type="button"  onclick="location.href='/trainerRegister'">회원가입</button>
+   </div>
+
+   <div class="display-table">
+      <div class="tab" >
+         <ul>
+            <li class="on" data-type="oneday">원데이 러닝 </a></li>
+            <li data-type="personal"> 1:1 개인러닝 </li>
+            <li data-type="general"> 일반 러닝 </li>
+            <li data-type="correction"> 러닝 자세교정 </li>
+            <li> <a href=""> 전체보기 </a></li>
+         </ul>
+      </div>
+
+
+      <div class="tab_content">
+
+         <div class="tab_con_item" th:each="c : ${courses}" 
+		 						   th:attr = "data-category=${c.eduType}" >
+            <a th:href="@{/training/AcademyDetail(id=${c.id})}">
+               <img th:src="${c.prPhotoUrl}">
+               <div class="card_info">
+                  <span th:text="${c.title}"> </span>
+                  <span th:text="'('+${c.location}+')'"></span>
+                  <span th:text="${c.startDate}"></span>
+                  <span th:text="${c.price}">원</span>
+               </div>
+            </a>
+         </div> <!---Top card div-->
+      </div> <!--tab_content-->
+   </div>
+   
+   <!--로그인 모달-->
+
+<div id="rloginModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>로그인</h3>
+
+        <form action="/rlogin" method="post" class="login-form">
+            <input type="text" id="trainerId" name="trainerId" placeholder="ID" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <button type="submit">로그인</button>
+        </form>
+    </div>
+</div>
+
+
+
+
+<script>
+    // 탭
+    const tabs = document.querySelectorAll('.tab li');
+    const cards = document.querySelectorAll('.tab_con_item');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('on'));
+            tab.classList.add('on');
+            const type = tab.dataset.type;
+            cards.forEach(card => {
+                if (!type || card.dataset.category === type) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // 모달
+    const rloginBtn = document.getElementById("rloginBtn");
+    const rloginModal = document.getElementById("rloginModal");
+    const rloginClose = rloginModal.querySelector(".close");
+
+    rloginBtn.addEventListener("click", () => {
+        rloginModal.style.display = "flex";
+    });
+
+    rloginClose.addEventListener("click", () => {
+        rloginModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === rloginModal) rloginModal.style.display = "none";
+    });
+</script>
+
+
+</body>
+</html>
+
+   
+   
+
