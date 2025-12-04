@@ -24,7 +24,8 @@ import lombok.RequiredArgsConstructor;
 public class JYListController {
 	
 	private final JYListService listservice;
-
+	
+	// 게시글 리스트
 	@GetMapping(value="/list", produces="text/html")
 	public String getList(@RequestParam(value = "category", required = false) String category,
 						  @RequestParam(value = "search", required = false) String search, 
@@ -53,7 +54,7 @@ public class JYListController {
 		return "/community/list"; // 최초 로딩용 전체 페이지
 	}
 	
-	
+	// 검색어 가져와서 List에 redirect
 	@PostMapping("/search")
 	public String getResultBySearch(@RequestParam("search") String search, RedirectAttributes redirect) {
 		redirect.addAttribute("search", search); // URL 파라미터로 전달
