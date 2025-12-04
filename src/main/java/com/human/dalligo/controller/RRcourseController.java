@@ -107,7 +107,7 @@ public class RRcourseController {
 	  //---트레이너 ID 점검부분-----//
 	  // 세션에서 로그인한 trainerId 저장한거 가져오기 (getAttribute)	 
 	  Integer trId =(Integer)session.getAttribute("trainerPk");	  
-	  System.out.println("trId:"+trId);
+	 // System.out.println("trId:"+trId);
 	  
 	  if(trId==null) {
 		  return "redirect:/rlogin";	  }	  
