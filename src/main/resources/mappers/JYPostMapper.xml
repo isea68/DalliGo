@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.human.dalligo.dao.JYPostDAO">
+	<resultMap id="PostResult" type="com.human.dalligo.vo.JYPostVO">
+	<!-- 수동으로 매핑 처리 -->
+	<id property="id" column="id"/>
+	<result property="category" column="category"/>
+	<result property="title" column="title"/>
+	<result property="userFk" column="user_fk"/>
+	<result property="content" column="content"/>
+	<result property="inDate" column="in_date"/>
+	</resultMap>
+
+
+	<insert id="insert" parameterType="com.human.dalligo.vo.JYPostVO"
+			useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO post (category, user_fk, title, content) VALUES(#{category}, #{userFk}, #{title}, #{content})
+	</insert>
+	
+	<select id="selectOneById" parameterType="int" resultMap="PostResult">
+		SELECT * FROM post WHERE id = #{id}
+	</select>
+	
+	<update id="update" parameterType="com.human.dalligo.vo.JYPostVO">
+		UPDATE post SET category = #{category}, title = #{title}, content = #{content}
+		WHERE id = #{id}
+	</update>
+	
+	<insert id="insertFiles" parameterType="com.human.dalligo.vo.JYFileVO">
+		INSERT INTO post_files VALUES (default, #{postId}, #{originalName}, #{savedName})
+	</insert>
+</mapper>

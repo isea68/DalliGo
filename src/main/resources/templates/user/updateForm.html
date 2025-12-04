@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>회원정보 수정 | DalliGO</title>
+	<style>
+		body {
+			font-family: 'Segoe UI', sans-serif;
+			background: #f4f7f9;
+			color: #333;
+		}
+
+		.container {
+			max-width: 450px;
+			margin: 50px auto;
+			background: #fff;
+			padding: 30px;
+			border-radius: 12px;
+			box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+		}
+
+		h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #00acc1;
+		}
+
+		label {
+			display: block;
+			margin: 12px 0 5px;
+			font-weight: 600;
+		}
+
+		input {
+			width: 100%;
+			padding: 12px;
+			border: 1px solid #ccc;
+			border-radius: 6px;
+			font-size: 1em;
+		}
+
+		.input-group {
+			display: flex;
+			gap: 8px;
+			align-items: center;
+		}
+
+		.input-group input {
+			flex: 1;
+		}
+
+		.input-group button {
+			width: 100px;
+			padding: 8px;
+			background: #00acc1;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		.input-group button:hover {
+			background: #00838f;
+		}
+
+		.btn,
+		.back-btn {
+			display: block;
+			/* 부모 width 100% 채우기 */
+			width: 100%;
+			padding: 12px;
+			margin-top: 10px;
+			/* 동일하게 */
+			border-radius: 6px;
+			font-size: 1.1em;
+			text-align: center;
+			text-decoration: none;
+			box-sizing: border-box;
+			/* padding 포함 전체 width 계산 */
+			cursor: pointer;
+		}
+
+		.btn {
+			background-color: #00acc1;
+			color: white;
+			border: none;
+		}
+
+		.btn:hover {
+			background-color: #00838f;
+		}
+
+		.back-btn {
+			background-color: #777;
+			color: white;
+			border: none;
+		}
+
+		.back-btn:hover {
+			background-color: #555;
+		}
+
+		.back-btn:hover {
+			background-color: #555;
+		}
+
+		.delete-btn {
+			width: 100%;
+			padding: 12px;
+			margin-top: 10px;
+			background-color: #f4511e;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			font-size: 1.1em;
+		}
+
+		.delete-btn:hover {
+			background-color: #d32f2f;
+		}
+
+		.result-text {
+			font-size: 0.9em;
+			margin-top: 2px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div th:replace="fragment/header :: headerDiv"></div>
+	<div class="container">
+		<h2>회원정보 수정</h2>
+		<form th:action="@{/update}" method="post" id="updateForm">
+
+			<label>아이디</label>
+			<input type="text" name="userId" th:value="${user.userId}" readonly>
+
+			<label>비밀번호</label>
+			<input type="password" name="password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
+				placeholder="영문+숫자 6자 이상">
+
+
+			<label>비밀번호 확인</label>
+			<input type="password" name="passwordConfirm" required placeholder="비밀번호 재입력">
+			<span id="pwCheckMsg" class="result-text"></span>
+
+			<label>이름</label>
+			<input type="text" name="name" th:value="${user.name}" required pattern="^[가-힣A-Za-z]+$"
+				placeholder="한글 또는 영문 입력">
+
+			<label>닉네임</label>
+			<div class="input-group">
+				<input type="text" name="nickName" th:value="${user.nickName}" required placeholder="닉네임 입력">
+				<button type="button" onclick="checkNickName()">중복확인</button>
+			</div>
+			<span id="nickNameResult" class="result-text"></span>
+
+			<label>주소</label>
+			<div class="input-group">
+				<input type="text" name="address" th:value="${user.address}" placeholder="도로명 주소">
+				<button type="button" onclick="execDaumPostcode()">주소 검색</button>
+			</div>
+
+			<label>상세주소</label>
+			<input type="text" name="detailAddress" placeholder="상세 주소 입력">
+
+			<label>전화번호</label>
+			<input type="text" name="phone" th:value="${user.phone}" maxlength="13" placeholder="010-0000-0000">
+
+			<button type="submit" class="btn">수정 완료</button>
+			<a th:href="@{/mypage}" class="back-btn">취소</a>
+			<button type="button" class="delete-btn" onclick="deleteUser()">회원 탈퇴</button>
+		</form>
+	</div>
+
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+	<script>
+		// 비밀번호 확인
+		const pw = document.querySelector('input[name="password"]');
+		const pwConfirm = document.querySelector('input[name="passwordConfirm"]');
+		const msg = document.getElementById("pwCheckMsg");
+		pw.addEventListener("input", checkPasswordMatch);
+		pwConfirm.addEventListener("input", checkPasswordMatch);
+		function checkPasswordMatch() {
+			if (!pw.value || !pwConfirm.value) {msg.textContent = ""; return;}
+			if (pw.value === pwConfirm.value) {msg.style.color = "green"; msg.textContent = "비밀번호 일치 ✔";}
+			else {msg.style.color = "red"; msg.textContent = "비밀번호 불일치 ❌";}
+		}
+
+		// 닉네임 중복
+		function checkNickName() {
+			const nickName = document.querySelector('input[name="nickName"]').value;
+			if (!nickName) return alert("닉네임을 입력하세요.");
+			fetch(`/checkNickName?nickName=${nickName}`)
+				.then(res => res.json())
+				.then(data => {
+					const result = document.getElementById("nickNameResult");
+					result.style.color = data.available ? "green" : "red";
+					result.textContent = data.available ? "사용 가능한 닉네임입니다." : "이미 사용 중입니다.";
+				});
+		}
+
+		// Daum 주소
+		function execDaumPostcode() {
+			new daum.Postcode({
+				oncomplete: function (data) {
+					let fullRoadAddr = data.roadAddress;
+					let extraRoadAddr = '';
+					if (data.bname && /[동|로|가]$/g.test(data.bname)) extraRoadAddr += data.bname;
+					if (data.buildingName && data.apartment === 'Y') extraRoadAddr += (extraRoadAddr ? ', ' + data.buildingName : data.buildingName);
+					if (extraRoadAddr) fullRoadAddr += ' (' + extraRoadAddr + ')';
+					document.querySelector('input[name="address"]').value = fullRoadAddr;
+					document.querySelector('input[name="detailAddress"]').focus();
+				}
+			}).open();
+		}
+
+		// 회원 탈퇴
+		function deleteUser() {
+		    if (confirm("정말 회원을 탈퇴하시겠습니까?")) {
+		        fetch('/delete', { method: 'POST' })
+		            .then(res => res.text())  // 문자열 반환
+		            .then(result => {
+		                if(result === "success") {
+		                    alert("회원 탈퇴가 완료되었습니다.");
+		                    location.href = '/'; // 메인 페이지로 이동
+		                } else {
+		                    alert("회원 탈퇴에 실패했습니다.");
+		                }
+		            })
+		            .catch(err => {
+		                console.error(err);
+		                alert("서버 오류 발생");
+		            });
+		    }
+		}
+	</script>
+</body>
+
+</html>

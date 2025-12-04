@@ -1,0 +1,31 @@
+package com.human.dalligo.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import com.human.dalligo.vo.JSUserVO;
+
+import jakarta.servlet.http.HttpSession;
+
+
+@Controller
+public class JSMyPageController {
+
+	@GetMapping("/mypage")
+	public String mypage(HttpSession session, Model model) {
+	    JSUserVO user = (JSUserVO) session.getAttribute("loginUser");
+	    if(user == null) {
+	        return "redirect:/"; // 로그인 안 했으면 메인으로
+	    }
+	    model.addAttribute("loginUser", user);
+//	    model.addAttribute("userId", user.getUserId());
+//	    model.addAttribute("name", user.getName());
+//	    model.addAttribute("nickName", user.getNickName());
+//	    model.addAttribute("address", user.getAddress());
+//	    model.addAttribute("phone", user.getPhone());
+//	    model.addAttribute("isAdmin", user.getIsAdmin());
+	    return "user/mypage";
+	}
+  
+}

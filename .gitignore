@@ -1,0 +1,77 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# ========================================
+# 1. 빌드/배포 결과물
+# ========================================
+target/
+bin/
+out/
+
+# ========================================
+# 2. 로그 파일
+# ========================================
+*.log
+
+# ========================================
+# 3. IDE 설정
+# ========================================
+# Eclipse
+*.classpath
+*.project
+*.settings/
+
+# IntelliJ IDEA
+*.iml
+.idea/
+
+# VS Code
+.vscode/
+
+# ========================================
+# 4. 개인 환경/민감 파일
+# ========================================
+local.properties
+*.env
+.DS_Store
+
+# ========================================
+# 5. OS 관련
+# ========================================
+Thumbs.db
+*.swp

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.RRtrainerDAO">
+
+	<resultMap id="trainerMap" type="com.human.dalligo.vo.RRtrainerVO">
+		<id property="id" column="id" />  <!--기본키-->
+		<result property="trainerId" column="trainer_id" />
+		<result property="password" column="password" />
+		<result property="name" column="name" />
+		<result property="photoUrl" column="photo_url" />
+		<result property="history" column="history" />
+	</resultMap>	
+
+
+	<insert id="insert" parameterType="com.human.dalligo.vo.RRtrainerVO">
+		insert into rrtrainer(trainer_id, password, name, photo_url,history)
+		values(#{trainerId}, #{password}, #{name}, #{photoUrl},#{history})
+	</insert>
+	
+	<select id="selectAll" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO" >
+		select * from rrtrainer;
+	
+	</select>
+
+
+	<select id="getBySelectId" resultMap="trainerMap" parameterType="Integer" >
+		select *
+		from rrtrainer
+		where id= #{id}
+		
+	</select>
+	
+	<select id="selectForLogin" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO">
+		
+		select * 		
+		from rrtrainer	
+		where trainer_id = #{trainerId}
+	
+	</select>
+
+
+</mapper>

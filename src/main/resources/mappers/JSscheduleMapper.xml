@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.human.dalligo.dao.JSScheduleDAO">
+
+    <resultMap id="DetailResult" type="com.human.dalligo.vo.JSScheduleVO">
+        <id property="id" column="id" />
+        <result property="title" column="title"/>
+        <result property="location" column="location"/>
+        <result property="startDate" column="start_date"/>
+        <result property="endDate" column="end_date"/>
+        <result property="distance" column="distance"/>
+        <result property="org" column="org"/>
+        <result property="regURL" column="reg_url"/>
+        <result property="description" column="description"/>
+        <result property="total" column="total"/>
+        <result property="price" column="price"/>
+        <result property="inDate" column="in_date"/>
+    </resultMap>
+
+    <!-- 기존: 고정 최신순 -->
+    <select id="selectAll" resultMap="DetailResult">
+        select * 
+        from event
+        order by start_date desc
+    </select>
+
+    <!-- 동적 정렬: ${order} 에 ASC 또는 DESC 들어감 -->
+    <select id="selectAllOrderByStartDate" parameterType="map" resultMap="DetailResult">
+        SELECT
+            id, title, location, start_date, end_date, distance, price, org, reg_url, description, in_date, total
+        FROM event
+        ORDER BY start_date ${order}
+    </select>
+    
+    <select id="selectFutureEvents" resultMap="DetailResult">
+    SELECT
+        id, title, location, start_date, end_date, distance, price, org, reg_url, description, in_date, total
+    FROM event
+    WHERE start_date >= CURDATE()
+    ORDER BY start_date ASC
+</select>
+
+</mapper>
