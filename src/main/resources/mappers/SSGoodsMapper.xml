@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.GoodsDAO">
+
+    <!-- 전체 조회 -->
+    <select id="selectAll" resultType="com.human.dalligo.vo.GoodsVO">
+        SELECT 
+            goods_id AS goodsId,
+            goods_name AS goodsName,
+            goods_brand AS goodsBrand,
+            goods_price AS goodsPrice,
+            goods_quantity AS goodsQuantity,
+            goods_tag AS goodsTag,
+            goods_image AS goodsImage,
+            goods_info AS goodsInfo,
+            top_rank AS topRank
+        FROM gstore
+    </select>
+
+    <!-- ID로 조회 -->
+    <select id="getGoodsById" parameterType="int" resultType="com.human.dalligo.vo.GoodsVO">
+        SELECT 
+            goods_id AS goodsId,
+            goods_name AS goodsName,
+            goods_brand AS goodsBrand,
+            goods_price AS goodsPrice,
+            goods_quantity AS goodsQuantity,
+            goods_tag AS goodsTag,
+            goods_image AS goodsImage,
+            goods_info AS goodsInfo,
+            top_rank AS topRank
+        FROM gstore
+        WHERE goods_id = #{goodsId}
+    </select>
+
+    <!-- INSERT -->
+    <insert id="insert" parameterType="com.human.dalligo.vo.GoodsVO" useGeneratedKeys="true" keyProperty="goodsId">
+        INSERT INTO gstore 
+        (goods_name, goods_brand, goods_price, goods_quantity, goods_tag, goods_image, goods_info)
+        VALUES 
+        (#{goodsName}, #{goodsBrand}, #{goodsPrice}, #{goodsQuantity}, #{goodsTag}, #{goodsImage}, #{goodsInfo})
+    </insert>
+
+    <!-- UPDATE -->
+    <update id="update" parameterType="com.human.dalligo.vo.GoodsVO">
+        UPDATE gstore
+        SET goods_name = #{goodsName},
+            goods_brand = #{goodsBrand},
+            goods_price = #{goodsPrice},
+            goods_quantity = #{goodsQuantity},
+            goods_tag = #{goodsTag},
+            goods_image = #{goodsImage},
+            goods_info = #{goodsInfo}
+        WHERE goods_id = #{goodsId}
+    </update>
+
+    <!-- DELETE -->
+    <delete id="delete" parameterType="int">
+        DELETE FROM gstore WHERE goods_id = #{goodsId}
+    </delete>
+
+    <!-- 필터 조회 -->
+    <select id="selectByFilter" resultType="com.human.dalligo.vo.GoodsVO">
+        SELECT 
+            goods_id AS goodsId,
+            goods_name AS goodsName,
+            goods_brand AS goodsBrand,
+            goods_price AS goodsPrice,
+            goods_quantity AS goodsQuantity,
+            goods_tag AS goodsTag,
+            goods_image AS goodsImage,
+            goods_info AS goodsInfo,
+            top_rank AS topRank
+        FROM gstore
+        WHERE 1=1
+        <if test="brand != null and brand != ''">
+            AND goods_brand = #{brand}
+        </if>
+        <if test="tag != null and tag != ''">
+            AND goods_tag = #{tag}
+        </if>
+        <if test="minPrice != null">
+            AND goods_price &gt;= #{minPrice}
+        </if>
+        <if test="maxPrice != null">
+            AND goods_price &lt;= #{maxPrice}
+        </if>
+    </select>
+
+    <!-- TOP 상품 조회 -->
+    <select id="selectTopGoods" resultType="com.human.dalligo.vo.GoodsVO">
+        SELECT 
+            goods_id AS goodsId,
+            goods_name AS goodsName,
+            goods_brand AS goodsBrand,
+            goods_price AS goodsPrice,
+            goods_quantity AS goodsQuantity,
+            goods_tag AS goodsTag,
+            goods_image AS goodsImage,
+            goods_info AS goodsInfo,
+            top_rank AS topRank
+        FROM gstore
+        WHERE top_rank IN (1,2,3)
+        ORDER BY top_rank
+    </select>
+
+    <!-- TOP 상품 업데이트 -->
+    <update id="updateTopRank">
+        UPDATE gstore
+        SET top_rank = CASE goods_id
+            WHEN #{top1} THEN 1
+            WHEN #{top2} THEN 2
+            WHEN #{top3} THEN 3
+            ELSE 0
+        END
+    </update>
+
+    <!-- 브랜드 조회 -->
+    <select id="selectAllBrands" resultType="string">
+        SELECT DISTINCT goods_brand FROM gstore
+    </select>
+
+    <!-- 태그 조회 -->
+    <select id="selectAllTags" resultType="string">
+        SELECT DISTINCT goods_tag FROM gstore
+    </select>
+
+</mapper>
