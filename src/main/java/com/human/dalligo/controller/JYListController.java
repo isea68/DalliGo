@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.human.dalligo.service.JYListService;
@@ -27,6 +28,7 @@ public class JYListController {
 	
 	// 게시글 리스트
 	@GetMapping(value="/list", produces="text/html")
+	@ResponseBody
 	public String getList(@RequestParam(value = "category", required = false) String category,
 						  @RequestParam(value = "search", required = false) String search, 
 						  HttpServletRequest request, 
@@ -35,8 +37,13 @@ public class JYListController {
 		// 1. 로그인 체크
 		Object loginUser = session.getAttribute("loginUser");
 		if(loginUser == null) {
-			return "redirect:/login";
-		}
+	        return """
+	                <script>
+	                    alert('로그인이 필요합니다.');
+	                    history.back();
+	                </script>
+	                """;
+	            }
 		
 		// 전체 게시글 조회
 		List<JYListVO> list = listservice.getListAll(category, search);
