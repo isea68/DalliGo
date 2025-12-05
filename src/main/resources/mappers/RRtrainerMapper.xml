@@ -8,14 +8,16 @@
 		<result property="trainerId" column="trainer_id" />
 		<result property="password" column="password" />
 		<result property="name" column="name" />
-		<result property="photoUrl" column="photo_url" />
+		<result property="photoOri" column="photo_ori" />
+		<result property="photoNew" column="photo_new" />	
+		
 		<result property="history" column="history" />
 	</resultMap>	
 
 
 	<insert id="insert" parameterType="com.human.dalligo.vo.RRtrainerVO">
-		insert into rrtrainer(trainer_id, password, name, photo_url,history)
-		values(#{trainerId}, #{password}, #{name}, #{photoUrl},#{history})
+		insert into rrtrainer(trainer_id, password, name, photo_ori, photo_new,history)
+		values(#{trainerId}, #{password}, #{name}, #{photoOri}, #{photoNew},#{history})
 	</insert>
 	
 	<select id="selectAll" resultMap="trainerMap" parameterType="com.human.dalligo.vo.RRtrainerVO" >

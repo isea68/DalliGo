@@ -1,9 +1,6 @@
 package com.human.dalligo.vo;
 
-
-
 import java.time.LocalDateTime;
-
 
 import lombok.Data;
 
@@ -11,7 +8,7 @@ import lombok.Data;
 public class RRcourseVO {
 	private Integer id;
 	private Integer trainerId;
-	private String  title;
+	private String title;
 	private LocalDateTime startDate;
 	private String selectDay;
 	private String location;
@@ -19,7 +16,8 @@ public class RRcourseVO {
 	private String supportItem;
 	private Integer price;
 	private String duration;
-	private String prPhotoUrl;
+	private String prphotoOri; // file original name
+	private String prphotoNew; // file changed name
 	private Integer capacity;
 	private String eduType;
 }
