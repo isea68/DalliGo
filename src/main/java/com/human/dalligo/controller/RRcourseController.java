@@ -101,7 +101,7 @@ public class RRcourseController {
   @PostMapping("/course") //post--> 폼전송/데이터 저장
   public String postcourse(@ModelAttribute RRcourseVO coursevo, 
 		  					HttpSession session,
-		  					@RequestParam("prphotoFile") MultipartFile prphotoFile
+		  					@RequestParam("prPhotoFile") MultipartFile prPhotoFile
 		  ) throws IOException {
 	  	  
 	  //---트레이너 ID 점검부분-----//
@@ -117,30 +117,18 @@ public class RRcourseController {
 	  
 	  //---트레이너 ID 점검부분-----//	
 	 
-	  if(!prphotoFile.isEmpty()) {
-	//  String uploadDir = "C:/upload/";
-	  String oriName = prphotoFile.getOriginalFilename();
-	//  String filename = System.currentTimeMillis()+"_"+prPhotoFile.getOriginalFilename();
-	//  File saveFile = new File(uploadDir+filename);
-	//  prPhotoFile.transferTo(saveFile);	
-	  
-	  // S3버킷으로 업로드
-	  String s3Url = trainerservice.s3upload(prphotoFile);
-
-	  
-	  //
-	  coursevo.setPrphotoOri(oriName);
-	  coursevo.setPrphotoNew(s3Url);
-	  
+	  if(!prPhotoFile.isEmpty()) {
+	  String uploadDir = "C:/upload/";
+	  String filename = System.currentTimeMillis()+"_"+prPhotoFile.getOriginalFilename();
+	  File saveFile = new File(uploadDir+filename);
+	  prPhotoFile.transferTo(saveFile);	  
+	  coursevo.setPrPhotoUrl("/upload/"+filename);   
 	  }
 	  
 	  //DB에 저장
 	  courseservice.insert(coursevo);      
 	  return "redirect:/academy";
   }      
-  
-  
-  
   
 
   
