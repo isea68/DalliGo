@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>신청현황</title></head>
+<body>
+  <h1>대회 신청 현황</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>No</th><th>Start City</th><th>End City</th><th>Title</th><th>Date</th><th>신청인원</th><th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="a : ${apps}">
+        <td th:text="${a.applyId}">1</td>
+        <td th:text="${a.startCity}">서울</td>
+        <td th:text="${a.endCity}">수원</td>
+        <td th:text="${a.title}">대회</td>
+        <td th:text="${#dates.format(a.date,'yyyy-MM-dd')}">2025-12-01</td>
+        <td th:text="${a.applyCount}">10</td>
+        <td th:text="${a.status}">모집중</td>
+      </tr>
+    </tbody>
+  </table>
+  <a href="/">메인으로</a>
+</body>
+</html>

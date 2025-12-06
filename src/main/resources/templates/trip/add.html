@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Add Trip</title>
+</head>
+<body>
+<h2>Add Trip</h2>
+<form action="/trips/add" method="post">
+<input type="hidden" name="eventId" th:value="${eventId}"/>
+
+
+<label>Start City:</label>
+<select name="startCity">
+<option th:each="c : ${cities}" th:value="${c.cityName}" th:text="${c.cityName}"></option>
+</select><br/>
+
+
+<label>End City:</label>
+<select name="endCity">
+<option th:each="c : ${cities}" th:value="${c.cityName}" th:text="${c.cityName}"></option>
+</select><br/>
+
+
+<label>Distance:</label>
+<input type="text" name="distance"><br/>
+
+
+<label>Cost:</label>
+<input type="text" name="cost"><br/>
+
+
+<label>Minimum People:</label>
+<input type="text" name="minPeople"><br/>
+
+
+<label>Trip Date:</label>
+<input type="date" name="tripDate"><br/>
+
+
+<label>Trip Time:</label>
+<input type="time" name="tripTime"><br/>
+
+
+<label>Status:</label>
+<select name="status">
+<option value="모집중">모집중</option>
+<option value="출발확정">출발확정</option>
+<option value="종료">종료</option>
+</select><br/>
+
+
+<button type="submit">Save</button>
+</form>
+</body>
+</html>

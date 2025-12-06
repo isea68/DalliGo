@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.LshTripDAO">
+
+    <!-- Trip 등록 -->
+    <insert id="insertTrip" parameterType="com.human.dalligo.vo.LshTripVO"
+            useGeneratedKeys="true" keyProperty="tripId">
+        INSERT INTO trips (
+            event_id, user_id, start_city, end_city,
+            distance, cost, current_people,
+            trip_date, trip_time, status, created_at
+        ) VALUES (
+            #{eventId}, #{userId}, #{startCity}, #{endCity},
+            #{distance}, #{cost}, #{currentPeople},
+            #{tripDate}, #{tripTime}, #{status}, NOW()
+        )
+    </insert>
+
+    <!-- Trip 수정 -->
+    <update id="updateTrip" parameterType="com.human.dalligo.vo.LshTripVO">
+        UPDATE trips
+        SET 
+            distance = #{distance},
+            cost = #{cost},
+            current_people = #{currentPeople},
+            status = #{status}
+        WHERE trip_id = #{tripId}
+    </update>
+
+    <!-- Trip 단건 조회 -->
+    <select id="selectTrip" parameterType="int"
+            resultType="com.human.dalligo.vo.LshTripVO">
+        SELECT *
+        FROM trips
+        WHERE trip_id = #{tripId}
+    </select>
+
+    <!-- 특정 이벤트의 전체 Trip 목록 -->
+    <select id="selectTripsByEvent" parameterType="int"
+            resultType="com.human.dalligo.vo.LshTripVO">
+        SELECT *
+        FROM trips
+        WHERE event_id = #{Id}
+    </select>
+
+    <!-- City 전체 목록 -->
+    <select id="selectAllCities" resultType="com.human.dalligo.vo.LshCityVO">
+        SELECT *
+        FROM cities
+        ORDER BY city_name
+    </select>
+
+    <!-- City 단건 -->
+    <select id="selectCity" parameterType="string"
+            resultType="com.human.dalligo.vo.LshCityVO">
+        SELECT *
+        FROM cities
+        WHERE city_name = #{cityName}
+    </select>
+
+    <!-- Trip 신청 INSERT -->
+    <insert id="insertApplication" parameterType="com.human.dalligo.vo.LshApplyVO">
+        INSERT INTO trip_applications (
+            user_id, event_id, status, apply_date
+        ) VALUES (
+            #{userId}, #{eventId}, #{status}, NOW()
+        )
+    </insert>
+
+    <!-- 현재 인원 증가 -->
+    <update id="increaseCurrentPeople" parameterType="int">
+        UPDATE trips
+        SET current_people = current_people + 1
+        WHERE trip_id = #{tripId}
+    </update>
+
+    <!-- 신청 리스트 + 이벤트 정보 -->
+    <select id="selectAllApplicationsWithEvent" resultType="map">
+        SELECT 
+            a.apply_id,
+            t.start_city,
+            t.end_city,
+            e.title,
+            e.start_date,
+            t.current_people,
+            a.status
+        FROM trip_applications a
+        JOIN trips t ON a.event_id = t.event_id
+        JOIN events e ON a.event_id = e.id
+        ORDER BY a.apply_date DESC
+    </select>
+
+    <!-- userId + eventId 기준 Trip 조회 -->
+    <select id="selectTripByUserAndEvent" 
+            resultType="com.human.dalligo.vo.LshTripVO">
+        SELECT *
+        FROM trips
+        WHERE user_id = #{userId}
+        AND event_id = #{eventId}
+        LIMIT 1
+    </select>
+
+    <!-- userId + eventId 기준 LshApply 조회 -->
+    <select id="selectByUserAndEvent"
+            resultType="com.human.dalligo.vo.LshApplyVO">
+        SELECT *
+        FROM trip_applications
+        WHERE user_id = #{userId}
+        AND event_id = #{eventId}
+        LIMIT 1
+    </select>
+
+</mapper>

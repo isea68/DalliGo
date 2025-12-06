@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${event.title} + ' - 신청'">Trip Detail</title>
+
+  <style>
+    .modal { 
+      display:none; position:fixed; inset:0; 
+      background:rgba(0,0,0,0.5); 
+      align-items:center; justify-content:center; 
+    }
+    .modal .box { width:80%; height:70%; background:white; padding:10px; }
+  </style>
+</head>
+
+<body>
+
+<h1 th:text="${event.title}">대회명</h1>
+
+<table border="1">
+  <tr>
+    <td><b>대회명</b></td>
+    <td th:text="${event.title}"></td>
+  </tr>
+
+  <tr>
+    <td><b>출발지</b></td>
+    <td>
+      <span id="startName" th:text="${startCity}"></span>
+      <button id="btnStartMap">지도 보기</button>
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>도착지</b></td>
+    <td>
+      <span id="endName" th:text="${endCity}"></span>
+      <button id="btnEndMap">지도 보기</button>
+    </td>
+  </tr>
+
+  <tr>
+    <td><b>일정</b></td>
+    <td th:text="${#dates.format(startDate,'yyyy-MM-dd')} 
+                 + ' ~ ' + 
+                 ${#dates.format(endDate,'yyyy-MM-dd')}"></td>
+  </tr>
+
+  <tr>
+    <td><b>거리 (km)</b></td>
+    <td id="distanceCell"
+        th:text="${tripDetail != null ? tripDetail.distance : '-'}">-</td>
+  </tr>
+
+  <tr>
+    <td><b>비용 (인당)</b></td>
+    <td id="costCell"
+        th:text="${tripDetail != null ? tripDetail.cost : '-'}">-</td>
+  </tr>
+
+  <tr>
+    <td><b>현재 신청인원</b></td>
+    <td id="currentPeople"
+        th:text="${tripDetail != null ? tripDetail.currentPeople : 0}">0</td>
+  </tr>
+
+  <tr>
+    <td><b>최소 출발인원</b></td>
+    <td><span th:text="25">25</span></td>
+  </tr>
+
+  <tr>
+    <td><b>상태</b></td>
+    <td id="statusCell"
+        th:text="${tripDetail != null ? tripDetail.status : '-'}">-</td>
+  </tr>
+</table>
+
+<button id="applyBtn">신청</button>
+<a href="/applylist">신청현황 보기</a>
+
+<!-- 지도 모달 -->
+<div id="mapModal" class="modal">
+  <div class="box">
+    <div id="map" style="width:100%; height:100%;"></div>
+    <button onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
+<!-- ★ 여기에는 오직 JS 변수 선언만 -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+	const startCity = /*[[${startCity}]]*/ '서울';
+    const endCity   = /*[[${endCity}]]*/ '강릉';
+/*]]>*/
+</script>
+
+<!-- 실제 동작 JS -->
+<script src="/js/trip-detail.js"></script>
+
+</body>
+</html>

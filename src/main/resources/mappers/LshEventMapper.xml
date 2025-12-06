@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.LshEventDAO">
+
+    <!-- LocalDateTime 매핑을 위한 resultMap -->
+    <resultMap id="EventMap" type="com.human.dalligo.vo.LshEventVO">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="location" column="location"/>
+        <result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
+        <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
+        <result property="distance" column="distance"/>
+        <result property="price" column="price"/>
+        <result property="org" column="org"/>
+        <result property="regUrl" column="reg_url"/>
+        <result property="description" column="description"/>
+        <result property="inDate" column="in_date" jdbcType="TIMESTAMP"/>
+        <result property="total" column="total"/>
+    </resultMap>
+
+    <!-- 전체 대회 목록 조회 -->
+    <select id="selectAll" resultMap="EventMap">
+        SELECT id, title, location, start_date, end_date,
+               distance, price, org, reg_url, description,
+               in_date, total
+        FROM event
+        ORDER BY start_date ASC;
+    </select>
+
+    <!-- 단일 대회 조회 -->
+    <select id="selectOne" parameterType="int" resultMap="EventMap">
+        SELECT id, title, location, start_date, end_date,
+               distance, price, org, reg_url, description,
+               in_date, total
+        FROM event
+        WHERE id = #{id};
+    </select>
+
+    <!-- 대회 등록 -->
+    <insert id="insert" parameterType="com.human.dalligo.vo.LshEventVO">
+        INSERT INTO event (title, location, start_date, end_date,
+                            distance, price, org, reg_url, description, in_date, total)
+        VALUES (#{title}, #{location}, #{startDate}, #{endDate},
+                #{distance}, #{price}, #{org}, #{regUrl}, #{description}, NOW(),
+                #{total});
+    </insert>
+
+    <!-- 이벤트별 Trip 조회 -->
+    <select id="selectTripsByEvent" resultType="com.human.dalligo.vo.LshTripVO">
+        SELECT *
+        FROM trips
+        WHERE event_id = #{eventId}
+    </select>
+
+    <!-- 일부 컬럼 조회용 -->
+    <select id="selectEventById" parameterType="int" resultMap="EventMap">
+        SELECT id, title, location, start_date, end_date, distance, price, org, reg_url, description, in_date, total
+        FROM event
+        WHERE id = #{id}
+    </select>
+
+</mapper>
