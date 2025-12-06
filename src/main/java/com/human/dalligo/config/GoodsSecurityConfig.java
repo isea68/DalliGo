@@ -17,6 +17,7 @@ public class GoodsSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+        .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/store/admin").authenticated() // 경로 변경
                 .anyRequest().permitAll()
