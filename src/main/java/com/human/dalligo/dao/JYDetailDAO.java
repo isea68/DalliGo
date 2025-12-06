@@ -9,6 +9,7 @@ import com.human.dalligo.vo.JYFileVO;
 import com.human.dalligo.vo.JYCommentVO;
 import com.human.dalligo.vo.JYDetailVO;
 import com.human.dalligo.vo.JYLikeVO;
+import com.human.dalligo.vo.JYPostVO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -85,5 +86,19 @@ public class JYDetailDAO {
 	public int countLikes(int postId) {
 		int countLikes = sqlsession.selectOne(MAPPER + ".selectCountLikes", postId);
 		return countLikes;
+	}
+	
+	public void update(JYPostVO postvo) {
+		sqlsession.update(MAPPER + ".update", postvo);
+	}
+	
+	public List<JYFileVO> findFilesByPostId(int postId) {
+		List<JYFileVO> oldFileList = sqlsession.selectList(MAPPER + ".selectFilesByPostId", postId);
+		return oldFileList;
+	}
+
+	public void deleteFilesByPostId(int postId) {
+		sqlsession.delete(MAPPER + ".deleteFilesByPostId", postId);
+		
 	}
 }

@@ -87,4 +87,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectCountLikes" parameterType="int" resultType="int">
 		SELECT COUNT(*) FROM post_likes WHERE post_id = #{postId}
 	</select>
+	
+	<update id="update" parameterType="com.human.dalligo.vo.JYPostVO">
+		UPDATE post SET category = #{category}, title = #{title}, content = #{content}
+		WHERE id = #{id}
+	</update>
+	
+	<select id="selectFilesByPostId" parameterType="int" resultType="com.human.dalligo.vo.JYFileVO">
+		SELECT * FROM post_files WHERE post_id = #{postId}
+	</select>
+	
+	<delete id="deleteFilesByPostId" parameterType="int">
+		DELETE FROM post_files WHERE post_id = #{postId}
+	</delete>
 </mapper>

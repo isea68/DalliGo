@@ -1,16 +1,21 @@
 package com.human.dalligo.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.human.dalligo.dao.JYDetailDAO;
 import com.human.dalligo.dao.JYPostDAO;
-import com.human.dalligo.vo.JYFileVO;
 import com.human.dalligo.vo.JYCommentVO;
 import com.human.dalligo.vo.JYDetailVO;
+import com.human.dalligo.vo.JYFileVO;
 import com.human.dalligo.vo.JYLikeVO;
 import com.human.dalligo.vo.JYPostVO;
 
@@ -22,6 +27,11 @@ public class JYDetailService {
 
 	private final JYDetailDAO detaildao;
 	private final JYPostDAO postdao;
+	private final AmazonS3 amazonS3;
+	
+	// 버킷 이름 주입
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucketName;
 
 	@Transactional(readOnly = true)
 	public JYDetailVO detailById(int id) {
@@ -42,8 +52,84 @@ public class JYDetailService {
 	}
 
 	// 단일 게시글 수정
-	public void update(JYPostVO postvo) {
-		postdao.update(postvo);
+	@Transactional // 중간에 하나라도 실패하면 rollback, 다 성공하면 한꺼번에 commit
+	public void update(JYPostVO postvo, List<MultipartFile> files) {
+		
+		// 1. 기존 파일 목록 조회
+		List<JYFileVO> oldFileList = detaildao.findFilesByPostId(postvo.getId());
+		
+		// 2. 기존 파일 삭제 처리 - S3 + DB 삭제
+				if (oldFileList != null) {
+					
+					for(JYFileVO file : oldFileList) {
+			
+						String oldSavedUrl = file.getSavedName();
+
+						// null 또는 빈값이면 삭제 처리 건너뛰기
+						if(oldSavedUrl == null || oldSavedUrl.isBlank()) continue;
+						
+						// S3 파일 key만 가져와야 함(URL이므로)
+						String key = extractObjectKeyFromUrl(oldSavedUrl);
+						
+						// S3에서 파일 삭제
+						amazonS3.deleteObject(bucketName, key);		
+					}
+					
+					// DB에서 파일 row 삭제
+					detaildao.deleteFilesByPostId(postvo.getId());	
+				}
+		
+		
+		// 3. 새 파일 업로드 처리
+		if (files != null && !files.isEmpty()) {
+			
+			// 2-1. 새 파일 업로드 + DB 저장
+			for (MultipartFile file : files) {
+
+				if (!file.isEmpty()) {
+					String originalName = file.getOriginalFilename();
+					String savedName; //  수정: URL 저장
+					try {
+						savedName = s3upload(file); // s3에 업로드 후 URL 반환
+					} catch (IOException e) {
+						e.printStackTrace();
+						throw new RuntimeException("S3 업로드 실패"); // RuntimeException이 발생하면 자동 롤백
+					}
+
+					JYFileVO filevo = new JYFileVO();
+					filevo.setPostId(postvo.getId());
+					filevo.setOriginalName(originalName);
+					filevo.setSavedName(savedName);
+
+					postdao.insertFiles(filevo);
+				}
+			}
+		}
+		
+		// 4. 게시글 내용 업데이트 - DB
+		detaildao.update(postvo);
+	}
+	
+	private String extractObjectKeyFromUrl(String oldSavedUrl) {
+		// 마지막 "/" 문자열이 key
+		String subStringUrl = oldSavedUrl.substring(oldSavedUrl.lastIndexOf("/") + 1);
+		return subStringUrl;
+	}
+
+	// S3 업로드
+	public String s3upload(MultipartFile file) throws IOException {
+
+		String savedName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+		ObjectMetadata metadata = new ObjectMetadata();
+		metadata.setContentLength(file.getSize());
+		metadata.setContentType(file.getContentType());
+
+		// 파일 업로드
+		amazonS3.putObject(bucketName, savedName, file.getInputStream(), metadata);
+
+		// 업로드된 파일의 전체 URL 반환
+		return amazonS3.getUrl(bucketName, savedName).toString();
 	}
 	
 	// 단일 게시글 삭제

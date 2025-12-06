@@ -1,18 +1,11 @@
 package com.human.dalligo.controller;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.human.dalligo.service.JYDetailService;
 import com.human.dalligo.vo.JSUserVO;
@@ -44,47 +38,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JYDetailController {
 	
-	private final JYDetailService detailservice;
-	
-	private static final String UPLOAD_DIR = "C:/upload1";
-			//"C:/Users/human13/OneDrive/Desktop/DalliGO_KJY/uploads";
-											// 로컬 저장소 -> 추후에 수정해야 함!!!! /
-	
-	// detail.html request 메핑
-	@GetMapping("/file/download")
-	public ResponseEntity<Resource> downloadFile(@RequestParam("savedName") String savedName,
-												 @RequestParam(value = "download", required = false) 
-												 Boolean download) throws IOException{
-		// 서버 경로 저장
-		File file = new File(UPLOAD_DIR + "/" + savedName);
-		System.out.println("파일 경로: " + file.getAbsolutePath());
-		System.out.println("파일 존재 여부: " + file.exists());
-		
-		if (!file.exists()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		Resource resource = new FileSystemResource(file);
-		
-		// 파일 MIME 타입
-		String contentType = Files.probeContentType(file.toPath());
-		if (contentType == null) contentType = "application/octet-stream";
-		
-		ResponseEntity.BodyBuilder response = ResponseEntity.ok()
-				.contentType(MediaType.parseMediaType(contentType));
-		
-		// 다운로드용일 때 attachment, 아니면 inline
-		if (download != null && download) {
-			response.header(HttpHeaders.CONTENT_DISPOSITION,
-					"attachment; filename=\"" + URLEncoder.encode(savedName, "UTF-8") + "\"");
-		} else {
-			response.header(HttpHeaders.CONTENT_DISPOSITION,
-					"inline; filename=\"" + URLEncoder.encode(savedName, "UTF-8") + "\"");
-		}
-		
-		return response.body(resource);
-	}
-	
+	private final JYDetailService detailservice;	
 	
 	// 단일 게시글 자세히 보기
 	@GetMapping("/detail/{id}")
@@ -105,12 +59,18 @@ public class JYDetailController {
 		JSUserVO loginUser = (JSUserVO) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 		
-		// 초기 하트 상태 설정
+		// 초기 하트 상태 설정 (비회원이면 false)
 		boolean isLikedByUser = false;
-		String userId = loginUser.getUserId();
-		isLikedByUser = detailservice.isLiked(postId, userId);
+		String userId = null;
+		
+		if(loginUser != null) {
+			userId = loginUser.getUserId();
+			isLikedByUser = detailservice.isLiked(postId, userId);
+		}
+		
 		model.addAttribute("isLikeByUser", isLikedByUser);
 		
+		// 좋아요 숫자
 		int countLikes = detailservice.countLikes(postId);
 		model.addAttribute("countLikes", countLikes);
 
@@ -153,9 +113,13 @@ public class JYDetailController {
 	@PostMapping("/update")
 	public String update(@ModelAttribute JYPostVO postvo,
 						 @RequestParam(value = "category", required = false) String category,
-						 @RequestParam(value = "search", required = false) String search) {
+						 @RequestParam(value = "search", required = false) String search,
+						 @RequestParam(value="files", required=false) List<MultipartFile> files) throws IOException {
 		
-		detailservice.update(postvo);
+		// 1. 파일 경로 저장
+		List<String> fileList = new ArrayList<>();
+		
+		detailservice.update(postvo, files);
 		
 		// 수정 후 detail.html로 redirect, list 상태 유지
 		String redirectUrl = "/community/detail/" + postvo.getId();
