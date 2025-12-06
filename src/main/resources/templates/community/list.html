@@ -259,9 +259,7 @@
 
 	<!-- 글쓰기 버튼 -->
 	<div id="upload-button">
-		<!-- 비회원 로그인 alert창 안내용-->
-		<input type="hidden" id="alertLogin" th:value="${alertLogin}">
-		<a th:href="@{/community/post(category=${category}, search=${search})}" class="upload-button">글쓰기</a>
+		<a href="/community/post" class="upload-button">글쓰기</a>
 	</div>
 
 	<!-- 게시글 리스트 부분-->
@@ -308,12 +306,7 @@
 </body>
 
 </html>
-
 <script>
-	// 로그인 안 했을 경우 alert 띄우기
-	const alertLogin = document.getElementById('alertLogin')?.value;
-	if(alertLogin) alert("로그인이 필요합니다.");
-	
 	const ListModule = (function () {
 		const container = document.getElementById('list-container');
 		const currentCategoryInput = document.getElementById('currentCategory');

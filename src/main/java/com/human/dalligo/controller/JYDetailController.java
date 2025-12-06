@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -45,7 +44,47 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JYDetailController {
 	
-	private final JYDetailService detailservice;	
+	private final JYDetailService detailservice;
+	
+	private static final String UPLOAD_DIR = "C:/upload1";
+			//"C:/Users/human13/OneDrive/Desktop/DalliGO_KJY/uploads";
+											// 로컬 저장소 -> 추후에 수정해야 함!!!! /
+	
+	// detail.html request 메핑
+	@GetMapping("/file/download")
+	public ResponseEntity<Resource> downloadFile(@RequestParam("savedName") String savedName,
+												 @RequestParam(value = "download", required = false) 
+												 Boolean download) throws IOException{
+		// 서버 경로 저장
+		File file = new File(UPLOAD_DIR + "/" + savedName);
+		System.out.println("파일 경로: " + file.getAbsolutePath());
+		System.out.println("파일 존재 여부: " + file.exists());
+		
+		if (!file.exists()) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		Resource resource = new FileSystemResource(file);
+		
+		// 파일 MIME 타입
+		String contentType = Files.probeContentType(file.toPath());
+		if (contentType == null) contentType = "application/octet-stream";
+		
+		ResponseEntity.BodyBuilder response = ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(contentType));
+		
+		// 다운로드용일 때 attachment, 아니면 inline
+		if (download != null && download) {
+			response.header(HttpHeaders.CONTENT_DISPOSITION,
+					"attachment; filename=\"" + URLEncoder.encode(savedName, "UTF-8") + "\"");
+		} else {
+			response.header(HttpHeaders.CONTENT_DISPOSITION,
+					"inline; filename=\"" + URLEncoder.encode(savedName, "UTF-8") + "\"");
+		}
+		
+		return response.body(resource);
+	}
+	
 	
 	// 단일 게시글 자세히 보기
 	@GetMapping("/detail/{id}")
@@ -66,18 +105,12 @@ public class JYDetailController {
 		JSUserVO loginUser = (JSUserVO) session.getAttribute("loginUser");
 		model.addAttribute("loginUser", loginUser);
 		
-		// 초기 하트 상태 설정 (비회원이면 false)
+		// 초기 하트 상태 설정
 		boolean isLikedByUser = false;
-		String userId = null;
-		
-		if(loginUser != null) {
-			userId = loginUser.getUserId();
-			isLikedByUser = detailservice.isLiked(postId, userId);
-		}
-		
+		String userId = loginUser.getUserId();
+		isLikedByUser = detailservice.isLiked(postId, userId);
 		model.addAttribute("isLikeByUser", isLikedByUser);
 		
-		// 좋아요 숫자
 		int countLikes = detailservice.countLikes(postId);
 		model.addAttribute("countLikes", countLikes);
 

@@ -118,7 +118,9 @@
 
 		<div class="detail_in">
 			<div class="up_left">
-				<img th:src="${cId.prPhotoUrl}">
+				<img th:src="${#strings.isEmpty(cId.prphotoNew) ?
+								             'https://hk-dalligo-images-2025.s3.ap-southeast-2.amazonaws.com/default/ma_s1.GIF'
+								             : cId.prphotoNew}">
 			</div>
 
 			<div class="up_right">
@@ -153,7 +155,7 @@
 		<div class="detail_in">
 			<div class="down_left">
 				<div class="img_box">
-					<img th:src="${tvo.photoUrl}">
+					<img th:src="${tvo.photoNew}">
 				</div>
 				<div class="text_pr">
 

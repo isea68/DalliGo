@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>게시글 제목</title>	
+	<title>게시글 제목</title>
 </head>
 
 <style>
@@ -25,13 +25,8 @@
 	}
 
 	#main-title {
-		padding-left: 35%;
-		font-size: 60px;
-	}
-
-	#detail-container{
-		width: 80%;
-		margin: 0 auto;
+		padding-left: 30%;
+		font-size: 100px;
 	}
 
 	.detail-box {
@@ -233,10 +228,7 @@
 </style>
 
 <body>
-	<script th:inline="javascript">
-		const loginUserExists = /*[[${loginUser != null}]]*/ false;
-	</script>
-	
+
 	<!-- 메인보드 -->
 	<div id="mainboard">
 		<a id="main-back" th:href="@{/community/list(category=${category}, search=${search})}">
@@ -246,11 +238,10 @@
 					d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1" />
 			</svg>
 		</a>
-		<h1 id="main-title">커뮤니티</h1>
+		<div id="main-title">커뮤니티</div>
 	</div>
 
 	<!-- 게시글 자세히 보기-->
-	 <div id="detail-container">
 	<div class="detail-box">
 		
 		<div class="list-header">
@@ -310,11 +301,11 @@
 										            and (#strings.endsWith(#strings.toLowerCase(filevo.savedName),'jpg')
 										                 or #strings.endsWith(#strings.toLowerCase(filevo.savedName),'png')
 										                 or #strings.endsWith(#strings.toLowerCase(filevo.savedName),'gif'))}"
-							th:src="${filevo.savedName}" />
+							th:src="@{/community/file/download(savedName=${filevo.savedName})}" />
 
 					</td>
 					<td>
-						<a th:href="${filevo.savedName}"
+						<a th:href="@{/community/file/download(savedName=${filevo.savedName})}"
 							th:text="${filevo.originalName}"></a>
 					</td>
 				</tr>
@@ -364,8 +355,6 @@
 		</div>
 	</div>
 
-	</div>
-
 	<!-- 바닥글-->
 	<footer>
 		<div id="footer">
@@ -375,7 +364,9 @@
 
 </body>
 
-<script>	
+</html>
+
+<script>
 	document.addEventListener('DOMContentLoaded', () => {
 		// 좋아요, 댓글에서 쓸 공통 게시글 번호
 		const postId = parseInt(document.getElementById('postId').value, 10);
@@ -386,12 +377,6 @@
 		const likeCountSpan = document.getElementById('like-count');
 
 		likeBtn.addEventListener('click', async () => {
-			// 비회원이 클릭했을 경우
-			if(!loginUserExists) {
-				alert("로그인이 필요합니다."); 
-				return;
-			}
-			
 			try{
 				const response = await fetch(`/community/post/${postId}/like`, { method: "POST" });
 				const data = await response.json(); // { liked: true/false, count: 숫자 }
@@ -423,14 +408,6 @@
 		// 댓글 클릭 시 모달창 열기
 		if (commentBtn) {
 			commentBtn.addEventListener('click', () => {
-				
-				// 비회원이 클릭했을 경우
-				if(!loginUserExists) {
-					alert("로그인이 필요합니다."); 
-					return;
-				}
-				
-				// 회원이면 모달창 열기
 				modal.style.display = 'block';
 				inputComment.value = '';
 				editingCommentId = null; // 새 댓글 모드
@@ -548,5 +525,3 @@
 		}
 	});
 </script>
-
-</html>
