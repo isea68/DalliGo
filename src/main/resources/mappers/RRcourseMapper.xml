@@ -15,7 +15,9 @@
 		<result property="supportItem" column="support_item" />
 		<result property="price" column="price" />
 		<result property="duration" column="duration" />
-		<result property="prPhotoUrl" column="prphoto_url" />
+		<result property="prphotoOri" column="prphoto_ori" />
+		<result property="prphotoNew" column="prphoto_new" />	
+		
 		<result property="capacity" column="capacity" />
 		<result property="eduType" column="edu_type" />
 	</resultMap>
@@ -23,8 +25,8 @@
 
 	<insert id="insertcourse" parameterType="com.human.dalligo.vo.RRcourseVO"
 		useGeneratedKeys="true" keyProperty="id">
-		insert into rrcourse(trainer_id,title,start_date,select_day,location,place,support_item,price,duration, prphoto_url, capacity,edu_type)
-		values(#{trainerId},#{title},#{startDate},#{selectDay},#{location},#{place},#{supportItem},#{price},#{duration},#{prPhotoUrl},#{capacity},#{eduType})
+		insert into rrcourse(trainer_id,title,start_date,select_day,location,place,support_item,price,duration, prphoto_ori, prphoto_new, capacity,edu_type)
+		values(#{trainerId},#{title},#{startDate},#{selectDay},#{location},#{place},#{supportItem},#{price},#{duration}, #{prphotoOri}, #{prphotoNew},#{capacity},#{eduType})
 	</insert>
 
 
