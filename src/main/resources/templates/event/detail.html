@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${event.title}">Event Detail</title>
+</head>
+<body>
+  <h1 th:text="${event.title}">대회명</h1>
+  <p><b>ID:</b> <span th:text="${event.id}"></span></p>
+  <p><b>Location:</b> <span th:text="${event.location}"></span></p>
+  <p><b>Start:</b> <span th:text="${#dates.format(startDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+  <p><b>End:</b> <span th:text="${#dates.format(endDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+  <p><b>Distance (race):</b> <span th:text="${event.distance}"></span></p>
+  <p><b>Price:</b> <span th:text="${event.price}"></span></p>
+  <p><b>Organizer:</b> <span th:text="${event.org}"></span></p>
+  <p><b>Registration URL:</b> <a th:href="${event.regUrl}" th:text="${event.regUrl}">link</a></p>
+  <p><b>Description:</b></p>
+  <p th:text="${event.description}"></p>
+
+  <p><a th:href="@{/events/{id}/trip-detail(id=${event.id})}">이 대회 신청 페이지로 이동</a></p>
+  <p><a href="/">목록으로 돌아가기</a></p>
+</body>
+</html>

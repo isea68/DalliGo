@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>대회 목록</title>
+</head>
+<body>
+  <h1>대회 목록</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th><th>Title</th><th>Location</th><th>Start Date</th><th>Org</th><th>Total</th><th>Detail</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="e : ${events}">
+        <td th:text="${e.id}">1</td>
+
+        <td>
+          <a th:href="@{/events/{eventId}/trips(eventId=${e.id})}" th:text="${e.title}">대회명</a>
+        </td>
+
+        <td th:text="${e.location}">서울</td>
+
+        <!-- 여기만 수정됨 -->
+        <td th:text="${e.startDate.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm'))}">
+          2025-12-01
+        </td>
+
+        <td th:text="${e.org}">Org</td>
+        <td th:text="${e.total}">100</td>
+
+        <td><a th:href="@{/events/{id}(id=${e.id})}">detail</a></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
