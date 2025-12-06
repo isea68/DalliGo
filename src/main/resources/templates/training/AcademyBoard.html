@@ -34,10 +34,7 @@
          <div class="tab_con_item" th:each="c : ${courses}" 
 		 						   th:attr = "data-category=${c.eduType}" >
             <a th:href="@{/training/AcademyDetail(id=${c.id})}">
-				<img th:src="${#strings.isEmpty(c.prphotoNew) ?
-				             'https://hk-dalligo-images-2025.s3.ap-southeast-2.amazonaws.com/ma_s1.GIF'
-				             : c.prphotoNew}">
-
+               <img th:src="${c.prPhotoUrl}">
                <div class="card_info">
                   <span th:text="${c.title}"> </span>
                   <span th:text="'('+${c.location}+')'"></span>

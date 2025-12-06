@@ -9,8 +9,7 @@ public class RRtrainerVO {
  private String trainerId;
  private String password;
  private String name ;
- private String photoOri; //file original name
- private String photoNew; // file changed name
+ private String photoUrl; //dB에 저장할 사진경로
  private String history;
 	
  

@@ -43,28 +43,20 @@ public class RRtrainerController {
 		  if(!photoFile.isEmpty()) {
 			  
 		  //1. 파일 저장 경로
-		 // String uploadDir = "C:/upload/"; //서버로컬 디렉토리 
-		  String oriname = photoFile.getOriginalFilename();	  
-		//  String filename = System.currentTimeMillis()+"_"+photoFile.getOriginalFilename();
-		//  File saveFile = new File(filename);
+		  String uploadDir = "C:/upload/"; //서버로컬 디렉토리 
+		  String filename = System.currentTimeMillis()+"_"+photoFile.getOriginalFilename();
+		  File saveFile = new File(uploadDir+filename);
 		  
 		  //2. 파일 저장
-		//  photoFile.transferTo(saveFile);
-		  
-		  // S3버킷으로 업로드
-		  String s3Url = trainerservice.s3upload(photoFile);
-		  
+		  photoFile.transferTo(saveFile);
 		  
 		  //3. DB에 저장할 경로 설정
-		  trainervo.setPhotoOri(oriname) ;
-		  trainervo.setPhotoNew(s3Url);
+		  trainervo.setPhotoUrl("/upload/"+filename);
 		  }
 		  
 		  //4. 서비스/DAO 호출해서 DB저장	  
 		  trainerservice.insert(trainervo);	  
 		  return "redirect:/rlogin";
-		  
-		
 	  } 
 	  
 	  
@@ -80,8 +72,6 @@ public class RRtrainerController {
 			  return "redirect:/rlogin?error";
 		  }     
 	  }
-	  
-
 	  
 
 }
