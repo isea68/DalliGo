@@ -161,6 +161,10 @@
 	<header>
 		<h2>관리자</h2>
 		<div th:replace="fragment/header :: headerDiv"></div>
+		<button onclick="location.href='/store/admin/orders'" 
+		        style="padding:10px 15px; background: #005ec4; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+		    주문 내역 보기
+		</button>
 		<button id="floatingAddBtn">상품 등록</button>
 	</header>
 

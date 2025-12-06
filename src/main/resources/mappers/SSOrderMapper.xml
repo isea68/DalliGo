@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.human.dalligo.dao.SSOrderDAO">
+
+    <!-- 주문 저장 -->
+    <insert id="insertOrder" parameterType="com.human.dalligo.vo.SSOrderVO">
+        INSERT INTO orders (goods_id, goods_name, quantity, buyer, address, phone, pay_date)
+        VALUES (#{goodsId}, #{goodsName}, #{quantity}, #{buyer}, #{address}, #{phone}, NOW())
+    </insert>
+
+    <!-- 관리자: 전체 주문 조회 -->
+    <select id="selectOrders" resultType="com.human.dalligo.vo.SSOrderVO">
+        SELECT
+            order_id      AS orderId,
+            goods_id      AS goodsId,
+            goods_name    AS goodsName,
+            quantity      AS quantity,
+            buyer         AS buyer,
+            address       AS address,
+            phone         AS phone,
+            pay_date      AS payDate
+        FROM orders
+        ORDER BY order_id ASC
+    </select>
+
+</mapper>

@@ -14,22 +14,23 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class GoodsSecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-        .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/store/admin").authenticated() // 경로 변경
-                .anyRequest().permitAll()
-            )
-            .formLogin(form -> form
-                .loginPage("/goodsadminlogin")       // 로그인 페이지 URL
-                .loginProcessingUrl("/login") // POST 요청 처리 URL, 기본값 /login
-                .permitAll()
-            )
-            .logout(logout -> logout.permitAll());
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	    http
+	        .csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(auth -> auth
+	                .requestMatchers("/store/admin").authenticated()
+	                .anyRequest().permitAll()
+	        )
+	        .formLogin(form -> form
+	                .loginPage("/goodsadminlogin")
+	                .loginProcessingUrl("/goodsadminlogin")
+	                .permitAll()
+	        )
+	        .logout(logout -> logout.permitAll());
 
-        return http.build();
-    }
+	    return http.build();
+	}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
