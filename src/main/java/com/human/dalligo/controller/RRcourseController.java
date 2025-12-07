@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.human.dalligo.service.RRcourseService;
 import com.human.dalligo.service.RRtrainerService;
+import com.human.dalligo.vo.JSUserVO;
 import com.human.dalligo.vo.RRcourseVO;
 import com.human.dalligo.vo.RRtrainerVO;
 
@@ -81,7 +82,9 @@ public class RRcourseController {
 	  //시간 (오전/오후 포함)
 	  DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("a h시",Locale.KOREAN);
 	  String timeStr =dt.format(timeFormat);
+	  JSUserVO loginUser=(JSUserVO)session.getAttribute("loginUser");
 	  
+	  model.addAttribute("user", loginUser);
 	  model.addAttribute("historyList", historyList);
 	  model.addAttribute("tvo", trainervo);	  
 	  model.addAttribute("monStr", monStr);
