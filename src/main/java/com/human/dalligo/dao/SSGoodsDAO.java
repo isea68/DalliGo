@@ -3,38 +3,39 @@ package com.human.dalligo.dao;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.human.dalligo.vo.GoodsVO;
+import com.human.dalligo.vo.SSGoodsVO;
 
 @Repository
-public class GoodsDAO {
+public class SSGoodsDAO {
 
     @Autowired
     private SqlSession sqlSession;
 
     // Mapper namespace
-    private static final String MAPPER = "com.human.dalligo.dao.GoodsDAO";
+    private static final String MAPPER = "com.human.dalligo.dao.SSGoodsDAO";
 
     // 전체 상품 조회
-    public List<GoodsVO> selectAll() {
+    public List<SSGoodsVO> selectAll() {
         return sqlSession.selectList(MAPPER + ".selectAll");
     }
 
     // 상품 id로 조회
-    public GoodsVO getGoodsById(int goodsId) {
+    public SSGoodsVO getGoodsById(int goodsId) {
         return sqlSession.selectOne(MAPPER + ".getGoodsById", goodsId);
     }
 
     // 상품 등록
-    public void insert(GoodsVO goodsVO) {
+    public void insert(SSGoodsVO goodsVO) {
         sqlSession.insert(MAPPER + ".insert", goodsVO);
     }
 
     // 상품 수정
-    public void update(GoodsVO goodsVO) {
+    public void update(SSGoodsVO goodsVO) {
         sqlSession.update(MAPPER + ".update", goodsVO);
     }
 
@@ -44,7 +45,7 @@ public class GoodsDAO {
     }
 
     // 필터 조건으로 조회 (가격, 카테고리, 브랜드)
-    public List<GoodsVO> selectByFilter(String brand, String tag, int minPrice, int maxPrice) {
+    public List<SSGoodsVO> selectByFilter(String brand, String tag, int minPrice, int maxPrice) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("brand", brand);
         params.put("tag", tag);
@@ -55,7 +56,7 @@ public class GoodsDAO {
         
     }
  // TOP 상품 조회
-    public List<GoodsVO> selectTopGoods() {
+    public List<SSGoodsVO> selectTopGoods() {
         return sqlSession.selectList(MAPPER + ".selectTopGoods");
     }
 
@@ -75,6 +76,12 @@ public class GoodsDAO {
     // 태그 전체 조회
     public List<String> selectAllTags() {
         return sqlSession.selectList(MAPPER + ".selectAllTags");
+    }
+    public void decreaseStock(int goodsId, int quantity) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("goodsId", goodsId);
+        params.put("quantity", quantity);
+        sqlSession.update(MAPPER + ".decreaseStock", params);
     }
     
 }

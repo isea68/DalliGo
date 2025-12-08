@@ -9,16 +9,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.human.dalligo.service.GoodsService;
-import com.human.dalligo.vo.GoodsVO;
+import com.human.dalligo.service.JSUserService;
+import com.human.dalligo.service.SSGoodsService;
+import com.human.dalligo.service.SSOrderService;
+import com.human.dalligo.vo.JSUserVO;
+import com.human.dalligo.vo.SSGoodsVO;
+import com.human.dalligo.vo.SSOrderVO;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class GoodsController {
+public class SSGoodsController {
 
-    private final GoodsService goodsService;
+    private final SSGoodsService goodsService;
+    private final SSOrderService orderService;
+    private final JSUserService userService;
 
-    public GoodsController(GoodsService goodsService) {
+    public SSGoodsController(SSGoodsService goodsService, SSOrderService orderService,JSUserService userService) {
         this.goodsService = goodsService;
+		this.orderService = orderService;
+		this.userService = userService;
     }
 
     // 일반 유저 상품 페이지
@@ -30,8 +40,8 @@ public class GoodsController {
             @RequestParam(value = "maxPrice", required = false, defaultValue = "300000") int maxPrice,
             Model model) {
 
-        List<GoodsVO> goodsList = goodsService.getGoodsByFilter(category, brand, minPrice, maxPrice);
-        List<GoodsVO> topGoodsList = goodsService.getTopGoods();
+        List<SSGoodsVO> goodsList = goodsService.getGoodsByFilter(category, brand, minPrice, maxPrice);
+        List<SSGoodsVO> topGoodsList = goodsService.getTopGoods();
         if (topGoodsList == null) topGoodsList = new ArrayList<>();
         List<String> brandList = goodsService.getAllBrands();
         List<String> tagList = goodsService.getAllTags();
@@ -47,21 +57,21 @@ public class GoodsController {
     // 관리자 페이지
     @GetMapping("/store/admin")
     public String adminPage(Model model) {
-        List<GoodsVO> goodsList = goodsService.getAllGoods();
+        List<SSGoodsVO> goodsList = goodsService.getAllGoods();
         model.addAttribute("goodsList", goodsList);
         return "goodsshop/admin";
     }
 
     // 관리자: 상품 등록
     @PostMapping("/store/admin/add")
-    public String addGoods(GoodsVO goodsVO) {
+    public String addGoods(SSGoodsVO goodsVO) {
         goodsService.addGoods(goodsVO);
         return "redirect:/store/admin";
     }
 
     // 관리자: 상품 수정
     @PostMapping("/store/admin/update")
-    public String updateGoods(GoodsVO goodsVO) {
+    public String updateGoods(SSGoodsVO goodsVO) {
         goodsService.updateGoods(goodsVO);
         return "redirect:/store/admin";
     }
@@ -105,6 +115,31 @@ public class GoodsController {
     @GetMapping("/goodsadminlogin")
     public String loginadmin() {
     	return "goodsshop/goodsadminlogin";
+    }
+    @GetMapping("/store/admin/orders")
+    public String orderList(Model model) {
+        List<SSOrderVO> orders = orderService.selectOrders(); // SSOrderVO 사용
+        model.addAttribute("orders", orders);
+        return "goodsshop/orderList";
+    }
+    @PostMapping("/storelogin")
+    public String login(@RequestParam("userId") String userId,
+                        @RequestParam("password") String password,
+                        HttpSession session,
+                        Model model) {
+        JSUserVO user = userService.login(userId, password);
+        if(user != null) {
+            session.setAttribute("loginUser", user);
+            return "redirect:/store";
+        } else {
+            model.addAttribute("error", "아이디 또는 비밀번호가 틀렸습니다.");
+            return "redirect:/store";
+        }
+    }
+    @GetMapping("/storelogout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // 세션 초기화 → 로그아웃
+        return "redirect:/store";
     }
     
 

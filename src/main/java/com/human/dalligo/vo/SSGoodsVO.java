@@ -3,7 +3,7 @@ package com.human.dalligo.vo;
 import lombok.Data;
 
 @Data
-public class GoodsVO {
+public class SSGoodsVO {
     private int goodsId;        // goods_id
     private String goodsName;   // goods_name
     private String goodsBrand;  // goods_brand
