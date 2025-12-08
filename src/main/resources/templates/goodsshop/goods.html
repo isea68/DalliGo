@@ -225,7 +225,31 @@
 
 	<header>
 		<div th:replace="fragment/header :: headerDiv"></div>
+		<div id="loginArea">
 
+		    <!-- 🔹 로그인 안 되어 있을 때 -->
+		    <div th:if="${session.loginUser == null}">
+		        <input type="text" id="userId" placeholder="아이디 입력">
+		        <input type="password" id="userPw" placeholder="비밀번호 입력">
+		        <button onclick="login()">로그인</button>
+		    </div>
+
+		    <!-- 🔹 로그인 되어 있을 때 -->
+		    <div th:if="${session.loginUser != null}">
+		        <b th:text="${session.loginUser.userId}"></b> 님 어서오세요!
+
+		        <!-- 관리자 -->
+				<button th:if="${session.loginUser != null and session.loginUser.isAdmin == 1}"
+				        onclick="location.href='/store/admin'">
+				    관리자 페이지
+				</button>
+				<button th:if="${session.loginUser != null}"
+				        onclick="location.href='/storelogout'">
+				    로그아웃
+				</button>
+		    </div>
+
+		</div>
 	</header>
 	<div>
 		<nav>
@@ -236,20 +260,36 @@
 					src="https://w7.pngwing.com/pngs/742/249/png-transparent-shopping-cart-bag-shopping-cart-thumbnail.png">
 			</button>
 			<div id="cartModal" class="cart-modal">
-				<div class="cart-modal-content">
-					<span id="closeCart" class="close">&times;</span>
-					<h2>장바구니</h2>
+			    <div class="cart-modal-content">
+			        <span id="closeCart" class="close">&times;</span>
+			        <h2>장바구니</h2>
 
-					<div id="cartItems"></div>
+			        <!-- 장바구니 아이템 리스트 -->
+			        <div id="cartItems">
+			            <!-- 예시: 실제로는 JS로 동적으로 추가 -->
+			            <div class="cart-item" data-id="123" data-name="상품A" data-quantity="2">
+			                상품A - 수량: 2
+			            </div>
+			            <div class="cart-item" data-id="124" data-name="상품B" data-quantity="1">
+			                상품B - 수량: 1
+			            </div>
+			        </div>
 
-					<div class="cart-footer">
-						<strong>총 금액: <span id="cartTotal">0</span> 원</strong>
-						<br><br>
-						<button id="checkoutBtn">
-							결제하기
-						</button>
-					</div>
-				</div>
+			        <div class="cart-footer">
+			            <strong>총 금액: <span id="cartTotal">0</span> 원</strong>
+			            <br><br>
+			            <button id="openPaymentFormBtn">결제하기</button>
+
+			            <!-- 고객정보 폼 (기본 숨김) -->
+			            <div id="paymentForm" style="display:none; margin-top:15px;">
+			                <h4>결제 정보 입력</h4>
+			                <input type="text" id="payerName" placeholder="이름">
+			                <input type="text" id="payerAddress" placeholder="주소">
+			                <input type="text" id="payerPhone" placeholder="전화번호">
+			                <button id="finalPayBtn">최종 결제하기</button>
+			            </div>
+			        </div>
+			    </div>
 			</div>
 		</nav>
 	</div>
@@ -585,6 +625,95 @@
 				window.location.href = '/store';
 			});
 		});
+		// 예시: 장바구니에서 선택된 상품 정보를 hidden에 세팅하는 함수
+		    // 실제로는 "담기" 버튼 클릭 시 cart 배열을 만들었으니 필요에 따라 수정
+		    function setPaymentItem(goodsId, goodsName, quantity) {
+		        document.getElementById('pf_goodsId').value = goodsId;
+		        document.getElementById('pf_goodsName').value = goodsName;
+		        document.getElementById('pf_quantity').value = quantity;
+		    }
+
+		    // 모달의 "결제하기" 버튼 -> 고객정보 폼 노출
+		    document.getElementById('openPaymentFormBtn').addEventListener('click', function() {
+		        document.getElementById('paymentForm').style.display = 'block';
+		    });
+
+			// 최종 결제
+			document.getElementById('finalPayBtn').addEventListener('click', () => {
+			    const buyer = document.getElementById('payerName').value.trim();
+			    const address = document.getElementById('payerAddress').value.trim();
+			    const phone = document.getElementById('payerPhone').value.trim();
+
+			    if (!buyer || !address || !phone) {
+			        alert('모든 고객 정보를 입력해주세요.');
+			        return;
+			    }
+
+			    if (cart.length === 0) {
+			        alert('장바구니에 상품이 없습니다.');
+			        return;
+			    }
+
+			    const orderData = cart.map(item => ({
+			        goodsId: parseInt(item.id),
+			        goodsName: item.name,
+			        quantity: item.qty,
+			        buyer: buyer,
+			        address: address,
+			        phone: phone
+			    }));
+
+			    fetch('/order', {
+			        method: 'POST',
+			        headers: { 'Content-Type': 'application/json' },
+			        body: JSON.stringify(orderData)
+			    })
+			    .then(resp => resp.text())
+			    .then(result => {
+			        if(result === 'success') {
+			            alert('결제가 완료되었습니다!');
+			            cart.length = 0; // 장바구니 초기화
+			            renderCart();
+			            document.getElementById('paymentForm').style.display = 'none'; // 모달 닫기
+			        } else {
+			            alert('결제에 실패했습니다. 다시 시도해주세요.');
+			        }
+			    })
+			    .catch(err => {
+			        console.error(err);
+			        alert('서버 에러가 발생했습니다.');
+			    });
+			});
+			function openLogin() {
+			    document.getElementById("loginForm").style.display = "block";
+			}
+
+			// ★ 실제 로그인 API 호출하는 부분 ★
+			// 여기에서 Spring Boot의 컨트롤러로 AJAX 전송하면 됨
+			function login() {
+			    const form = document.createElement("form");
+			    form.method = "POST";
+			    form.action = "/storelogin";
+
+			    const idField = document.createElement("input");
+			    idField.type = "hidden";
+			    idField.name = "userId";
+			    idField.value = document.getElementById("userId").value;
+			    form.appendChild(idField);
+
+			    const pwField = document.createElement("input");
+			    pwField.type = "hidden";
+			    pwField.name = "password";
+			    pwField.value = document.getElementById("userPw").value;
+			    form.appendChild(pwField);
+
+			    document.body.appendChild(form);
+			    form.submit();
+			}
+
+			function goAdminPage() {
+			    window.location.href = "/store/admin";   // 관리자 페이지 URL
+			}
 	</script>
 
 
