@@ -54,7 +54,6 @@ public class JYDetailService {
 	// 단일 게시글 수정
 	@Transactional // 중간에 하나라도 실패하면 rollback, 다 성공하면 한꺼번에 commit
 	public void update(JYPostVO postvo, List<MultipartFile> files) {
-		
 		// 1. 기존 파일 목록 조회
 		List<JYFileVO> oldFileList = detaildao.findFilesByPostId(postvo.getId());
 		
@@ -74,7 +73,7 @@ public class JYDetailService {
 						// S3에서 파일 삭제
 						amazonS3.deleteObject(bucketName, key);		
 					}
-					
+				
 					// DB에서 파일 row 삭제
 					detaildao.deleteFilesByPostId(postvo.getId());	
 				}
@@ -128,8 +127,9 @@ public class JYDetailService {
 		// 파일 업로드
 		amazonS3.putObject(bucketName, savedName, file.getInputStream(), metadata);
 
-		// 업로드된 파일의 전체 URL 반환
-		return amazonS3.getUrl(bucketName, savedName).toString();
+		// 업로드된 파일의 전체 URL 반환 + 캐시 방지 쿼리스트링 추가
+	    String url = amazonS3.getUrl(bucketName, savedName).toString();
+	    return url + "?v=" + System.currentTimeMillis();
 	}
 	
 	// 단일 게시글 삭제

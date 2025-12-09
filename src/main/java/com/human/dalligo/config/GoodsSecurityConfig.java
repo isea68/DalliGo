@@ -1,9 +1,8 @@
 package com.human.dalligo.config;
 
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security. config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,23 +14,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class GoodsSecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/store/admin").authenticated() // 경로 변경
-                .anyRequest().permitAll()
-            )
-            .formLogin(form -> form
-                .loginPage("/")       // 로그인 페이지 URL
-                .loginProcessingUrl("/main") // POST 요청 처리 URL, 기본값 /goodsadminlogin
-                .permitAll()
-            )
-            .logout(logout -> logout.permitAll());
 
-        return http.build();
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	    http
+	        .csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(auth -> auth
+	                .requestMatchers("/store/admin/orders").authenticated()
+	                .anyRequest().permitAll()
+	        )
+	        .formLogin(form -> form
+	                .loginPage("/")
+	                .loginProcessingUrl("/main")
+	                .permitAll()
+	        )
+	        .logout(logout -> logout.permitAll());
+
+
+	    return http.build();
+	}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,8 +43,8 @@ public class GoodsSecurityConfig {
     @Bean
     public UserDetailsService users() {
         UserDetails user = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("1234"))
+                .username("admin1")
+                .password(passwordEncoder().encode("admin1"))
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(user);

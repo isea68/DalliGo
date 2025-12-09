@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.time.LocalTime;
+import java.time.LocalDate;
+import java.sql.Timestamp;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,11 @@ public class LshTripService {
 
     private final LshTripDAO tripDAO;
     private final LshEventDAO eventDAO;
+    private final LshEventService eventService;
 
     /** 이벤트별 Trip (첫 번째 Trip 반환) */
     public LshTripVO getTripByEvent(int eventId) {
-        List<LshTripVO> list = tripDAO.selectTripsByEvent(eventId);
+        List<LshTripVO> list = tripDAO.selectTripsByEvent(eventId);        
         return (list != null && !list.isEmpty()) ? list.get(0) : null;
     }
 
@@ -63,8 +65,12 @@ public class LshTripService {
         trip.setDistance(BigDecimal.valueOf(0.0));
         trip.setCost(0);
         trip.setCurrentPeople(0);
-        trip.setTripDate(event.getStartDate().toLocalDate());
-        trip.setTripTime(LocalTime.of(6,0)); // 기본 출발시간 06:00
+        // ★ LocalDate → Timestamp 변환 적용
+        LocalDate localDate = event.getStartDate().toLocalDate(); // LocalDate 추출
+        Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay()); // 00:00 시각 붙여서 Timestamp로 변환
+        trip.setTripDate(timestamp); // VO 메소드와 타입 일치
+        //trip.setTripDate(event.getStartDate().toLocalDate());
+        //trip.setTripTime(LocalTime.of(6,0)); // 기본 출발시간 06:00
         trip.setStatus("모집중");
 
         tripDAO.insertTrip(trip);
@@ -92,7 +98,10 @@ public class LshTripService {
             trip.setDistance(distance);
             trip.setCost(calculateCost(distance));
             trip.setCurrentPeople(0);
-            trip.setTripDate(ev.getStartDate().toLocalDate());
+            // ★ LocalDate → Timestamp 변환 적용
+            LocalDate localDate = ev.getStartDate().toLocalDate(); // LocalDate 추출
+            Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay()); // 00:00 시각 붙여서 Timestamp로 변환
+            trip.setTripDate(timestamp); // VO 메소드와 타입 일치
             trip.setStatus("모집중");
 
             tripDAO.insertTrip(trip);
@@ -127,17 +136,17 @@ public class LshTripService {
     /** 상태 계산 */
     public String computeStatus(LshTripVO trip, LshEventVO event) {
 
-        LocalDateTime now = LocalDateTime.now();
-        trip.setTripDate(event.getStartDateOnly());
+        // 현재 시각을 Timestamp로
+        Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        // deadline → event 시작 날짜의 00:00 시각
-        LocalDateTime deadline = event.getStartDateOnly().atStartOfDay();
+        // 이벤트 시작일을 Timestamp로 변환 (00:00 시각 기준)
+        Timestamp deadline = Timestamp.valueOf(event.getStartDateOnly().atStartOfDay());
 
         // 최소 출발 인원(고정값)
         final int MIN_PEOPLE = 25;
 
         // 이벤트 시작일이 지난 경우
-        if (!now.isBefore(deadline)) {
+        if (now.compareTo(deadline) >= 0) { // now >= deadline
             return trip.getCurrentPeople() >= MIN_PEOPLE ? "출발확정" : "취소";
         }
 
@@ -146,7 +155,7 @@ public class LshTripService {
             return "출발확정";
         }
 
-        // 기본
+        // 기본 상태
         return "모집중";
     }
 
@@ -174,6 +183,93 @@ public class LshTripService {
         tripDAO.increaseCurrentPeople(tripId);
 
         return 1;
+    }
+    
+    /** Trip 신청 */
+//    @Transactional
+//    public void applyToEvent(int eventId, String userId) {
+//
+//        // 1) 중복 신청 확인
+//        int exists = tripDAO.existsApplication(userId, eventId);
+//        if (exists > 0) {
+//            throw new IllegalStateException("이미 신청하셨습니다.");
+//        }
+//
+//        // 2) 신청 (application status는 "신청"으로 기록)
+//        LshApplyVO vo = new LshApplyVO();
+//        vo.setUserId(userId);
+//        vo.setEventId(eventId);
+//        vo.setStatus("신청");
+//        tripDAO.insertApplication(vo);
+//
+//        // 3) trips.current_people 증가 (DB의 현재값과 동기화)
+//        tripDAO.incrementTripCurrentPeople(eventId);
+//
+//        // 4) event.start_date -> trip.trip_date
+//        LshEventVO event = eventDAO.selectOne(eventId);
+//        
+//        if (event == null) {
+//            throw new RuntimeException("Event not found: " + eventId);
+//        }
+//
+//        // 2. trip 조회
+//        LshTripVO trip = tripDAO.getTripByEvent(eventId);
+//        if (trip == null) {
+//            throw new RuntimeException("Trip not found for eventId: " + eventId);
+//        }
+//        
+//        trip.setTripDate(event.getStartDate().toLocalDate());
+//        tripDAO.updateTrip(trip);
+//        
+//        if (trip == null) {
+//            // 만약 trip이 없으면 상황에 맞게 처리 (예외 또는 로그)
+//            throw new IllegalStateException("해당 이벤트에 대한 trip 정보가 없습니다.");
+//        }
+//
+//        // 5) 오늘 날짜와 trip_date(날짜 타입) 기준으로 상태 결정
+//        LocalDate today = LocalDate.now();
+//        LocalDate tripDate = trip.getTripDate(); // LshTripVO 의 tripDate는 java.time.LocalDate 이어야 함
+//
+//        String newTripStatus;
+//        if (today.isBefore(tripDate)) {
+//            newTripStatus = "모집중";
+//        } else {
+//            // 오늘이거나 이후일 경우 currentPeople 기준
+//            int currentPeople = trip.getCurrentPeople();
+//            if (currentPeople >= 25) {
+//                newTripStatus = "승인";
+//            } else {
+//                newTripStatus = "종료";
+//            }
+//        }
+//
+//        // 6) trips.status 업데이트 (필요 시에만 수행)
+//        if (!newTripStatus.equals(trip.getStatus())) {
+//            tripDAO.updateTripStatus(eventId, newTripStatus);
+//        }
+//    }
+    
+    @Transactional
+    public boolean applyToEvent(int eventId, String userId) {
+        int exists = tripDAO.existsApplication(userId, eventId);
+        if (exists > 0) return false; // 이미 신청
+
+        // 신규 신청
+        LshApplyVO vo = new LshApplyVO();
+        vo.setUserId(userId);
+        vo.setEventId(eventId);
+        vo.setStatus("신청");
+        tripDAO.insertApplication(vo);
+
+        // trips.current_people 증가
+        tripDAO.incrementTripCurrentPeople(eventId);
+
+        return true;
+    }
+    
+    public int getCurrentPeople(int eventId) {
+        LshTripVO trip = tripDAO.getTripByEvent(eventId);
+        return trip.getCurrentPeople();
     }
 
     /** 도시명 추출 */
@@ -223,7 +319,7 @@ public class LshTripService {
             a.setStartCity((String) r.get("start_city"));
             a.setEndCity((String) r.get("end_city"));
             a.setTitle((String) r.get("title"));
-            a.setDate((LocalDateTime) r.get("start_date"));
+            a.setDate((Timestamp) r.get("start_date"));
             a.setApplyCount((Integer) r.get("current_people"));
             a.setStatus((String) r.get("status"));
             out.add(a);
@@ -237,7 +333,7 @@ public class LshTripService {
         private String startCity;
         private String endCity;
         private String title;
-        private LocalDateTime date;
+        private Timestamp date;
         private int applyCount;
         private String status;
     }

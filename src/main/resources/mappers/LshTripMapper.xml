@@ -43,7 +43,7 @@
             resultType="com.human.dalligo.vo.LshTripVO">
         SELECT *
         FROM trips
-        WHERE event_id = #{Id}
+        WHERE event_id = #{eventId}
     </select>
 
     <!-- City 전체 목록 -->
@@ -60,15 +60,6 @@
         FROM cities
         WHERE city_name = #{cityName}
     </select>
-
-    <!-- Trip 신청 INSERT -->
-    <insert id="insertApplication" parameterType="com.human.dalligo.vo.LshApplyVO">
-        INSERT INTO trip_applications (
-            user_id, event_id, status, apply_date
-        ) VALUES (
-            #{userId}, #{eventId}, #{status}, NOW()
-        )
-    </insert>
 
     <!-- 현재 인원 증가 -->
     <update id="increaseCurrentPeople" parameterType="int">
@@ -89,7 +80,7 @@
             a.status
         FROM trip_applications a
         JOIN trips t ON a.event_id = t.event_id
-        JOIN events e ON a.event_id = e.id
+        JOIN event e ON a.event_id = e.id
         ORDER BY a.apply_date DESC
     </select>
 
@@ -112,5 +103,66 @@
         AND event_id = #{eventId}
         LIMIT 1
     </select>
+    
+    <!-- trip_applications INSERT -->
+    <insert id="insertApplication" parameterType="com.human.dalligo.vo.LshApplyVO" >
+        INSERT INTO trip_applications
+        (user_id, event_id, apply_date, status)
+        VALUES
+        (#{userId}, #{eventId}, NOW(), #{status})
+    </insert>
+
+    <!-- ★ 특정 이벤트의 현재 신청자 수 조회 -->
+    <select id="countApplicationsByEvent" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM trip_applications
+        WHERE event_id = #{eventId}
+    </select>
+    
+     <!-- 3) 중복 신청 여부 (userId + eventId) -->
+    <select id="existsApplication" parameterType="map" resultType="int">
+        SELECT COUNT(*) 
+        FROM trip_applications
+        WHERE user_id = #{userId}
+          AND event_id = #{eventId}
+    </select>
+
+    <!-- 4) eventId로 trips 레코드 조회 (trip_date 는 DATE -> LocalDate로 매핑) -->
+    <select id="getTripByEvent" parameterType="int" resultType="com.human.dalligo.vo.LshTripVO">
+        SELECT trip_id, event_id, user_id, start_city, end_city,
+               distance, cost, current_people,
+               trip_date, trip_time, status, created_at
+        FROM trips
+        WHERE event_id = #{eventId}
+        LIMIT 1
+    </select>
+
+    <!-- 5) trips.current_people 증가 (동시성 고려 시 DB에서 atomic하게 처리) -->
+    <update id="incrementTripCurrentPeople" parameterType="int">
+        UPDATE trips
+        SET current_people = IFNULL(current_people,0) + 1
+        WHERE event_id = #{eventId}
+    </update>
+
+    <!-- 6) trips.status 업데이트 -->
+    <update id="updateTripStatus" parameterType="map">
+        UPDATE trips
+        SET status = #{status}
+        WHERE event_id = #{eventId}
+    </update>
+    
+    <select id="selectGroupedTripStatus" resultType="map">
+		SELECT
+			t.start_city AS startCity,
+			t.end_city AS endCity,
+		SUM(t.current_people) AS totalPeople,
+		MAX(e.title) AS title,
+		MAX(t.trip_date) AS tripDate,
+		MAX(t.status) AS status
+		FROM trips t
+		GROUP BY t.start_city, t.end_city
+		ORDER BY t.start_city, t.end_city;
+	</select>
+
 
 </mapper>

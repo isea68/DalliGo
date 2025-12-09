@@ -16,6 +16,7 @@ public class JSMainController {
 	    public String getMain(HttpSession session, Model model) {
 	        JSUserVO loginUser = (JSUserVO) session.getAttribute("loginUser");
 	        model.addAttribute("loginUser", loginUser);
+	        
 	        return "main";
 	    }
 	

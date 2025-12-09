@@ -23,8 +23,17 @@ public interface LshTripDAO {
     LshCityVO selectCity(String cityName);
 
     // Applications
-    int insertApplication(LshApplyVO vo);
+    void insertApplication(LshApplyVO vo);
+    int countApplicationsByEvent(int eventId);
+    int existsApplication(@Param("userId") String userId, @Param("eventId") int eventId);
     void increaseCurrentPeople(int tripId);
+    
+    // 게시판의 신청인원 합산
+    List<Map<String, Object>> selectGroupedTripStatus();
+    
+    LshTripVO getTripByEvent(@Param("eventId") int eventId);
+    int incrementTripCurrentPeople(@Param("eventId") int eventId);
+    int updateTripStatus(@Param("eventId") int eventId, @Param("status") String status);
 
     List<Map<String, Object>> selectAllApplicationsWithEvent();
     

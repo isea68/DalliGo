@@ -5,34 +5,35 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.human.dalligo.dao.GoodsDAO;
-import com.human.dalligo.vo.GoodsVO;
+import com.human.dalligo.dao.SSGoodsDAO;
+import com.human.dalligo.vo.SSGoodsVO;
+import com.human.dalligo.vo.SSOrderVO;
 
 @Service
-public class GoodsService {
+public class SSGoodsService {
 
-    private final GoodsDAO goodsDAO;
+    private final SSGoodsDAO goodsDAO;
 
-    public GoodsService(GoodsDAO goodsDAO) {
+    public SSGoodsService(SSGoodsDAO goodsDAO) {
         this.goodsDAO = goodsDAO;
     }
 
-    public List<GoodsVO> getAllGoods() {
-        List<GoodsVO> list = goodsDAO.selectAll();
+    public List<SSGoodsVO> getAllGoods() {
+        List<SSGoodsVO> list = goodsDAO.selectAll();
         if (list == null) return Collections.emptyList();
         list.removeIf(item -> item == null);
         return list;
     }
 
-    public GoodsVO getGoodsById(int goodsId) {
+    public SSGoodsVO getGoodsById(int goodsId) {
         return goodsDAO.getGoodsById(goodsId);
     }
 
-    public void addGoods(GoodsVO goodsVO) {
+    public void addGoods(SSGoodsVO goodsVO) {
         goodsDAO.insert(goodsVO);
     }
 
-    public void updateGoods(GoodsVO goodsVO) {
+    public void updateGoods(SSGoodsVO goodsVO) {
         goodsDAO.update(goodsVO);
     }
 
@@ -41,11 +42,11 @@ public class GoodsService {
     }
 
     /** 🔥 필터 상품 — null-safe 버전 */
-    public List<GoodsVO> getGoodsByFilter(String tag, String brand, Integer minPrice, Integer maxPrice) {
+    public List<SSGoodsVO> getGoodsByFilter(String tag, String brand, Integer minPrice, Integer maxPrice) {
         if (minPrice == null) minPrice = 0;
         if (maxPrice == null) maxPrice = 300000;
 
-        List<GoodsVO> list = goodsDAO.selectByFilter(brand, tag, minPrice, maxPrice);
+        List<SSGoodsVO> list = goodsDAO.selectByFilter(brand, tag, minPrice, maxPrice);
 
         if (list == null) return Collections.emptyList();
 
@@ -56,8 +57,8 @@ public class GoodsService {
     }
 
     /** 🔥 TOP 상품 — null-safe 버전 */
-    public List<GoodsVO> getTopGoods() {
-        List<GoodsVO> list = goodsDAO.selectTopGoods();
+    public List<SSGoodsVO> getTopGoods() {
+        List<SSGoodsVO> list = goodsDAO.selectTopGoods();
 
         if (list == null) return Collections.emptyList();
 
@@ -81,4 +82,6 @@ public class GoodsService {
         List<String> list = goodsDAO.selectAllTags();
         return list == null ? Collections.emptyList() : list;
     }
+ 
+
 }

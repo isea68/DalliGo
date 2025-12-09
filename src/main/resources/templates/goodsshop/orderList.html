@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>주문 목록</title>
+</head>
+<body>
+
+<h2>주문 내역</h2>
+
+<table border="1" width="50%" style="">
+    <tr>
+        <th>주문번호</th>
+		<th>구매자</th>
+        <th>상품명</th>
+        <th>수량</th>  
+        <th>주소</th>
+        <th>전화번호</th>
+        <th>주문일</th>
+    </tr>
+
+	<tr th:each="o : ${orders}">
+	    <td th:text="${o.orderId}"></td>
+		<td th:text="${o.buyer}"></td>
+	    <td th:text="${o.goodsName}"></td>
+	    <td th:text="${o.quantity}"></td>
+	    <td th:text="${o.address}"></td>
+	    <td th:text="${o.phone}"></td>
+	    <td th:text="${#dates.format(o.payDate, 'yyyy-MM-dd HH:mm')}"></td>
+	</tr>
+</table>
+
+</body>
+</html>
