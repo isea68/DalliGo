@@ -1,5 +1,7 @@
 package com.human.dalligo.vo;
 
+import java.sql.Timestamp;
+
 public class LshTripVO {
 private int tripId;
 private int eventId;
@@ -9,10 +11,10 @@ private String endCity;
 private java.math.BigDecimal distance;
 private int cost;
 private int currentPeople;
-private java.time.LocalDate tripDate;
+private Timestamp tripDate;
 private java.time.LocalTime tripTime;
 private String status;
-private java.time.LocalDateTime createdAt;
+private Timestamp createdAt;
 
 
 public int getTripId() { return tripId; }
@@ -47,8 +49,8 @@ public int getCurrentPeople() { return currentPeople; }
 public void setCurrentPeople(int currentPeople) { this.currentPeople = currentPeople; }
 
 
-public java.time.LocalDate getTripDate() { return tripDate; }
-public void setTripDate(java.time.LocalDate tripDate) { this.tripDate = tripDate; }
+public Timestamp getTripDate() { return tripDate; }
+public void setTripDate(Timestamp tripDate) { this.tripDate = tripDate; }
 
 
 public java.time.LocalTime getTripTime() { return tripTime; }
@@ -59,6 +61,6 @@ public String getStatus() { return status; }
 public void setStatus(String status) { this.status = status; }
 
 
-public java.time.LocalDateTime getCreatedAt() { return createdAt; }
-public void setCreatedAt(java.time.LocalDateTime createdAt) { this.createdAt = createdAt; }
+public Timestamp getCreatedAt() { return createdAt; }
+public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }

@@ -50,19 +50,19 @@
   <tr>
     <td><b>거리 (km)</b></td>
     <td id="distanceCell"
-        th:text="${tripDetail != null ? tripDetail.distance : '-'}">-</td>
+        th:text="${trip != null ? trip.distance : '-'}">-</td>
   </tr>
 
   <tr>
     <td><b>비용 (인당)</b></td>
     <td id="costCell"
-        th:text="${tripDetail != null ? tripDetail.cost : '-'}">-</td>
+        th:text="${trip != null ? trip.cost : '-'}">-</td>
   </tr>
 
   <tr>
     <td><b>현재 신청인원</b></td>
     <td id="currentPeople"
-        th:text="${tripDetail != null ? tripDetail.currentPeople : 0}">0</td>
+        th:text="${trip != null && trip.currentPeople != null ? trip.currentPeople : 0}">0</td>
   </tr>
 
   <tr>
@@ -73,7 +73,7 @@
   <tr>
     <td><b>상태</b></td>
     <td id="statusCell"
-        th:text="${tripDetail != null ? tripDetail.status : '-'}">-</td>
+        th:text="${trip != null ? trip.status : '-'}">-</td>
   </tr>
 </table>
 
@@ -88,11 +88,49 @@
   </div>
 </div>
 
+<script>
+	document.getElementById("applyBtn").addEventListener("click", function () {
+
+	    if (!eventId || !userId) {
+	        alert("로그인 정보 또는 이벤트 정보가 올바르지 않습니다.");
+	        return;
+	    }
+
+	    if (confirm("정말 신청하시겠습니까?")) {
+
+	        fetch("/apply", {
+	            method: "POST",
+	            headers: { "Content-Type": "application/json" },
+	            body: JSON.stringify({ event_id: eventId })
+	        })
+	        .then(res => res.json())
+	        .then(data => {
+	            alert(data.message);
+	            if (data.ok) {
+	                document.getElementById("currentPeople").textContent = data.currentPeople;
+	            }
+	        })
+	        .catch(err => {
+	            alert("신청 중 오류 발생");
+	            console.error(err);
+	        });
+
+	    }
+	});
+
+</script>
+
 <!-- ★ 여기에는 오직 JS 변수 선언만 -->
 <script th:inline="javascript">
 /*<![CDATA[*/
 	const startCity = /*[[${startCity}]]*/ '서울';
     const endCity   = /*[[${endCity}]]*/ '강릉';
+	const eventId = /*[[${event.id}]]*/ 0;
+	const userId  = /*[[${loginUser.userId}]]*/ '';
+	
+	const applyBtn = document.getElementById("applyBtn");
+	const currentPeopleEl = document.getElementById("currentPeople");
+	
 /*]]>*/
 </script>
 

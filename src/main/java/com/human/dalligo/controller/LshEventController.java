@@ -36,6 +36,7 @@ public class LshEventController {
 // 이벤트 상세 페이지
 	@GetMapping("/events/{id}")
 	public String eventDetail(@PathVariable int id, Model model) {
+
 		LshEventVO ev = eventService.getEvent(id);
 	    if (ev == null) return "error";
 	    model.addAttribute("event", ev);
@@ -43,12 +44,6 @@ public class LshEventController {
 	    List<LshTripVO> trips = tripService.getTripsByEvent(id);
 	    model.addAttribute("trips", trips);
 	    return "event/detail";
-	}
-	
-	// 신청현황 리스트보기
-	@GetMapping("applylist")
-	public String getMethodName() {
-		return "/trip/list";
 	}
 	 
 
