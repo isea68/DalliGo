@@ -24,6 +24,7 @@ import com.human.dalligo.service.LshTripService.ApplicationDTO;
 import com.human.dalligo.vo.JSUserVO;
 import com.human.dalligo.vo.LshCityVO;
 import com.human.dalligo.vo.LshEventVO;
+import com.human.dalligo.vo.LshTripSumVO;
 import com.human.dalligo.vo.LshTripVO;
 
 import lombok.RequiredArgsConstructor;
@@ -133,6 +134,31 @@ public class LshTripController {
 
 		return res;
 	}
+	
+	@PostMapping("/trip/cancel")
+	@ResponseBody
+	public Map<String, Object> cancelTrip(@RequestBody Map<String, Object> payload) {
+	    int tripId = (int) payload.get("tripId");
+	    String userId = (String) payload.get("userId");
+
+	    boolean ok = tripService.cancelApplication(tripId, userId);
+
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("ok", ok);
+	    result.put("message", ok ? "신청이 취소되었습니다." : "취소 실패 또는 이미 취소됨");
+	    return result;
+	}
+
+	
+	// 게시판 신청인원 합산
+	@GetMapping("/trip/list")
+    public String getTripList(Model model) {
+
+        List<LshTripSumVO> sumList = tripService.getTripSumByRoute();
+        model.addAttribute("sumList", sumList);
+
+        return "trip/list";
+    }
 
 
 	/** 이벤트 상세 → Trip 상세 */
