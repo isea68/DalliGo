@@ -115,10 +115,7 @@ public class JYDetailController {
 						 @RequestParam(value = "category", required = false) String category,
 						 @RequestParam(value = "search", required = false) String search,
 						 @RequestParam(value="files", required=false) List<MultipartFile> files) throws IOException {
-		
-		// 1. 파일 경로 저장
-		List<String> fileList = new ArrayList<>();
-		
+				
 		detailservice.update(postvo, files);
 		
 		// 수정 후 detail.html로 redirect, list 상태 유지

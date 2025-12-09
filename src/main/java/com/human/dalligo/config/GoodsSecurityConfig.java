@@ -23,8 +23,8 @@ public class GoodsSecurityConfig {
 	                .anyRequest().permitAll()
 	        )
 	        .formLogin(form -> form
-	                .loginPage("/goodsadminlogin")
-	                .loginProcessingUrl("/goodsadminlogin")
+	                .loginPage("/")
+	                .loginProcessingUrl("/main")
 	                .permitAll()
 	        )
 	        .logout(logout -> logout.permitAll());
