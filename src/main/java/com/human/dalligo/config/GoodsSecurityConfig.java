@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class GoodsSecurityConfig {
 
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
@@ -28,6 +29,7 @@ public class GoodsSecurityConfig {
 	                .permitAll()
 	        )
 	        .logout(logout -> logout.permitAll());
+
 
 	    return http.build();
 	}

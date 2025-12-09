@@ -13,7 +13,7 @@ public class RRcourseDAO {
 	
 	@Autowired
 	SqlSession sqlsession;
-	private static final String Mapper ="com.human.dalligo.dao.RRcourseDAO";
+	private static final String Mapper ="com.human.dalligo.dao.RRcourseMapper";
 	
 	public void insert(RRcourseVO coursevo) {
 		sqlsession.insert(Mapper+".insertcourse", coursevo);
@@ -28,6 +28,15 @@ public class RRcourseDAO {
 		RRcourseVO course = sqlsession.selectOne(Mapper+".selectById",id);
 		return course;
 	}
+
+	public void delete(Integer id) {;
+		sqlsession.delete(Mapper+".deleteCourse", id);
+		
+	}
+	public int deleteint(Integer id) {;
+	return sqlsession.delete(Mapper+".deleteCourse", id);
+	
+}
 	
 	
 }
