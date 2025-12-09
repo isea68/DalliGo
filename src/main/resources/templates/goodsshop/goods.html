@@ -226,29 +226,14 @@
 	<header>
 		<div th:replace="fragment/header :: headerDiv"></div>
 		<div id="loginArea">
-
-		    <!-- 🔹 로그인 안 되어 있을 때 -->
-		    <div th:if="${session.loginUser == null}">
-		        <input type="text" id="userId" placeholder="아이디 입력">
-		        <input type="password" id="userPw" placeholder="비밀번호 입력">
-		        <button onclick="login()">로그인</button>
-		    </div>
-
-		    <!-- 🔹 로그인 되어 있을 때 -->
-		    <div th:if="${session.loginUser != null}">
-		        <b th:text="${session.loginUser.userId}"></b> 님 어서오세요!
-
+		    
+		    <div th:if="${session.loginUser != null}">		        
 		        <!-- 관리자 -->
 				<button th:if="${session.loginUser != null and session.loginUser.isAdmin == 1}"
 				        onclick="location.href='/store/admin'">
 				    관리자 페이지
-				</button>
-				<button th:if="${session.loginUser != null}"
-				        onclick="location.href='/storelogout'">
-				    로그아웃
-				</button>
+				</button>				
 		    </div>
-
 		</div>
 	</header>
 	<div>
