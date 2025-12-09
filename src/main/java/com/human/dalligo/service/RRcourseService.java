@@ -33,7 +33,7 @@ public class RRcourseService {
 		
 	}
 	
-	
+	//S3 업로드
 	
 	public String s3upload(MultipartFile prphotoFile) throws IOException{
 		
@@ -56,7 +56,7 @@ public class RRcourseService {
 	}
 	
 	
-	
+	//전체조회
 	            
 	public List<RRcourseVO> selectList() {
 		List<RRcourseVO> courses=coursedao.selectAll();	
@@ -66,7 +66,96 @@ public class RRcourseService {
 	
 	public RRcourseVO selectById(Integer id) {
 		RRcourseVO course = coursedao.selectById(id);
+		System.out.println("DB token="+course.getDeleteToken());
+
 		return course;
 	}
+	
+	// 삭제기능 (S3 이미지삭제+ DB삭제 +소유자 확인)
+	
+	
+//	public void delete (Integer courseId, Integer trainerPk) {
+//		
+//		//DB 조회
+//		RRcourseVO cvo = coursedao.selectById(courseId);
+//		if(cvo ==null) {
+//			throw new RuntimeException("강좌가 존재하지 않습니다.");
+//		}
+//		
+//		// 소유자 확인
+//		if(!cvo.getTrainerId().equals(trainerPk)) {
+//			
+//			System.out.println("cvo_TrID:"+cvo.getTrainerId());
+//			System.out.println("trainerPK:"+trainerPk);
+//			throw new RuntimeException("권한이 없습니다.");
+//		}
+//					
+//		// S3 이미지 삭제
+//		String imageUrl =cvo.getPrphotoNew();
+//		if(imageUrl!=null &&imageUrl.contains(bucketName)) {
+//			
+//			//url에서  key(파일명) 추출
+//			String key = imageUrl.substring(imageUrl.lastIndexOf("/")+1);			
+//			amazonS3.deleteObject(bucketName, key);			
+//		}
+//		
+//		coursedao.delete(courseId);
+//				
+//	}
+
+	//강습과정 삭제 서비스  : 강좌번호와 토큰
+	public void deleteByToken(Integer courseId, String token) {
+		System.out.println("=== deleteByToken START ===");
+		
+		//디버깅
+		System.out.println("입력받은 id = " + courseId);
+	    System.out.println("입력받은 token = " + token);
+		
+		//강좌 존재유무확인
+		RRcourseVO course = coursedao.selectById(courseId);
+		System.out.println("삭제할 강좌번호:"+ course);	
+		
+		if (course==null) {
+			System.out.println("강좌가 존재하지 않음.");
+			throw new RuntimeException("강좌가 존재하지 않습니다.");
+		}	
+
+
+		//token 확인
+		if(!course.getDeleteToken().equals(token)) {
+			System.out.println("Token mismatch!");
+			throw new RuntimeException("권한이 없습니다.");
+		}
+		
+	
+		// S3 이미지 삭제
+		String imageUrl =course.getPrphotoNew();
+		if(imageUrl!=null &&imageUrl.contains(bucketName)) {
+			
+			System.out.println("prPhotoNew_url:"+imageUrl);
+			//url 에서  key(파일명) 추출
+		String key = imageUrl.substring(imageUrl.lastIndexOf("/")+1);	
+		System.out.println("url추출결과:"+key);	
+		try {
+		amazonS3.deleteObject(bucketName, key);
+		System.out.println("S3 이미지 삭제성공");
+		}catch(Exception e) {
+			 System.out.println("S3 삭제 에러:"+e.getMessage());
+			    e.printStackTrace();
+		}
+			
+		// 삭제 행이 나오는지 체크
+		int rr = coursedao.deleteint(courseId);
+		System.out.println("course del result:"+rr);
+		
+		if(rr==0) {
+			System.out.println("DB 삭제 실패");
+			throw new RuntimeException("삭제실패");
+		}
+		System.out.println("삭제완료");
+				
+	}
+	
+	}	
 
 }

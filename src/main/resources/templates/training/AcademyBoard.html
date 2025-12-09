@@ -9,12 +9,18 @@
 </head>
 
 <body>
+	<div th:replace="fragment/header :: headerDiv"></div>	
+	
+	<div>
+	       <p th:if="${error}" th:text="${error}" style="color:red; font-weight:bold;"></p>
+	       <p th:if="${msg}" th:text="${msg}" style="color:blue; font-weight:bold;"></p>
+	  </div>
 
    <h2>프로그램 소개</h2>
    <div class="mbtn">
-      <button type="submit"  onclick="location.href='/'">Home</button>
-      <button type="button"  id="rloginBtn">로그인 </button>
-      <button type="button"  onclick="location.href='/trainerRegister'">회원가입</button>
+ 
+      <button type="button"  id="rloginBtn"> 강좌등록 </button>
+      <button type="button"  onclick="location.href='/trainerRegister'">강사회원가입</button>
    </div>
 
    <div class="display-table">
@@ -54,7 +60,7 @@
 <div id="rloginModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h3>로그인</h3>
+        <h3>강사로그인</h3>
 
         <form action="/rlogin" method="post" class="login-form">
             <input type="text" id="trainerId" name="trainerId" placeholder="ID" required>

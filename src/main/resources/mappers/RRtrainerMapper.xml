@@ -40,6 +40,8 @@
 		where trainer_id = #{trainerId}
 	
 	</select>
+	
+	
 
 
 </mapper>

@@ -40,7 +40,7 @@
 
 
 	  .text_pr {
-	      padding-left: 20px;
+	      padding-left: 100px;
 	  }
 
 	  .detail_in {
@@ -52,7 +52,11 @@
 
 
 	  .up_right{
-	      flex-wrap: wrap;
+	      flex:1;
+		  padding-left: 150px;
+		  flex-wrap: wrap;
+		  font-size: larger;
+		  
 	  }
 
 	/*수강내역 모달*/
@@ -113,6 +117,7 @@
 
 
 <body>
+	<div th:replace="fragment/header :: headerDiv"></div>
 
 	<div class="card_detail" th:attr="data-id=${cId.id}">
 
@@ -136,7 +141,7 @@
 					<!--모달내용-->
 					<div class="modal-content">
 						<span class="close">&times;</span> <!--X 버튼으로 닫기-->
-				<!--	<h2 th:text="${user.name}"> 님 신청은 다음과 같습니다. </h2>-->		
+					<!--<h2 th:text="${user.name}"> 님 신청은 다음과 같습니다. </h2>-->		
 						<h2 > 유느님 신청은 다음과 같습니다. </h2>							
 						<div class="enroll-content">									
 							<p>신청과정 : <span th:text ="${cId.title}"></span> </p>
@@ -157,17 +162,19 @@
 				<div class="img_box">
 					<img th:src="${tvo.photoNew}">
 				</div>
+				
 				<div class="text_pr">
-
 					<h3 th:text="${tvo.name}"> </h3>
 
 					<ul>
 						<li th:each="item : ${historyList}" th:text="${item}">
 						</li>
 					</ul>
-
-
-
+					
+					<a th:href="@{/trainer/ad/del/{id}(id=${cId.id}, token=${cId.deleteToken})}">
+								    <button> 과정삭제</button>					
+					</a>
+					
 				</div>
 
 			</div>

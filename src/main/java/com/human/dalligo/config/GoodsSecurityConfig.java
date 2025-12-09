@@ -24,8 +24,8 @@ public class GoodsSecurityConfig {
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
-                .loginPage("/goodsadminlogin")       // 로그인 페이지 URL
-                .loginProcessingUrl("/goodsadminlogin") // POST 요청 처리 URL, 기본값 /goodsadminlogin
+                .loginPage("/")       // 로그인 페이지 URL
+                .loginProcessingUrl("/main") // POST 요청 처리 URL, 기본값 /goodsadminlogin
                 .permitAll()
             )
             .logout(logout -> logout.permitAll());
