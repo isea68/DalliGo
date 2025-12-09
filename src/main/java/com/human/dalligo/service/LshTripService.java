@@ -16,6 +16,7 @@ import com.human.dalligo.dao.LshTripDAO;
 import com.human.dalligo.vo.LshApplyVO;
 import com.human.dalligo.vo.LshCityVO;
 import com.human.dalligo.vo.LshEventVO;
+import com.human.dalligo.vo.LshTripSumVO;
 import com.human.dalligo.vo.LshTripVO;
 
 import lombok.Data;
@@ -132,6 +133,16 @@ public class LshTripService {
 
         return 1;
     }
+    
+    // 게시판 신청인원 합산
+    public List<LshTripSumVO> getTripSumByRoute() {
+    	return tripDAO.selectGroupedTripStatus();
+	}
+    
+    public boolean cancelApplication(int tripId, String userId) {
+    	int rows = tripDAO.deleteTripApplication(tripId, userId);
+        return rows > 0;
+	}
 
     /** 상태 계산 */
     public String computeStatus(LshTripVO trip, LshEventVO event) {
@@ -337,5 +348,6 @@ public class LshTripService {
         private int applyCount;
         private String status;
     }
+
 }
 

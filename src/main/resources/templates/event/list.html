@@ -3,39 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <title>대회 목록</title>
+
+  <!-- header 스타일 적용 -->
+  <link rel="stylesheet" th:href="@{/css/header.css}" />
+
+  <!-- detail.html과 동일한 페이지용 CSS -->
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          margin: 0;
+          padding: 0;
+          text-align: center;
+      }
+
+      /* 페이지 전체 콘텐츠 영역 */
+      .page-container {
+          max-width: 900px;
+          margin: 30px auto;
+          padding: 0 20px;
+      }
+
+      table {
+          margin: 20px auto;
+          border-collapse: collapse;
+          width: 80%;
+      }
+
+      th, td {
+          padding: 10px;
+          border: 1px solid #aaa;
+          text-align: center;
+      }
+
+      h1 {
+          margin-top: 30px;
+      }
+  </style>
 </head>
+
 <body>
-	<header>
-		<div th:replace="fragment/header :: headerDiv"></div>
-	</header>
-  <h1>대회 목록</h1>
-  <table border="1">
+
+<header th:replace="fragment/header :: headerDiv"></header>
+
+<div class="page-container">
+
+<!-- 제목 + 버튼 -->
+  <div style="width:80%; margin:0 auto; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h1 style="margin:0;">대회 목록</h1>
+
+      <a th:href="@{/trip/list}" 
+         style="text-decoration:none; color:#007bff; font-weight:bold; font-size:20px;">
+          신청현황 보기
+      </a>
+	  </div>
+	  
+  <table>
     <thead>
       <tr>
-        <th>ID</th><th>Title</th><th>Location</th><th>Start Date</th><th>Org</th><th>Total</th><th>Detail</th>
+        <th>No</th>
+        <th>대회명</th>
+        <th>대회장소</th>
+        <th>일정</th>
+        <th>대회기관</th>
       </tr>
     </thead>
+
     <tbody>
-      <tr th:each="e : ${events}">
-        <td th:text="${e.id}">1</td>
+      <tr th:each="e, iterStat : ${events}">
+        <td th:text="${iterStat.index + 1}"></td>
 
         <td>
-          <a th:href="@{/events/{eventId}/trips(eventId=${e.id})}" th:text="${e.title}">대회명</a>
+          <a th:href="@{/events/{eventId}/trips(eventId=${e.id})}" 
+		  style="text-decoration:none; color:#007bff; font-weight:bold;"
+		  onmouseover="this.style.color='#800080';"
+		  onmouseout="this.style.color='#007bff';"
+		  th:text="${e.title}"></a>
         </td>
 
-        <td th:text="${e.location}">서울</td>
+        <td th:text="${e.location}"></td>
 
-        <!-- 여기만 수정됨 -->
+        <!-- 날짜 포맷 -->
         <td th:text="${e.startDate.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm'))}">
-          2025-12-01
         </td>
 
-        <td th:text="${e.org}">Org</td>
-        <td th:text="${e.total}">100</td>
-
-        <td><a th:href="@{/events/{id}(id=${e.id})}">detail</a></td>
+        <td th:text="${e.org}"></td>
       </tr>
     </tbody>
   </table>
+
+</div>
+
 </body>
 </html>
