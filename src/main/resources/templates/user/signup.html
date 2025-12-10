@@ -11,6 +11,7 @@
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			background-color: #f4f7f9;
 			color: #333;
+			padding: 50px;
 		}
 
 		/* 헤더 */
@@ -64,6 +65,13 @@
 			border-radius: 6px;
 			font-size: 1em;
 		}
+
+		.signup-container input[type="checkbox"] {
+			width: auto;
+			margin: 0;
+		}
+
+
 
 		.signup-container button {
 			width: 100%;
@@ -128,6 +136,38 @@
 			font-size: 0.9em;
 			margin-top: 2px;
 		}
+
+		.input-group .show-btn {
+			width: 70px;
+			padding: 8px;
+		}
+
+		.show-btn {
+			margin-top: 0px;
+			width: 60px;
+			padding: 8px;
+			background: #00acc1;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		.show-btn:hover {
+			background: #00838f;
+		}
+
+		.terms-box {
+			background: #fafafa;
+			border: 1px solid #ccc;
+			padding: 10px;
+			margin-top: 5px;
+			border-radius: 5px;
+			max-height: 120px;
+			overflow-y: auto;
+			font-size: 0.9em;
+			line-height: 1.4;
+		}
 	</style>
 </head>
 
@@ -146,9 +186,17 @@
 			</span>
 			<!-- 비밀번호 -->
 			<label>비밀번호</label>
-			<input type="password" id="password" name="password" required placeholder="영문+숫자 조합">
+			<div class="input-group">
+				<input type="password" id="password" name="password" required placeholder="영문+숫자 조합,6자리 이상">
+				<button type="button" class="show-btn" onclick="togglePw('password')">보기</button>
+			</div>
+
 			<label>비밀번호 확인</label>
-			<input type="password" id="passwordConfirm" name="passwordConfirm" required placeholder="영문+숫자 조합">
+			<div class="input-group">
+				<input type="password" id="passwordConfirm" name="passwordConfirm" required
+					placeholder="영문+숫자 조합, 6자리 이상">
+				<button type="button" class="show-btn" onclick="togglePw('passwordConfirm')">보기</button>
+			</div>
 			<small id="pwCheckMsg" class="result-text"> </small>
 			<!-- 이름 -->
 			<label>이름</label>
@@ -172,6 +220,124 @@
 			<!-- 핸드폰 번호 -->
 			<label>핸드폰 번호</label>
 			<input type="text" name="phone" id="phone" maxlength="13" value="010-" required>
+
+			<div class="terms-container" style="margin-top: 25px;">
+				<h3 style="margin-bottom: 10px; color:#00acc1;">약관 동의</h3>
+
+				<!-- 전체 동의 -->
+				<div>
+					<label for="agreeAll"><b>전체 동의합니다</b></label>
+					<input type="checkbox" id="agreeAll" onclick="toggleAllAgree()">
+				</div>
+
+				<hr>
+
+				<!-- 필수 이용약관 -->
+				<div>
+					<label for="terms1">[필수] 서비스 이용약관 동의</label>
+					<input type="checkbox" class="agree-check" id="terms1">
+
+					<div class="terms-box">
+						<b>제1조 목적</b><br>
+						   본 약관은 DalliGO(이하 "회사")가 제공하는 서비스 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임 사항을 규정함을 목적으로 합니다.<br><br>
+
+						   <b>제2조 정의</b><br>
+						   1. "서비스"란 회사가 제공하는 모든 온라인 서비스 및 부가 서비스를 의미합니다.<br>
+						   2. "이용자"란 본 약관에 따라 회사가 제공하는 서비스를 이용하는 회원을 의미합니다.<br>
+						   3. "회원"이란 회사에 개인정보를 제공하고 회원가입을 완료한 자를 의미합니다.<br><br>
+
+						   <b>제3조 약관의 효력 및 변경</b><br>
+						   1. 본 약관은 이용자가 회원가입 시 동의함으로써 효력이 발생합니다.<br>
+						   2. 회사는 관련 법령을 위반하지 않는 범위에서 약관을 변경할 수 있으며, 변경된 약관은 적용일자 7일 전 공지합니다.<br>
+						   3. 이용자는 변경 약관에 동의하지 않을 경우 서비스 이용을 중단하고 탈퇴할 수 있습니다.<br><br>
+
+						   <b>제4조 서비스 제공</b><br>
+						   1. 회사는 다음 서비스를 제공합니다.<br>
+						      - 플랫폼 기반 정보 제공 서비스<br>
+						      - 회원 커뮤니티 서비스<br>
+						      - 기타 회사가 정하는 서비스<br>
+						   2. 회사는 운영상 필요한 경우 서비스의 일부를 변경하거나 중단할 수 있습니다.<br><br>
+
+						   <b>제5조 서비스 이용 제한</b><br>
+						   회사는 다음 사유가 발생한 경우 서비스 이용을 제한하거나 중단할 수 있습니다.<br>
+						   1. 이용자가 법령 또는 약관을 위반한 경우<br>
+						   2. 시스템 점검, 장애 등 불가피한 경우<br>
+						   3. 기타 회사가 서비스 제공이 어렵다고 판단하는 경우<br><br>
+
+						   <b>제6조 이용자의 의무</b><br>
+						   이용자는 다음 행위를 해서는 안 됩니다.<br>
+						   1. 타인의 개인정보 도용<br>
+						   2. 서비스 운영을 방해하는 행위<br>
+						   3. 회사 또는 제3자의 권리를 침해하는 행위<br>
+						   4. 법령에 위반되는 모든 행위<br><br>
+
+						   <b>제7조 회사의 의무</b><br>
+						   1. 회사는 안정적인 서비스 제공을 위해 노력합니다.<br>
+						   2. 회사는 이용자의 개인정보를 관련 법령에 따라 안전하게 보호합니다.<br><br>
+
+						   <b>제8조 계약 해지</b><br>
+						   이용자는 언제든지 회원 탈퇴를 요청할 수 있으며 회사는 관련 절차에 따라 즉시 처리합니다.<br><br>
+
+						   <b>제9조 책임 제한</b><br>
+						   회사는 천재지변, 시스템 장애 등 불가항력 사유로 인한 손해에 대해 책임을 지지 않습니다.<br><br>
+
+						   <b>제10조 준거법</b><br>
+						   본 약관은 대한민국 법령을 따릅니다.
+					</div>
+				</div>
+
+				<!-- 필수 개인정보 처리방침 -->
+				<div style="margin-top: 12px;">
+					<label for="terms2">[필수] 개인정보 처리방침 동의</label>
+					<input type="checkbox" class="agree-check" id="terms2">
+
+					<div class="terms-box">
+						<b>1. 수집하는 개인정보 항목</b><br>
+						   회사는 서비스 제공을 위해 다음의 개인정보를 수집합니다.<br>
+						   - 필수: 아이디, 비밀번호, 이름, 닉네임, 주소, 연락처<br>
+						   - 자동 수집 항목: 접속 IP, 쿠키, 방문 기록, 기기 정보<br><br>
+
+						   <b>2. 개인정보의 수집 및 이용 목적</b><br>
+						   - 회원가입 및 본인 확인<br>
+						   - 서비스 제공 및 운영 관리<br>
+						   - 문의사항 처리 및 공지사항 안내<br>
+						   - 서비스 개선을 위한 통계 분석<br><br>
+
+						   <b>3. 개인정보의 보유 및 이용 기간</b><br>
+						   - 회원 탈퇴 시 즉시 삭제<br>
+						   - 단, 관련 법령에 의해 보관이 필요한 경우 해당 기간 동안 보관<br>
+						     (예: 전자상거래법에 따른 기록 보존 5년 등)<br><br>
+
+						   <b>4. 동의를 거부할 권리 및 불이익</b><br>
+						   이용자는 개인정보 제공에 대해 동의를 거부할 권리가 있습니다.<br>
+						   다만, 필수 항목에 대한 동의를 거부할 경우 서비스 이용이 제한될 수 있습니다.
+					</div>
+				</div>
+
+				<!-- 선택 마케팅 수신 동의 -->
+				<div style="margin-top: 12px;">
+					<label for="terms3">[선택] 마케팅 정보 수신 동의</label>
+					<input type="checkbox" class="agree-check" id="terms3">
+
+					<div class="terms-box">
+						<b>1. 수집 항목</b><br>
+						    - 이메일, 전화번호, 앱 푸시 정보<br><br>
+
+						    <b>2. 이용 목적</b><br>
+						    - 이벤트, 할인 혜택, 프로모션 관련 정보 제공<br>
+						    - 신규 서비스 및 업데이트 안내<br><br>
+
+						    <b>3. 보유 기간</b><br>
+						    - 회원 탈퇴 또는 동의 철회 시까지 보관<br><br>
+
+						    <b>4. 동의를 거부할 권리</b><br>
+						    이용자는 마케팅 정보 수신에 동의하지 않을 수 있으며,<br>
+						    동의를 거부하더라도 서비스 이용에는 제한이 없습니다.
+					</div>
+				</div>
+			</div>
+
+
 			<!-- 회원가입 버튼 -->
 			<button type="submit">회원가입</button>
 		</form>
@@ -179,6 +345,7 @@
 			<a th:href="@{/}">로그인</a>
 		</div>
 	</div>
+
 	<!-- Daum 주소 검색 API -->
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script>
@@ -224,16 +391,16 @@
 		let isComposing = false;
 
 		nameInput.addEventListener("compositionstart", () => {
-		    isComposing = true;
+			isComposing = true;
 		});
 		nameInput.addEventListener("compositionend", (e) => {
-		    isComposing = false;
-		    e.target.value = e.target.value.replace(/[^가-힣]/g, ""); // 조합 끝난 후 필터링
+			isComposing = false;
+			e.target.value = e.target.value.replace(/[^가-힣]/g, ""); // 조합 끝난 후 필터링
 		});
 		nameInput.addEventListener("input", function () {
-		    if (!isComposing) {
-		        this.value = this.value.replace(/[^가-힣]/g, "");
-		    }
+			if (!isComposing) {
+				this.value = this.value.replace(/[^가-힣]/g, "");
+			}
 		});
 		// 비밀번호: 영문+숫자만 허용, 최소 6자리 체크
 		function validatePasswordInput() {
@@ -260,6 +427,19 @@
 			} else {
 				pwMsg.style.color = "red";
 				pwMsg.textContent = "비밀번호가 일치하지 않습니다 ❌";
+			}
+		}
+
+		function togglePw(id) {
+			const input = document.getElementById(id);
+			const btn = input.nextElementSibling; // 버튼 가져오기
+
+			if (input.type === "password") {
+				input.type = "text";
+				btn.textContent = "숨기기";
+			} else {
+				input.type = "password";
+				btn.textContent = "보기";
 			}
 		}
 		// ================== Daum 주소 검색 ==================
@@ -307,10 +487,40 @@
 				pwConfirmInput.focus();
 				return;
 			}
+			if (!document.getElementById("terms1").checked ||
+				!document.getElementById("terms2").checked) {
+				alert("필수 약관에 동의해야 회원가입이 가능합니다.");
+				return;
+			}
 
 			if (confirm("회원가입을 진행하시겠습니까?")) {
 				form.submit();
 			}
+		});
+
+		/* ===== 모달 열기/닫기 ===== */
+		function openModal(id) {
+			document.getElementById(id).style.display = "flex";
+		}
+		function closeModal(id) {
+			document.getElementById(id).style.display = "none";
+		}
+
+		/* ===== 전체 동의 ===== */
+		function toggleAllAgree() {
+			const allChecked = document.getElementById("agreeAll").checked;
+			document.querySelectorAll(".agree-check").forEach(chk => {
+				chk.checked = allChecked;
+			});
+		}
+
+		/* ===== 개별 체크 → 전체동의 자동 업데이트 ===== */
+		document.querySelectorAll(".agree-check").forEach(chk => {
+			chk.addEventListener("change", () => {
+				const checks = document.querySelectorAll(".agree-check");
+				const allChecked = [...checks].every(c => c.checked);
+				document.getElementById("agreeAll").checked = allChecked;
+			});
 		});
 	</script>
 </body>

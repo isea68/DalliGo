@@ -10,6 +10,7 @@
 			font-family: 'Segoe UI', sans-serif;
 			background: #f4f7f9;
 			color: #333;
+			padding: 50px;
 		}
 
 		.container {
@@ -126,6 +127,26 @@
 			font-size: 0.9em;
 			margin-top: 2px;
 		}
+
+		.input-group .show-btn {
+			width: 70px;
+			padding: 8px;
+		}
+
+		.show-btn {
+			margin-top: 0px;
+			width: 60px;
+			padding: 8px;
+			background: #00acc1;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+		}
+
+		.show-btn:hover {
+			background: #00838f;
+		}
 	</style>
 </head>
 
@@ -140,14 +161,17 @@
 			<input type="text" name="userId" th:value="${user.userId}" readonly>
 
 			<label>비밀번호</label>
-			<input type="password" name="password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$"
-				placeholder="영문+숫자 6자 이상">
-
+			<div class="input-group">
+				<input type="password" id="password" name="password" th:value="${user.password}" required placeholder="영문+숫자 조합,6자리 이상">
+				<button type="button" class="show-btn" onclick="togglePw('password')">보기</button>
+			</div>
 
 			<label>비밀번호 확인</label>
-			<input type="password" name="passwordConfirm" required placeholder="비밀번호 재입력">
-			<span id="pwCheckMsg" class="result-text"></span>
-
+			<div class="input-group">
+				<input type="password" id="passwordConfirm" th:value="${user.password}" name="passwordConfirm" required
+					placeholder="영문+숫자 조합, 6자리 이상">
+				<button type="button" class="show-btn" onclick="togglePw('passwordConfirm')">보기</button>
+			</div>
 			<label>이름</label>
 			<input type="text" name="name" th:value="${user.name}" required pattern="^[가-힣A-Za-z]+$"
 				placeholder="한글 또는 영문 입력">
@@ -169,9 +193,8 @@
 			<input type="text" name="detailAddress" placeholder="상세 주소 입력">
 
 			<label>핸드폰 번호</label>
-			<input type="text" name="phone" id="phone" maxlength="13" value="010-" required
-			th:value="${user.phone}">
-		
+			<input type="text" name="phone" id="phone" maxlength="13" value="010-" required th:value="${user.phone}">
+
 			<button type="submit" class="btn">수정 완료</button>
 			<a th:href="@{/mypage}" class="back-btn">취소</a>
 			<button type="button" class="delete-btn" onclick="deleteUser()">회원 탈퇴</button>
@@ -190,6 +213,18 @@
 			if (!pw.value || !pwConfirm.value) {msg.textContent = ""; return;}
 			if (pw.value === pwConfirm.value) {msg.style.color = "green"; msg.textContent = "비밀번호 일치 ✔";}
 			else {msg.style.color = "red"; msg.textContent = "비밀번호 불일치 ❌";}
+		}
+		function togglePw(id) {
+			const input = document.getElementById(id);
+			const btn = input.nextElementSibling; // 버튼 가져오기
+
+			if (input.type === "password") {
+				input.type = "text";
+				btn.textContent = "숨기기";
+			} else {
+				input.type = "password";
+				btn.textContent = "보기";
+			}
 		}
 		const phone = document.getElementById("phone");
 		phone.addEventListener("input", () => {
