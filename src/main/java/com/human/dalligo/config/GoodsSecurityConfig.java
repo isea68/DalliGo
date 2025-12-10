@@ -14,7 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class GoodsSecurityConfig {
 
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
@@ -24,12 +23,17 @@ public class GoodsSecurityConfig {
 	                .anyRequest().permitAll()
 	        )
 	        .formLogin(form -> form
-	                .loginPage("/")
-	                .loginProcessingUrl("/main")
+	                .loginPage("/goodsadminlogin")
+	                .loginProcessingUrl("/goodsadminlogin")
 	                .permitAll()
 	        )
-	        .logout(logout -> logout.permitAll());
-
+	        .logout(logout -> logout
+	                .logoutUrl("/logout")
+	                .logoutSuccessUrl("/")   // 🔥 로그아웃 후 메인으로 이동
+	                .invalidateHttpSession(true)
+	                .deleteCookies("JSESSIONID")
+	                .permitAll()
+	            );
 
 	    return http.build();
 	}
