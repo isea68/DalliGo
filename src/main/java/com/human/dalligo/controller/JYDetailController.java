@@ -52,6 +52,7 @@ public class JYDetailController {
 		JYDetailVO detail = detailservice.detailById(postId);
 		List<JYCommentVO> commentList = detailservice.getCommentsById(postId);
 		
+		System.out.println(detail.toString());
 		model.addAttribute("detail", detail);
 		model.addAttribute("commentList", commentList);
 		
@@ -103,7 +104,7 @@ public class JYDetailController {
 	// 수정할 단일 게시글 조회
 	@GetMapping("/update/{id}")
 	public String updatePost(@PathVariable("id") int id, Model model) {
-		JYPostVO detailvo = detailservice.getDetailById(id);
+		JYPostVO detailvo = detailservice.getDetailByPostId(id);
 		
 		model.addAttribute("detailvo", detailvo);
 		return "/community/detailMod";

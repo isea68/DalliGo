@@ -8,28 +8,24 @@
 </head>
 
 <style>
-	#header {
-		border: 1px solid black;
-		width: 80%;
-		height: 500px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		font-size: 100px;
+	body {
+		font-family: 'Segoe UI', Tahoma;
+		margin: 0;
+		background-color: #f4f7f9;
+		padding: 100px;
 	}
 
 	#mainboard {
-		border: 1px solid black;
 		width: 100%;
 		height: 100px;
-		border-radius: 10px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		font-size: 50px;
 		font-weight: bold;
+		color: black;
 		margin-top: 20px;
-		margin-bottom: 20px;
+		margin-bottom: 50px;
 	}
 
 	#nav-box nav {
@@ -45,15 +41,16 @@
 		align-items: center;
 		padding: 5px 10px;
 		border: none;
-		font-size: 22px;
+		font-size: 20px;
 		font-weight: 500;
 		text-decoration: none;
-		color: white;
+		color: black;
 		height: 50px;
 		margin-bottom: 20px;
 		border-radius: 15px;
-		background-color: #00acc1;
+		background-color: rgb(149, 202, 255);
 		transition: 0.2s;
+		white-space: nowrap; /* 줄바꿈 방지 */
 	}
 
 	.nav-item a:hover {
@@ -63,10 +60,12 @@
 
 	#search-container {
 		display: flex;
+		justify-content: center;
 		align-items: center;
 		gap: 5px;
-		width: 100%;
+		max-width: 900px;
 		height: 50px;
+		margin: 0 auto;
 	}
 
 	#search-box {
@@ -74,16 +73,18 @@
 	}
 
 	.input_search {
-		width: 1100px;
+		width: 600px;
 		height: 40px;
 		font-size: 20px;
+		padding-left: 10px;
+		border-radius: 10px;
 	}
 
 	#search-button {
 		height: 45px;
 		border: none;
-		border-radius: 10px;
-		background-color: #00acc1;
+		border-radius: 15px;
+		background-color: rgb(184, 191, 254);
 	}
 
 	#search-button:hover {
@@ -101,15 +102,15 @@
 	.upload-button {
 		display: inline-block;
 		margin: 5px;
-		width: 150px;
-		height: 150px;
+		width: 130px;
+		height: 130px;
 		border: none;
 		border-radius: 50%;
-		background-color: #00acc1;
-		font-size: 37px;
+		background-color: rgb(149, 202, 255);
+		font-size: 30px;
 		font-weight: 700;
-		color: white;
-		line-height: 150px;
+		color: black;
+		line-height: 130px;
 		text-align: center;
 		text-decoration: none;
 		cursor: pointer;
@@ -118,25 +119,35 @@
 	.upload-button:hover {
 		transform: scale(1.05);
 	}
-	
-	.PostDetailPath{
+
+	.PostDetailPath {
 		text-decoration: none;
 		color: inherit;
 	}
 
+	.list-container{
+		display: flex;
+		justify-content: center;
+	}
+
 	.list-box {
-		margin-top: 5%;
-		width: 100%;
+		margin: 5% auto 0 auto;
+		width: 60%;
 		height: 300px;
-		border: 1px solid;
-		border-radius: 10px;
+		border-radius: 12px;
 		display: flex;
 		flex-direction: column;
+		background-color: white;
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+		padding: 30px;
 	}
 
 	.list-box:hover {
-		background-color: #00abc10e;
+		background-color: #24b0c227;
 		cursor: pointer;
+		box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    	transform: translateY(-3px);
+    	transition: 0.3s;
 	}
 
 	.list-header {
@@ -145,26 +156,20 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin: 10px;
+		margin-bottom: 30px;
 	}
 
 	.list-username {
-		margin-left: 10px;
-		font-size: 30px;
+		font-size: 20px;
 		font-weight: 700;
-	}
-
-	.list-date {
-		margin-right: 20px;
+		margin-bottom: 30px;
 	}
 
 	.list-title {
 		width: 99%;
 		height: 500px;
-		padding: 20px;
-		padding-left: 20px;
 		border-radius: 10px;
-		font-size: 40px;
+		font-size: 30px;
 	}
 
 	.button-detail {
@@ -191,7 +196,6 @@
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
-		margin: 10px;
 	}
 
 	.likes {
@@ -270,19 +274,21 @@
 
 			<div th:each="item : ${list}" class="list-item">
 				<a class="PostDetailPath"
-				   th:href="@{/community/detail/{id}(id=${item.id}, category=${category}, search=${search})}">
+					th:href="@{/community/detail/{id}(id=${item.id}, category=${category}, search=${search})}">
 					<div class="list-box">
 						<div class="list-header">
-							<div class="list-username" th:text="'러너: '+ ${item.nickName} + ' 님'">러너: 오늘도달려 님</div>
-							<div class="list-date" th:text="${#temporals.format(item.inDate, 'yyyy-MM-dd')}">2025.11.18
-							</div>
+						<div class="list-category" th:text="'카테고리: ' + ${item.category}">카테고리</div>
+						<div class="list-date" th:text="${#temporals.format(item.inDate, 'yyyy-MM-dd')}">2025.11.18</div>
 						</div>
+							<div class="list-username" th:text="'러너: '+ ${item.nickName} + ' 님'">러너: 오늘도달려 님</div>
 
 						<div class="list-title" th:text="${item.title}">오늘 10km 완주했어요!</div>
 
 						<div class="reaction">
-							<div class="likes" th:text="${item.countLikes > 0} ? '좋아요 ' + ${item.countLikes} : '좋아요 0'">🤍 좋아요</div>
-							<div class="comment" th:text="${item.countComments > 0} ? '댓글 ' + ${item.countComments} : '댓글 0'">
+							<div class="likes" th:text="${item.countLikes > 0} ? '좋아요 ' + ${item.countLikes} : '좋아요 0'">
+								🤍 좋아요</div>
+							<div class="comment"
+								th:text="${item.countComments > 0} ? '댓글 ' + ${item.countComments} : '댓글 0'">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
 									class="bi bi-chat" viewBox="0 0 16 16">
 									<path
@@ -312,8 +318,8 @@
 <script>
 	// 로그인 안 했을 경우 alert 띄우기
 	const alertLogin = document.getElementById('alertLogin')?.value;
-	if(alertLogin) alert("로그인이 필요합니다.");
-	
+	if (alertLogin) alert("로그인이 필요합니다.");
+
 	const ListModule = (function () {
 		const container = document.getElementById('list-container');
 		const currentCategoryInput = document.getElementById('currentCategory');

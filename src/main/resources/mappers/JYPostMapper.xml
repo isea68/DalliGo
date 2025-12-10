@@ -20,8 +20,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INSERT INTO post (category, user_fk, title, content) VALUES(#{category}, #{userFk}, #{title}, #{content})
 	</insert>
 	
-	<select id="selectOneById" parameterType="int" resultMap="PostResult">
-		SELECT * FROM post WHERE id = #{id}
+	<select id="selectOneByPostId" parameterType="int" resultMap="PostResult">
+		SELECT * FROM post WHERE id = #{postId}
 	</select>
 	
 	<insert id="insertFiles" parameterType="com.human.dalligo.vo.JYFileVO">
