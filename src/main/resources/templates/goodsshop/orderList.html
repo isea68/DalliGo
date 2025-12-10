@@ -2,32 +2,85 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>주문 목록</title>
+
+    <style>
+        /* 주문내역 제목 */
+        h2 {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 테이블 전체 */
+        .order-table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            font-family: "Segoe UI", sans-serif;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* 헤더 스타일 */
+        .order-table th {
+            background: #005ec4;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* 내용 스타일 */
+        .order-table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* 호버 시 강조 */
+        .order-table tr:hover td {
+            background: #f3f8ff;
+        }
+
+        /* 마지막 줄 보더 제거 */
+        .order-table tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
 </head>
+
 <body>
+    <div th:replace="fragment/header :: headerDiv"></div>
 
-<h2>주문 내역</h2>
+    <h2 style="text-align:center;">주문 내역</h2>
 
-<table border="1" width="50%" style="">
-    <tr>
-        <th>주문번호</th>
-		<th>구매자</th>
-        <th>상품명</th>
-        <th>수량</th>  
-        <th>주소</th>
-        <th>전화번호</th>
-        <th>주문일</th>
-    </tr>
+    <table class="order-table">
+        <tr>
+            <th>주문번호</th>
+            <th>구매자</th>
+            <th>상품명</th>
+            <th>수량</th>
+            <th>주소</th>
+            <th>전화번호</th>
+            <th>주문일</th>
+        </tr>
 
-	<tr th:each="o : ${orders}">
-	    <td th:text="${o.orderId}"></td>
-		<td th:text="${o.buyer}"></td>
-	    <td th:text="${o.goodsName}"></td>
-	    <td th:text="${o.quantity}"></td>
-	    <td th:text="${o.address}"></td>
-	    <td th:text="${o.phone}"></td>
-	    <td th:text="${#dates.format(o.payDate, 'yyyy-MM-dd HH:mm')}"></td>
-	</tr>
-</table>
+        <tr th:each="o : ${orders}">
+            <td th:text="${o.orderId}"></td>
+            <td th:text="${o.buyer}"></td>
+            <td th:text="${o.goodsName}"></td>
+            <td th:text="${o.quantity}"></td>
+            <td th:text="${o.address}"></td>
+            <td th:text="${o.phone}"></td>
+            <td th:text="${#dates.format(o.payDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+    </table>
 
 </body>
 </html>

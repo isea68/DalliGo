@@ -6,29 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<style>
-		header {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 10px 20px;
-			border-bottom: 1px solid #ccc;
-			gap: 30px;
-		}
+		
 
-		#logoname {
-			font-size: 28px;
-			font-weight: bold;
-			text-align: left;
-			flex-grow: 1;
-		}
+		
 
-		#logo img {
-			width: 60px;
-			height: 60px;
-		}
-
-		nav {
-			float: right;
+		.store-nav {
+		    float: right;
 		}
 
 		table {
@@ -44,14 +27,11 @@
 		}
 
 		#goodslist {
-			margin-left: 180px;
-			/* 필터 테이블 옆에 위치 */
-			width: calc(100% - 180px);
-			display: flex;
-			flex-wrap: wrap;
-			gap: 20px;
-			overflow-y: auto;
-			max-height: 600px;
+		    margin-left: 180px;
+		    width: calc(100% - 180px);
+		    display: flex;
+		    flex-wrap: wrap;
+		    gap: 20px;
 		}
 
 		.goods {
@@ -218,26 +198,45 @@
 			border-radius: 5px;
 			cursor: pointer;
 		}
+		#adminbtn{
+			background-color: red;
+		}
 	</style>
 </head>
 
 <body>
 
-	<header>
 		<div th:replace="fragment/header :: headerDiv"></div>
-		<div id="loginArea">
-		    
-		    <div th:if="${session.loginUser != null}">		        
-		        <!-- 관리자 -->
-				<button th:if="${session.loginUser != null and session.loginUser.isAdmin == 1}"
-				        onclick="location.href='/store/admin'">
-				    관리자 페이지
-				</button>				
-		    </div>
-		</div>
-	</header>
-	<div>
-		<nav>
+		
+	
+	
+		<nav class="store-nav">
+			<div id="loginArea">
+
+						    <!-- 🔹 로그인 안 되어 있을 때 -->
+						    <!--<div th:if="${session.loginUser == null}">
+						        <input type="text" id="userId" placeholder="아이디 입력">
+						        <input type="password" id="userPw" placeholder="비밀번호 입력">
+						        <button onclick="login()">로그인</button>
+						    </div> -->
+
+						    <!-- 🔹 로그인 되어 있을 때 -->
+						    <div th:if="${session.loginUser != null}">
+						        <!-- <b th:text="${session.loginUser.userId}"></b> 님 어서오세요! -->
+
+						        <!-- 관리자 -->
+								<button th:if="${session.loginUser != null and session.loginUser.isAdmin == 1}"
+								        onclick="location.href='/store/admin'" id="adminbtn">
+								    관리자 페이지
+								</button>
+								<!--<button th:if="${session.loginUser != null}"
+								        onclick="location.href='/storelogout'">
+								    로그아웃
+								</button> -->
+						    </div>
+
+						</div>
+				<div>
 			<input type="text" placeholder="검색어를 입력하세요" id="search">
 			<button id="searchBtn">검색</button>
 			<button id="basketbtn">
