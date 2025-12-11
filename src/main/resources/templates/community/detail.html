@@ -279,7 +279,7 @@
 			<div class="list-date" th:text="${#temporals.format(detail.inDate, 'yyyy-MM-dd')}">2025.11.18</div>
 		</div>
 
-		<th:block th:if="${loginUser != null and loginUser.userId == detail.userId}">
+		<th:block th:if="${loginUser != null and (loginUser.userId == detail.userId or loginUser.isAdmin == 1)}">
 			<div class="list-button">
 				<a class="button-detail" th:href="@{/community/update/{id}(id=${detail.id})}">수정</a>
 				<a class="button-detail" th:href="@{/community/delete/{id}(id=${detail.id})}"
@@ -365,7 +365,7 @@
 			<div class="comment-text" th:text="${item.content}">수고 많으셨습니다!!</div>
 
 			<div class="comment-button">
-				<th:block th:if="${loginUser != null and loginUser.userId == item.userId}">
+					<th:block th:if="${loginUser != null and (loginUser.userId == item.userId or loginUser.isAdmin == 1)}">
 					<button type="button" class="button-detail button-mod" th:data-id="${item.id}">수정</button>
 					<button type="button" class="button-detail button-del" th:data-id="${item.id}"> 삭제</button>
 					</button>

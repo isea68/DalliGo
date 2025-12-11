@@ -129,6 +129,12 @@
 		display: flex;
 		justify-content: center;
 	}
+	
+	.admin-post .list-box{
+		height: 180px;
+		border: 2px solid #ff6b6b;
+		background-color: #fff5f5;
+	}
 
 	.list-box {
 		margin: 5% auto 0 auto;
@@ -199,7 +205,9 @@
 	}
 
 	.likes {
-		margin: 10px;
+		margin-top: 10px;
+		margin-right: 10px;
+		margin-bottom: 10px;
 	}
 
 	footer {
@@ -272,7 +280,7 @@
 	<div id="list-container">
 		<div th:fragment="postItems">
 
-			<div th:each="item : ${list}" class="list-item">
+			<div th:each="item : ${list}" class="list-item" th:classappend="${item.isAdmin == 1} ? ' admin-post' : ''">
 				<a class="PostDetailPath"
 					th:href="@{/community/detail/{id}(id=${item.id}, category=${category}, search=${search})}">
 					<div class="list-box">
