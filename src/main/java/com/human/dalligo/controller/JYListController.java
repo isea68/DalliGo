@@ -31,7 +31,7 @@ public class JYListController {
 
 		// 전체 게시글 조회
 		List<JYListVO> list = listservice.getListAll(category, search);
-		model.addAttribute("list", list);
+		model.addAttribute("list", list);		
 		model.addAttribute("category", category);
 		model.addAttribute("search", search);
 
