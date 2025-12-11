@@ -21,8 +21,8 @@ public class JYPostDAO {
 		sqlsession.insert(MAPPER + ".insert", postvo);
 	}
 	
-	public JYPostVO getDetailById(int id) {
-		JYPostVO detailvo = sqlsession.selectOne(MAPPER + ".selectOneById", id);
+	public JYPostVO getDetailByPostId(int postId) {
+		JYPostVO detailvo = sqlsession.selectOne(MAPPER + ".selectOneByPostId", postId);
 		return detailvo;
 	}
 

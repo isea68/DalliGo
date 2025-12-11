@@ -8,9 +8,17 @@
 </head>
 
 <style>
+	body {
+		font-family: 'Segoe UI', Tahoma;
+		margin: 0;
+		background-color: #f4f7f9;
+		padding: 100px;
+	}
+
 	#mainboard {
 		display: flex;
 		justify-content: flex-start;
+		align-items: center;
 	}
 
 	#main-back {
@@ -25,24 +33,27 @@
 	}
 
 	#main-title {
-		padding-left: 35%;
-		font-size: 60px;
+		padding-left: 37%;
+		font-size: 50px;
+		color: black;
 	}
 
 	#detail-container{
-		width: 80%;
+		width: 60%;
 		margin: 0 auto;
 	}
 
 	.detail-box {
 		margin-top: 5%;
 		width: 100%;
-		border: 1px solid;
-		border-radius: 10px;
+		padding: 30px;
+		margin: 40px auto;
+		background-color: white;
+		padding: 30px;
+		border-radius: 12px;
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 		display: flex;
 		flex-direction: column;
-		margin-bottom: 10px;
-		padding-bottom: 30px;
 	}
 
 	.list-header {
@@ -53,7 +64,7 @@
 
 	.list-username {
 		margin: 10px;
-		font-size: 30px;
+		font-size: 25px;
 		font-weight: 500;
 	}
 
@@ -75,7 +86,7 @@
 		width: 75px;
 		height: 50px;
 		border: none;
-		border-radius: 7px;
+		border-radius: 10px;
 		background-color: #00acc1;
 		font-size: 18px;
 		line-height: 40px;
@@ -100,13 +111,13 @@
 		margin-left: 10px;
 		margin-top: 5%;
 		margin-bottom: 5%;
-		font-size: 40px;
+		font-size: 35px;
 		font-weight: 700;
 	}
 
 	.list-content {
 		margin: 10px;
-		font-size: 25px;
+		font-size: 20px;
 		margin-bottom: 100px;
 	}
 
@@ -118,7 +129,7 @@
 	.reaction {
 		display: flex;
 		justify-content: flex-start;
-		font-size: 30px;
+		font-size: 20px;
 		margin-bottom: 30px;
 	}
 
@@ -132,9 +143,12 @@
 	}
 
 	.comment-box {
-		border: 1px solid;
-		border-radius: 10px;
-		margin-bottom: 10px;
+	width: 100%;
+	margin: 40px auto;
+	background-color: white;
+	padding: 30px;
+	border-radius: 12px;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 	}
 
 	.comment-header {
@@ -233,6 +247,8 @@
 </style>
 
 <body>
+	<div th:replace="fragment/header :: headerDiv"></div>
+	
 	<script th:inline="javascript">
 		const loginUserExists = /*[[${loginUser != null}]]*/ false;
 	</script>
@@ -240,7 +256,7 @@
 	<!-- 메인보드 -->
 	<div id="mainboard">
 		<a id="main-back" th:href="@{/community/list(category=${category}, search=${search})}">
-			<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor"
+			<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor"
 				class="bi bi-arrow-left-square-fill" viewBox="0 0 16 16">
 				<path
 					d="M16 14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2zm-4.5-6.5H5.707l2.147-2.146a.5.5 0 1 0-.708-.708l-3 3a.5.5 0 0 0 0 .708l3 3a.5.5 0 0 0 .708-.708L5.707 8.5H11.5a.5.5 0 0 0 0-1" />
@@ -306,11 +322,10 @@
 			<table>
 				<tr th:each="filevo : ${detail.fileList}">
 					<td>
-						<img th:if="${filevo.savedName != null
-										            and (#strings.endsWith(#strings.toLowerCase(filevo.savedName),'jpg')
-										                 or #strings.endsWith(#strings.toLowerCase(filevo.savedName),'png')
-										                 or #strings.endsWith(#strings.toLowerCase(filevo.savedName),'gif'))}"
-							th:src="${filevo.savedName}" />
+						<img th:if="${filevo.savedName != null and #strings.endsWith(filevo.savedName.toLowerCase(), '.jpg')
+						             or #strings.endsWith(filevo.savedName.toLowerCase(), '.png')
+						             or #strings.endsWith(filevo.savedName.toLowerCase(), '.gif')}"
+						     th:src="${filevo.savedName}">
 
 					</td>
 					<td>
