@@ -285,7 +285,7 @@
 					th:href="@{/community/detail/{id}(id=${item.id}, category=${category}, search=${search})}">
 					<div class="list-box">
 						<div class="list-header">
-						<div class="list-category" th:text="'카테고리: ' + ${item.category}">카테고리</div>
+						<div class="list-category" th:text="${item.category}">카테고리</div>
 						<div class="list-date" th:text="${#temporals.format(item.inDate, 'yyyy-MM-dd')}">2025.11.18</div>
 						</div>
 							<div class="list-username" th:text="'러너: '+ ${item.nickName} + ' 님'">러너: 오늘도달려 님</div>
