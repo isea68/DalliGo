@@ -6,7 +6,7 @@
 			color: white;
 			padding: 15px 50px;
 			display: flex;
-			justify-content: space-between;
+			justify-content: flex-start;
 			align-items: center;
 			position: fixed;
 			top: 0;
@@ -17,9 +17,9 @@
 		}
 
 
-
 		header h1 {
-			margin: 0;
+			margin-left: 10px;
+			margin-right: 50%;
 		}
 
 		nav a {
@@ -35,6 +35,7 @@
 		}
 	</style>
 	<header>
+		<img th:src="@{/images/DalliGO_logo.jpg}" style="width: 60px; height: auto;">
 		<h1>DalliGO</h1>
 		<nav>
 			<a th:href="@{/}">홈</a>
