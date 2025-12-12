@@ -91,10 +91,9 @@ public class LshTripService {
         //trip.setEndCity(extractCity(event.getLocation()));
 
         // ★ 여기에 거리/비용 계산 추가 ★
-        LshDistanceVO cityDist = distanceService.getDistance(startCity, endCity);
-        BigDecimal distance = (cityDist != null && cityDist.getDistanceKm() != null) 
-                               ? cityDist.getDistanceKm() 
-                               : BigDecimal.ZERO;
+        Integer distKm = distanceService.getDistance(startCity, endCity);
+        // Integer → BigDecimal 변환하여 trip에 저장
+        BigDecimal distance = BigDecimal.valueOf(distKm);
         trip.setDistance(distance);
         
         // 로그 확인용
@@ -113,12 +112,6 @@ public class LshTripService {
         
         trip.setCurrentPeople(0);
         
-        // ★ LocalDate → Timestamp 변환 적용
-//        LocalDate localDate = event.getStartDate().toLocalDate(); // LocalDate 추출
-//        Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay()); // 00:00 시각 붙여서 Timestamp로 변환
-//        trip.setTripDate(timestamp); // VO 메소드와 타입 일치
-        //trip.setTripDate(event.getStartDate().toLocalDate());
-        //trip.setTripTime(LocalTime.of(6,0)); // 기본 출발시간 06:00
         // status 상태 계산 적용
         String status = computeStatus(tripDate, 0);
         trip.setStatus(status);
@@ -126,46 +119,6 @@ public class LshTripService {
         tripDAO.insertTrip(trip);
         return tripDAO.getTripByEvent(event.getId());
     }
-
-
-    /** Trip 신규 생성/거리 업데이트 */
-//    @Transactional
-//    public LshTripVO updateOrCreateTripWithDistance(int eventId, String userId, BigDecimal distance) {
-//
-//        LshTripVO trip = getTripByEvent(eventId);
-//
-//        if (trip == null) {
-//            LshEventVO ev = eventDAO.selectOne(eventId);
-
-//            trip = new LshTripVO();
-//            trip.setEventId(eventId);
-//            trip.setUserId(userId);
-//            trip.setStartCity("서울"); 
-//
-//            String endCity = extractCity(ev.getLocation());
-//            trip.setEndCity(endCity);
-
-//            trip.setDistance(distance);
-//            trip.setCost(calculateCost(distance));
-//            trip.setCurrentPeople(0);
-//            // ★ LocalDate → Timestamp 변환 적용
-//            LocalDate localDate = ev.getStartDate().toLocalDate(); // LocalDate 추출
-//            Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay()); // 00:00 시각 붙여서 Timestamp로 변환
-//            trip.setTripDate(timestamp); // VO 메소드와 타입 일치
-            // ⭐ 상태 다시 계산
-//            String status = computeStatus(trip.getTripDate(), trip.getCurrentPeople());
-//            trip.setStatus(status);
-//
-//            tripDAO.insertTrip(trip);
-//
-//        } else {
-//            trip.setDistance(distance);
-//            trip.setCost(calculateCost(distance));
-//            tripDAO.updateTrip(trip);
-//        }
-//
-//        return trip;
-//    }
 
     /** 신청 */
     @Transactional
@@ -183,18 +136,6 @@ public class LshTripService {
     public int getApplicationCount(int eventId) {
         return tripDAO.countApplicationsByEvent(eventId);
     }
-
-
-    
-    // 게시판 신청인원 합산
-//    public List<LshTripSumVO> getTripSumByRoute() {
-//    	return tripDAO.selectGroupedTripStatus();
-//	}
-//    
-//    public boolean cancelApplication(int eventId, String userId) {
-//    	int rows = tripDAO.deleteTripApplication(eventId, userId);
-//        return rows > 0;
-//	}
 
     // status 상태 계산
     private String computeStatus(Timestamp startDate, int currentPeople) {
@@ -216,9 +157,9 @@ public class LshTripService {
 
 
     /** 요금 계산 */
-    public int calculateCost(BigDecimal distanceKm) {
-        if (distanceKm == null) return 28000;
-        double km = distanceKm.doubleValue();
+    public int calculateCost(BigDecimal distance) {
+        if (distance == null) return 28000;
+        double km = distance.doubleValue()*2; // 왕복처리
         if (km <= 100) return 28000;
         if (km <= 300) return 40000;
         return 52000;
@@ -257,71 +198,6 @@ public class LshTripService {
 
         return 1;
     }
-
-    
-    /** Trip 신청 */
-//    @Transactional
-//    public void applyToEvent(int eventId, String userId) {
-//
-//        // 1) 중복 신청 확인
-//        int exists = tripDAO.existsApplication(userId, eventId);
-//        if (exists > 0) {
-//            throw new IllegalStateException("이미 신청하셨습니다.");
-//        }
-//
-//        // 2) 신청 (application status는 "신청"으로 기록)
-//        LshApplyVO vo = new LshApplyVO();
-//        vo.setUserId(userId);
-//        vo.setEventId(eventId);
-//        vo.setStatus("신청");
-//        tripDAO.insertApplication(vo);
-//
-//        // 3) trips.current_people 증가 (DB의 현재값과 동기화)
-//        tripDAO.incrementTripCurrentPeople(eventId);
-//
-//        // 4) event.start_date -> trip.trip_date
-//        LshEventVO event = eventDAO.selectOne(eventId);
-//        
-//        if (event == null) {
-//            throw new RuntimeException("Event not found: " + eventId);
-//        }
-//
-//        // 2. trip 조회
-//        LshTripVO trip = tripDAO.getTripByEvent(eventId);
-//        if (trip == null) {
-//            throw new RuntimeException("Trip not found for eventId: " + eventId);
-//        }
-//        
-//        trip.setTripDate(event.getStartDate().toLocalDate());
-//        tripDAO.updateTrip(trip);
-//        
-//        if (trip == null) {
-//            // 만약 trip이 없으면 상황에 맞게 처리 (예외 또는 로그)
-//            throw new IllegalStateException("해당 이벤트에 대한 trip 정보가 없습니다.");
-//        }
-//
-//        // 5) 오늘 날짜와 trip_date(날짜 타입) 기준으로 상태 결정
-//        LocalDate today = LocalDate.now();
-//        LocalDate tripDate = trip.getTripDate(); // LshTripVO 의 tripDate는 java.time.LocalDate 이어야 함
-//
-//        String newTripStatus;
-//        if (today.isBefore(tripDate)) {
-//            newTripStatus = "모집중";
-//        } else {
-//            // 오늘이거나 이후일 경우 currentPeople 기준
-//            int currentPeople = trip.getCurrentPeople();
-//            if (currentPeople >= 25) {
-//                newTripStatus = "승인";
-//            } else {
-//                newTripStatus = "종료";
-//            }
-//        }
-//
-//        // 6) trips.status 업데이트 (필요 시에만 수행)
-//        if (!newTripStatus.equals(trip.getStatus())) {
-//            tripDAO.updateTripStatus(eventId, newTripStatus);
-//        }
-//    }
     
  // ----- 신청: 중복 체크 후 insert (event 기준) -----
     @Transactional
@@ -332,12 +208,6 @@ public class LshTripService {
             return -1; // 이미 신청되어 있으면 insert/증가 모두 금지
         }
         System.out.println("applyToEvent called: eventId=" + eventId + ", userId=" + userId);
-        
-        // 다른 방식의 중복 체크
-        //int count = tripDAO.countExistingApplication(userId, eventId);
-        //if (count > 0) {
-        //    return -1; // 이미 신청됨
-        //}
 
         // 3) trips.current_people 같은 컬럼 직접 변경하지 않음 — count(*)로 관리
         return applyToTrip(eventId, userId);
@@ -392,8 +262,11 @@ public class LshTripService {
                 "속초", "목포", "구미", "포천", "제주", "성남", "용인"
         );
         
-        for (String p : parts) {
-            for (String city : majorCities) {
+        for (String city : majorCities) {
+            if (address.startsWith(city)) {
+                return city;
+            }
+            for (String p : parts) {
                 if (p.contains(city)) {
                     return city;
                 }
@@ -471,24 +344,4 @@ public class LshTripService {
     }
 
 }
-//        for (Map<String, Object> r : rows) {
-//        	LshApplyListVO a = new LshApplyListVO();
-//            a.setApplyId((Integer) r.get("apply_id"));
-//            a.setStartCity((String) r.get("start_city"));
-//            a.setEndCity((String) r.get("end_city"));
-//            a.setTitle((String) r.get("title"));
-//            // Timestamp → null 발생 가능 대비
-//            Object dateObj = r.get("start_date");
-//            a.setDate(dateObj instanceof Timestamp ? (Timestamp) dateObj : null);
-//            // current_people → Long 또는 Integer 주의
-//            Object countObj = r.get("current_people");
-//            if (countObj instanceof Integer i)     a.setApplyCount(i);
-//            else if (countObj instanceof Long l)   a.setApplyCount(l.intValue());
-//            else                                   a.setApplyCount(0);
-//            a.setStatus((String) r.get("status"));
-//            out.add(a);
-//        }
-//        return out;
-//  }
-//}
 

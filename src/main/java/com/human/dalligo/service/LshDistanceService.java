@@ -13,25 +13,24 @@ public class LshDistanceService {
 
     private final LshDistanceDAO distanceDAO;
 
-    public LshDistanceVO getDistance(String startCity, String endCity) {
+    public Integer getDistance(String startCity, String endCity) {
+
+        // 1) 동일 도시면 0km
         if (startCity.equals(endCity)) {
-            // 동일 도시는 0km, 비용 0으로 처리
-            LshDistanceVO vo = new LshDistanceVO();
-            vo.setStartCity(startCity);
-            vo.setEndCity(endCity);
-            vo.setDistanceKm(BigDecimal.ZERO);
-            return vo;
+            return 0;
         }
 
-        LshDistanceVO distance = distanceDAO.selectDistance(startCity, endCity);
-        if (distance == null) {
-            // 데이터 없으면 기본값
-            distance = new LshDistanceVO();
-            distance.setStartCity(startCity);
-            distance.setEndCity(endCity);
-            distance.setDistanceKm(BigDecimal.ZERO);
+        // 2) DB 조회
+        LshDistanceVO vo = distanceDAO.selectDistance(startCity, endCity);
+
+        // 3) 값이 없으면 0km
+        if (vo == null || vo.getDistance() == null) {
+            return 0;
         }
-        return distance;
+
+        // 4) BigDecimal → int 변환
+        return vo.getDistance().intValue();
     }
+
 }
 

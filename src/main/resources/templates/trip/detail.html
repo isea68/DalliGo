@@ -122,7 +122,7 @@
         <tr>
             <td><b>거리 (km)</b></td>
             <td id="distanceCell"
-                th:text="${trip != null ? #numbers.formatDecimal(trip.distance, 0, 'POINT', 2, 'NONE') : '-'}">-</td>
+                th:text="${trip != null ? trip.distance : '-'}">-</td>
         </tr>
 
         <tr>

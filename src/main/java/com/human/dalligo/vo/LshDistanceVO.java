@@ -8,6 +8,6 @@ public class LshDistanceVO {
     private int id;
     private String startCity;
     private String endCity;
-    private BigDecimal distanceKm;
+    private BigDecimal distance;
 }
 

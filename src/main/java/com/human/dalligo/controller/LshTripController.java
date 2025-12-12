@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.human.dalligo.service.LshDistanceService;
 import com.human.dalligo.service.LshEventService;
 import com.human.dalligo.service.LshTripService;
 import com.human.dalligo.vo.JSUserVO;
@@ -33,6 +34,7 @@ public class LshTripController {
 
     private final LshTripService tripService;
     private final LshEventService eventService;
+    private final LshDistanceService distanceService;
 
 
     /** 이벤트의 Trip 상세 조회 */
@@ -72,10 +74,33 @@ public class LshTripController {
     // 거리 업데이트 : trip객체에 distance를 같이 넘겨야 함
     @GetMapping("/trips/{id}")
     public String showTripDetail(@PathVariable("id") int tripId, Model model) {
-        LshTripVO trip = tripService.getTripById(tripId); // trip 조회
-        model.addAttribute("trip", trip);                 // model에 trip 추가
-        return "trip/detail";                              // detail.html로 포워드
+
+        LshTripVO trip = tripService.getTripById(tripId);
+        model.addAttribute("trip", trip);
+
+        // 1) 주소에서 도시 추출
+        String startCity = trip.getStartCity(); // 또는 trip.getStart_address()
+        String endCity   = trip.getEndCity();   // 또는 trip.getEvent_location()
+
+        startCity = tripService.extractCity(startCity);
+        endCity   = tripService.extractCity(endCity);
+
+        // 2) 콘솔 확인용 로그
+        System.out.println("=== 거리 계산 ===");
+        System.out.println("출발지: " + startCity);
+        System.out.println("도착지: " + endCity);
+
+        // 3) DB에서 거리 조회
+        Integer distance = distanceService.getDistance(startCity, endCity);
+
+        System.out.println("거리(km): " + distance);
+
+        // 4) 화면 전달
+        model.addAttribute("distance", distance);
+
+        return "trip/detail";
     }
+
 
     /** 이벤트 신청 */
     @PostMapping("/apply")

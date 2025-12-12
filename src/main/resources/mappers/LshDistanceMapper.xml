@@ -7,7 +7,8 @@
     <select id="selectDistance" parameterType="map" resultType="com.human.dalligo.vo.LshDistanceVO">
         SELECT *
         FROM city_distance
-        WHERE start_city = #{startCity} AND end_city = #{endCity}
+        WHERE (start_city = #{startCity} AND end_city = #{endCity})
+           or (start_city = #{endCity} AND end_city = #{startCity})
     </select>
 
 </mapper>
