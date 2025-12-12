@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <title>대회 신청 현황</title>
 
-<!-- header 스타일 적용 -->
-<link rel="stylesheet" th:href="@{/css/header.css}" />
-
 <!-- event/list.html과 동일한 페이지용 CSS -->
 <style>
     body {
@@ -74,14 +71,17 @@
         </thead>
 
         <tbody>
-            <tr th:each="item, stat : ${sumList}">
+            <tr th:each="item, stat : ${applyLists}">
                 <td th:text="${stat.count}"></td>
                 <td th:text="${item.startCity}"></td>
                 <td th:text="${item.endCity}"></td>
                 <td th:text="${item.title}"></td>
-                <td th:text="${#dates.format(item.tripDate, 'yyyy-MM-dd')}"></td>
-                <td th:text="${item.totalPeople}"></td>
-                <td th:text="${item.status}"></td>
+				<!-- 일정(date는 Timestamp이므로 format) -->
+				<td th:text="${#dates.format(item.date, 'yyyy-MM-dd')}"></td>
+		        <!-- 신청인원 -->
+		        <td th:text="${item.applyCount}"></td>
+		        <!-- 상태 -->
+		        <td th:text="${item.status}"></td>
             </tr>
         </tbody>
     </table>

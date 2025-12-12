@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <title th:text="${event.title} + ' - 신청'">Trip Detail</title>
 
-    <!-- fragment/header.css만 사용 -->
-    <link rel="stylesheet" th:href="@{/css/header.css}" />
-
     <!-- detail.html 전용 CSS -->
     <style>
         body {
@@ -125,7 +122,7 @@
         <tr>
             <td><b>거리 (km)</b></td>
             <td id="distanceCell"
-                th:text="${trip != null ? trip.distance : '-'}">-</td>
+                th:text="${trip != null ? #numbers.formatDecimal(trip.distance, 0, 'POINT', 2, 'NONE') : '-'}">-</td>
         </tr>
 
         <tr>
@@ -180,10 +177,15 @@
 <script>
     document.getElementById("applyBtn").addEventListener("click", function () {
 
-        if (!eventId || !userId) {
-            alert("로그인 정보 또는 이벤트 정보가 올바르지 않습니다.");
+        if (!eventId) {
+            alert("이벤트 정보가 올바르지 않습니다.");
             return;
         }
+		
+		if (!userId) {
+		        alert("로그인이 필요합니다.");
+		        return;
+		    }
 
         if (confirm("정말 신청하시겠습니까?")) {
 
@@ -196,47 +198,72 @@
             .then(data => {
                 alert(data.message);
                 if (data.ok) {
+					// 현재 인원수 갱신
                     document.getElementById("currentPeople").textContent = data.currentPeople;
+					// 신청 버튼 비활성화
+					document.getElementById("applyBtn").disabled = true;
+					// 취소 버튼 활성화
+					const cancelBtn = document.getElementById("cancelBtn");
+					if (cancelBtn) cancelBtn.disabled = false;
                 }
             })
             .catch(err => {
                 alert("신청 중 오류 발생");
                 console.error(err);
             });
-
         }
     });
 	
-	document.getElementById("cancelBtn").addEventListener("click", function () {
+	if (document.getElementById("cancelBtn")) {
+	    document.getElementById("cancelBtn").addEventListener("click", function () {
 
-	    if (!eventId || !userId) {
-	        alert("로그인 정보 또는 이벤트 정보가 올바르지 않습니다.");
-	        return;
-	    }
+	        if (!eventId) {
+	            alert("여행 정보가 올바르지 않습니다.");
+	            return;
+	        }
 
-	    if (confirm("신청을 취소하시겠습니까?")) {
+	        if (!userId) {
+	            alert("로그인이 필요합니다.");
+	            return;
+	        }
 
-	        fetch("/trip/cancel", {
-	            method: "POST",
-	            headers: { "Content-Type": "application/json" },
-	            body: JSON.stringify({ tripId: eventId, userId: userId })
-	        })
-	        .then(res => res.json())
-	        .then(data => {
-	            alert(data.message);
-	            if (data.ok) {
-	                // 신청인원 감소
-	                let current = parseInt(document.getElementById("currentPeople").textContent);
-	                document.getElementById("currentPeople").textContent = Math.max(current - 1, 0);
-	            }
-	        })
-	        .catch(err => {
-	            alert("취소 중 오류 발생");
-	            console.error(err);
-	        });
+	        if (confirm("정말 신청을 취소하시겠습니까?")) {
 
-	    }
-	});
+	            fetch("/trip/cancel", {
+	                method: "POST",
+	                headers: { "Content-Type": "application/json" },
+	                body: JSON.stringify({ eventId: eventId })   // userId 전송 X
+	            })
+	            .then(res => res.json())
+	            .then(data => {
+	                alert(data.message);
+
+	                if (data.ok) {
+	                    // 취소 성공 → 버튼 상태 변경
+	                    document.getElementById("cancelBtn").disabled = true;
+	                    document.getElementById("applyBtn").disabled = false;
+
+	                    // 현재 인원 업데이트
+	                    updateCurrentPeople(eventId);
+	                }
+	            })
+	            .catch(err => {
+	                alert("취소 중 오류 발생");
+	                console.error(err);
+	            });
+	        }
+	    });
+	}
+	
+	// 현재 인원 갱신
+	function updateCurrentPeople(eventId) {
+    	fetch(`/trip/current-people/${eventId}`)
+        	.then(res => res.json())
+       		.then(data => {
+            	document.getElementById("currentPeople").textContent = data.currentPeople;
+        	})
+        	.catch(err => console.error(err));
+	}
 
 </script>
 
@@ -246,10 +273,9 @@
     const endCity   = /*[[${endCity}]]*/ '강릉';
     const eventId = /*[[${event.id}]]*/ 0;
     const userId  = /*[[${loginUser.userId}]]*/ '';
+	const tripId = /*[[${trip != null ? trip.tripId : 0}]]*/ 0;
 /*]]>*/
 </script>
-
-<script src="/js/trip-detail.js"></script>
 
 </body>
 </html>
