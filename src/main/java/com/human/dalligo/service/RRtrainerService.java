@@ -63,10 +63,10 @@ public class RRtrainerService {
 	
 	public RRtrainerVO selectForLogin( RRtrainerVO trainervo ) {
 		RRtrainerVO tvo = trainerdao.selectForLogin(trainervo);
-		if (tvo!=null && tvo.getPassword().equals(tvo.getPassword())) {
-			return tvo;
+		if (tvo!=null && tvo.getPassword().equals(trainervo.getPassword())) {
+			return tvo; //로고인 성공
 		}else {
-			return null ;
+			return null ; //로그인 실패
 		}			
 	}
 	

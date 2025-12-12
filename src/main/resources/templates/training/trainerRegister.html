@@ -13,6 +13,7 @@
 
 	body {
 	   font-family: Arial;
+	   padding-top: 80px;
 	  } 
 
 	   .container {
@@ -130,6 +131,14 @@
 	    h2 {
 	           text-align: center;
 	       }	
+		   
+		   
+		   .page-title {
+		       text-align: center;
+		       margin-top: 30px;
+		       margin-bottom: 10px;
+		   }
+
 	
 </style>
 
@@ -138,9 +147,10 @@
 
 	<div th:replace="fragment/header :: headerDiv"></div>	
 	
-     <h2>회원가입</h2>
+	<h2 class="page-title">강사회원가입</h2>
 
-    <div  class="container">       
+    <div  class="container">      
+	
         <form action="/trainerRegister" 
 			method="post"
 			enctype="multipart/form-data" 
@@ -160,25 +170,24 @@
 			 </div>
         </form>
     </div>
+	
+	<script>
+
+		 function checkDuplicateId() {
+			var id =document.getElementById('trainerId').value.trim();
+			if(id==="") return false;
+			
+			var oldId =["tr11","tr22","tr33","tr44","tr55","tr66","tr77","tr88","tr99"]
+			if(oldId.includes(id)) {
+				alert ("이미 존재하는 아이디입니다");
+				return false;			
+			}
+			return true;		
+			
+		 }
+	  
+	</script>	
 
 </body>
 
 </html>
-<script>
-
-	 function checkDuplicateId() {
-		var id =document.getElementById('trainerId').value.trim();
-		if(id==="") return false;
-		
-		var oldId =["tr11","tr22","tr33","tr44","tr55","tr66","tr77","tr88","tr99"]
-		if(oldId.includes(id)) {
-			alert ("이미 존재하는 아이디입니다");
-			return false;			
-		}
-		return true;
-		
-		
-	 }
-
-  
-</script>

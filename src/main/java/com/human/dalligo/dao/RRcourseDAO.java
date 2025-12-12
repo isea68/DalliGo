@@ -37,6 +37,10 @@ public class RRcourseDAO {
 	return sqlsession.delete(Mapper+".deleteCourse", id);
 	
 }
+
+	public List<RRcourseVO> findByTrainerId(Integer trainerPk) {
+		return sqlsession.selectList(Mapper+".findByTrainerId", trainerPk);
+	}
 	
 	
 }

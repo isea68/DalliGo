@@ -46,6 +46,12 @@
    	    DELETE FROM rrcourse
     	WHERE id = #{id}
 	</delete>
+	
+	<select id="findByTrainerId" resultMap="courseMap">
+	   select * from rrcourse
+	   where trainer_id=#{trainerPk}
+	
+	</select>
 
 
 

@@ -1,13 +1,20 @@
-   body {
+html, body {
+    margin: 0;
+    padding: 0;
     font-family: Arial;
-   } 
+}
+
+body {
+    padding: 120px;
+    box-sizing: border-box;
+}
 
     .container {
 
             display: flex;
             align-items: center;
             width: 350px;
-            margin: 50px auto;
+            margin: 0 auto;
             border: 1px solid #ccc;
             padding: 20px;
             position: relative;

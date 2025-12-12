@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>강사 로그인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .trlogin-container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            width: 300px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0b7dda;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+	
+	<div th:replace="fragment/header :: headerDiv"></div>	
+	
+	
+
+	<div id="trloginModal" class="modal">
+	    <div class="modal-content">
+	        <span class="close">&times;</span>
+	        <h3>강사로그인</h3>
+
+	        <form action="/training/trlogin" method="post" class="login-form" autocomplete="off">
+	            <input type="text" id="trainerId" name="trainerId" placeholder="ID" required>
+	            <input type="password" id="password" name="password" placeholder="Password" required>
+	            <input type="hidden" id="dest" name="dest">
+				<button type="submit">로그인</button>
+	        </form>
+	    </div>
+	</div>
+	
+<script>
+	
+	    const trloginModal = document.getElementById("trloginModal");
+	    const trloginClose = trloginModal.querySelector(".close");
+	    const destInput = document.getElementById("dest");
+
+	    // URL 파라미터 읽기
+	    const params = new URLSearchParams(window.location.search);
+	    const from = params.get("from");     // AcademyBoard 에서 왔는지
+	    const dest = params.get("dest");     // 목적지 (course / trainerPage)
+	    const error = params.get("error");  // 강사로그인 실패
+
+	    // 1.dest 값을 form hidden 에 저장
+	    if (dest) {
+	        destInput.value = dest;
+	    }
+
+	    // 2.AcademyBoard 에서 왔으면 자동으로 모달 열기
+	    if (from === "AcademyBoard") {
+	        trloginModal.style.display = "flex";
+	    }
+
+	    // 3.로그인 실패 메시지
+	    if (error=== "trainerCallFail") {
+	        alert("강사 로그인 정보가 맞지 않습니다");
+	        trloginModal.style.display = "flex";
+	    }
+
+
+	    // 5.X 버튼으로 닫기
+	    trloginClose.addEventListener("click", () => {
+	       // trloginModal.style.display = "none";
+		   history.back();
+	    });
+
+	    // 6. 모달 바깥 클릭 → 닫기
+	    window.addEventListener("click", (e) => {
+	        if (e.target === trloginModal) {
+	         //   trloginModal.style.display = "none";
+			 history.back();
+	        }
+	    });
+		
+
+	
+
+	
+		
+</script>		
+
+</body>
+</html>

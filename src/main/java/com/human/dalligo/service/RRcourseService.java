@@ -69,39 +69,9 @@ public class RRcourseService {
 		System.out.println("DB token="+course.getDeleteToken());
 
 		return course;
-	}
+		}
 	
-	// 삭제기능 (S3 이미지삭제+ DB삭제 +소유자 확인)
-	
-	
-//	public void delete (Integer courseId, Integer trainerPk) {
-//		
-//		//DB 조회
-//		RRcourseVO cvo = coursedao.selectById(courseId);
-//		if(cvo ==null) {
-//			throw new RuntimeException("강좌가 존재하지 않습니다.");
-//		}
-//		
-//		// 소유자 확인
-//		if(!cvo.getTrainerId().equals(trainerPk)) {
-//			
-//			System.out.println("cvo_TrID:"+cvo.getTrainerId());
-//			System.out.println("trainerPK:"+trainerPk);
-//			throw new RuntimeException("권한이 없습니다.");
-//		}
-//					
-//		// S3 이미지 삭제
-//		String imageUrl =cvo.getPrphotoNew();
-//		if(imageUrl!=null &&imageUrl.contains(bucketName)) {
-//			
-//			//url에서  key(파일명) 추출
-//			String key = imageUrl.substring(imageUrl.lastIndexOf("/")+1);			
-//			amazonS3.deleteObject(bucketName, key);			
-//		}
-//		
-//		coursedao.delete(courseId);
-//				
-//	}
+
 
 	//강습과정 삭제 서비스  : 강좌번호와 토큰
 	public void deleteByToken(Integer courseId, String token) {
@@ -132,13 +102,13 @@ public class RRcourseService {
 		String imageUrl =course.getPrphotoNew();
 		if(imageUrl!=null &&imageUrl.contains(bucketName)) {
 			
-			System.out.println("prPhotoNew_url:"+imageUrl);
+		//	System.out.println("prPhotoNew_url:"+imageUrl);
 			//url 에서  key(파일명) 추출
 		String key = imageUrl.substring(imageUrl.lastIndexOf("/")+1);	
-		System.out.println("url추출결과:"+key);	
+		//System.out.println("url추출결과:"+key);	
 		try {
 		amazonS3.deleteObject(bucketName, key);
-		System.out.println("S3 이미지 삭제성공");
+		//System.out.println("S3 이미지 삭제성공");
 		}catch(Exception e) {
 			 System.out.println("S3 삭제 에러:"+e.getMessage());
 			    e.printStackTrace();
@@ -156,6 +126,10 @@ public class RRcourseService {
 				
 	}
 	
+	}
+
+	public List<RRcourseVO> findByTrainerId(Integer trainerPk) {		
+		return coursedao.findByTrainerId(trainerPk);
 	}	
 
 }
