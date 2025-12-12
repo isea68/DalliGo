@@ -1,5 +1,10 @@
-
+body {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     padding: 70px;
+ }
 	
+
 	 .card_detail {
 	      display: block;
 

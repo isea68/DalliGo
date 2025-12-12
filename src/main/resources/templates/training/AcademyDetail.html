@@ -11,16 +11,31 @@
 </head>
 
 <style>
+	
+	body {
+		font-family: 'Segoe UI', Tahoma;
+		margin: 0;
+		background-color: #f4f7f9;
+		padding-top: 100px;
+	}
+
+	
 	 .card_detail {
 	      display: block;
 
 	  }
 
-	.up_right,
-	.up_left  {
-	     flex: 1;
-	    padding-left:10px;   
+	.up_left {
+		width: 200px;
+		padding-left: 0;
 	}
+
+	.up_right{
+		flex: 1;
+		padding-left: 200px;
+		font-size: larger;
+	}
+	
 
 	  .down_left {
 	      display: flex;
@@ -47,17 +62,10 @@
 	      display: flex;
 	      padding-top: 50px;
 	      padding-left: 20px;
+		  align-items: flex-start;
 	  }
 
 
-
-	  .up_right{
-	      flex:1;
-		  padding-left: 150px;
-		  flex-wrap: wrap;
-		  font-size: larger;
-		  
-	  }
 
 	/*수강내역 모달*/
 
@@ -141,16 +149,18 @@
 					<!--모달내용-->
 					<div class="modal-content">
 						<span class="close">&times;</span> <!--X 버튼으로 닫기-->
-					<!--<h2 th:text="${user.name}"> 님 신청은 다음과 같습니다. </h2>-->		
-						<h2 > 유느님 신청은 다음과 같습니다. </h2>							
-						<div class="enroll-content">									
+				<!--	<h2 th:text="${user.name}"> 님 신청은 다음과 같습니다. </h2>	
+						<h2 > 유느님 신청은 다음과 같습니다. </h2>	-->		
+						<h2 th:if="${!isGuest}" th:text="${user.name}+'님 신청은 다음과 같습니다'">신청정보</h2>					
+						<h2 th:if="${isGuest}">회원만 신청할 수 있습니다.</h2>
+						<div class="enroll-content" th:if="${!isGuest}">									
 							<p>신청과정 : <span th:text ="${cId.title}"></span> </p>
 							<p>트레이너 : <span th:text ="${tvo.name+'강사님'}"> </span>	</p>
 							<p>수강시작 : <span th:text ="${cId.startDate}"> </span></p>	
 							<p>수강장소 : <span th:text ="${cId.place}"></span> </p>	
 							<p>수강료 : <span th:text ="${cId.price+'원'}"></span></p>	
 							</div>						
-						<button id="modalConfirm">확인</button>
+						<button id="modalConfirm" th:if="${!isGuest}">확인</button>
 					</div>
 				</div> 	<!--모달배경-->
 				
@@ -171,9 +181,9 @@
 						</li>
 					</ul>
 					
-					<a th:href="@{/trainer/ad/del/{id}(id=${cId.id}, token=${cId.deleteToken})}">
-								    <button> 과정삭제</button>					
-					</a>
+			<!--		<a th:href="@{/trainer/ad/del/{id}(id=${cId.id}, token=${cId.deleteToken})}">
+								    <button> 강좌삭제</button>					
+					</a>-->
 					
 				</div>
 

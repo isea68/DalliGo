@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,9 +29,10 @@ import com.human.dalligo.vo.RRtrainerVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class RRcourseController {
@@ -39,16 +41,17 @@ public class RRcourseController {
  private final RRtrainerService trainerservice;
 	
 	
-	
+ 	//강좌의 main화면---------------------------------------------
   @GetMapping("/academy")
   public String getTrain(Model model) {	  
 	  List<RRcourseVO> courses = courseservice.selectList();
+
 	  model.addAttribute("courses", courses);	  
       return "/training/AcademyBoard";
   }  
 
 
-  
+   //강좌의 상세페이지---------------------------------------------
   @GetMapping("/training/AcademyDetail")    
   public String gettrainingDetail(@RequestParam("id") int id,
 		  							HttpSession session,
@@ -62,10 +65,11 @@ public class RRcourseController {
 	  
 	  //3.트레이너 정보 조회	  
 	  RRtrainerVO trainervo =trainerservice.select(trainerId);    
-	  if (trainervo==null) {	
-		  System.out.println("조회 트레이너 없음");
-	  }else {
-		  System.out.println("조회강좌:"+trainervo);
+	  if (trainervo==null) {			  
+		  //개발용 sysout 대신 로그 사용
+		  log.warn("조회 트레이너 없음:id={}",trainerId );	
+	  }else {		  
+		  log.info("조회강좌:{}", trainervo);	
 	  }
 	  
 	  //4.트레이너의 히스토리 데이터를 '|'기준으로 분리해서 정렬하기 위한 작업
@@ -87,28 +91,32 @@ public class RRcourseController {
 	  String timeStr =dt.format(timeFormat);
 	  
 	  JSUserVO loginUser = (JSUserVO)session.getAttribute("loginUser");
+	  if(loginUser==null) {
+		  model.addAttribute("isGuest",true);// 비회원임
+	  }else {
+		  model.addAttribute("user", loginUser); 
+	  }
 	  
-	  model.addAttribute("user", loginUser);	  
+	 //.addAttribute("user", loginUser);	  
 	  model.addAttribute("historyList", historyList);
 	  model.addAttribute("tvo", trainervo);	  
 	  model.addAttribute("monStr", monStr);
 	  model.addAttribute("dayStr", dayStr);
 	  model.addAttribute("timeStr", timeStr);
-	  model.addAttribute("cId", courseId);
-	  
-	  
+	  model.addAttribute("cId", courseId); 	  
 	  
 	  return "/training/AcademyDetail";
   } 
   
   
-  @GetMapping("/course")  // Get--> 주로 화면열기/폼 보여주기
+  // 강좌등록 화면---------------------------------------------
+  @GetMapping("/course")  
   public String getcourse() {
       return "/training/course";
   } 
   
 
-  	//post--> 폼전송/강습과정 등록 데이터  
+  	//post--> 강좌등록 데이터  ---------------------------------------------
   @PostMapping("/course") 
   public String postcourse(@ModelAttribute RRcourseVO coursevo, 
 		  					HttpSession session,
@@ -118,7 +126,15 @@ public class RRcourseController {
 	  //---트레이너 ID 점검부분-----
 	  // CourseVO에 trainerId부분은 트레이너의 PK를 갖고와야한다.
 	  // 그래서 세션에서 trainerPK라 명명하고 갖고와서 CourserVO에 저장해준다
-	  Integer trId =(Integer)session.getAttribute("trainerPk");	  
+	  RRtrainerVO trCall =(RRtrainerVO)session.getAttribute("trainerlogin");
+	  
+	  if(trCall==null) {
+		  //로그인 안돼음
+	  }
+	  
+	  Integer trId = trCall.getId();
+	  
+	 // Integer trId =(Integer)session.getAttribute("trainerPk");	  
 	 // System.out.println("trId:"+trId);	  
 	  
 	  if(trId==null) {
@@ -147,14 +163,15 @@ public class RRcourseController {
 	  courseservice.insert(coursevo);      
 	  return "redirect:/academy";
   }     
+     
   
-    //강습과정 삭제   : 강좌번호와 토큰 넘기기기
+    //강좌 삭제   : 강좌번호와 토큰 넘기기기----------------------------------------------
    @GetMapping("/trainer/ad/del/{id}")
 	public String deleteAd(@PathVariable("id") Integer id, 
 							@RequestParam("token") String token,
 							RedirectAttributes rttr) {
 		
-		System.out.println("Url token ="+token);
+	//	System.out.println("Url token ="+token);
 		
 		try {
 			courseservice.deleteByToken(id, token);
@@ -166,6 +183,34 @@ public class RRcourseController {
 		rttr.addFlashAttribute("msg", "삭제가 완료되었습니다.");
 		return "redirect:/academy"; // 삭제 후 목록으로 이동
 	}
+   
+   
+	  //강사 마이페이지 만들기---------------------------------------------
+	  @GetMapping("/trainerPage")
+	  public String trainerpage(
+			  	@SessionAttribute(name="trainerlogin", required=false) RRtrainerVO trCall
+			  	, Model model) {
+		  
+		  //로그인한 강사ID 가져오기
+		  //Integer trainerId =(Integer)session.getAttribute("trainerId");
+		    Integer trainerPK = trCall.getId();
+		    System.out.println("trainerPK="+trainerPK );
+		  
+		  if(trainerPK==null) {
+			  return "redirect:/academy?needTrlog=Notrainer";
+		  }
+		  //해당 강사가 등록한 모든 강좌 가져오기
+		  List<RRcourseVO> myCourseList = courseservice.findByTrainerId(trainerPK);
+		   
+	//	  System.out.println("조회된 강좌수:"+myCourseList);
+	//	  for(RRcourseVO vo :myCourseList) {
+	//		  System.out.println("강좌:"+vo);
+	//	  }
+		  
+		  model.addAttribute("myCourseList", myCourseList);
+	  	 return  "training/trainerPage";
+	  }
+   
   
   
 }

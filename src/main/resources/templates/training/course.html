@@ -94,11 +94,11 @@
 	</div>
 
 	<div class="container">
-		<h2>런닝 과정 등록</h2>
+		<h2> 달리기 강좌 등록</h2>
 
 		<form action="/course" 
 		 	method="post"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data"   autocomplete="off">
 
 			<input type="text" class="text" name="title" placeholder="강좌명" required>
 
@@ -111,7 +111,7 @@
 				<option>주말반</option>
 			</datalist>
 			
-			<input type="text" class="text" name="eduType" list="edutype" placeholder="원데이러닝,개인러닝,일반러닝,자세교정" required>
+			<input type="text" class="text" name="eduType" list="edutype" placeholder="원데이러닝,1:1 개인러닝,일반러닝,자세교정" required>
 						<datalist id="edutype">
 							<option>원데이 러닝</option>
 							<option>1:1 개인러닝</option>

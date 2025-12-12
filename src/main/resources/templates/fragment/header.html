@@ -1,46 +1,50 @@
 <div th:fragment="headerDiv">
 	<style>
-		/* 헤더 */
-				header {
-					background-color: #00acc1;
-					color: white;
-					padding: 15px 50px;
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					position: sticky;
-					top: 0;
-					z-index: 1000;
-				}
+		
+		header {
+			background-color: #00acc1;
+			color: white;
+			padding: 15px 50px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			box-sizing: border-box; 
+			z-index: 1000;
+		}
 
-				header h1 {
-					margin: 0;
-				}
 
-				nav a {
-					color: white;
-					text-decoration: none;
-					margin-left: 25px;
-					font-weight: 500;
-					transition: color 0.3s;
-				}
 
-				nav a:hover {
-					color: #e0f7fa;
-				}
+		header h1 {
+			margin: 0;
+		}
 
+		nav a {
+			color: white;
+			text-decoration: none;
+			margin-left: 25px;
+			font-weight: 500;
+			transition: color 0.3s;
+		}
+
+		nav a:hover {
+			color: #e0f7fa;
+		}
 	</style>
 	<header>
-			<h1>DalliGO</h1>
-			<nav>
-				<a th:href="@{/}">홈</a>
-				<a th:href="@{/schedule}">대회 일정</a>
-				<a th:href="@{/community/list}">커뮤니티</a>				
-				<a th:href="@{/store}">스토어</a>
-				<a th:href="@{/events}">동행서비스</a>
-				<a th:href="@{/academy}">아카데미</a>							
-				<a th:href="@{/mypage}">마이페이지</a>
-			</nav>
-			
-		</header>		
+		<h1>DalliGO</h1>
+		<nav>
+			<a th:href="@{/}">홈</a>
+			<a th:href="@{/schedule}">대회 일정</a>
+			<a th:href="@{/community/list}">커뮤니티</a>
+			<a th:href="@{/store}">스토어</a>
+			<a th:href="@{/events}">동행서비스</a>
+			<a th:href="@{/academy}">아카데미</a>
+			<a th:href="@{/mypage}">마이페이지</a>
+		</nav>
+
+	</header>
 </div>

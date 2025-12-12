@@ -1,0 +1,33 @@
+
+<body>
+  <div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
+    
+    <h2>내 강좌 목록</h2>
+
+    <div th:if="${#lists.isEmpty(myCourseList)}">
+        등록된 강좌가 없습니다.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(myCourseList)}" border="1" style="width: 600px; text-align: center;">
+        <tr>
+            <th>강좌명</th>
+            <th>장소</th>
+            <th>시작일</th>
+            <th>관리</th>
+        </tr>
+
+        <tr th:each="c : ${myCourseList}">
+            <td th:text="${c.title}"></td>
+            <td th:text="${c.location}"></td>
+            <td th:text="${c.startDate}"></td>
+            <td>
+                <a th:href="@{/trainer/ad/del/{id}(id=${c.id}, token=${c.deleteToken})}">
+                    <button>삭제</button>
+                </a>
+            </td>
+        </tr>
+    </table>
+
+  </div>
+</body>
+
