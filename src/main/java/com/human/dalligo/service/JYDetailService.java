@@ -202,13 +202,12 @@ public class JYDetailService {
 
 	// 댓글 수정
 	public JYCommentVO updateComment(JYCommentVO commentvo) {
+		// 댓글 내용 업데이트 - commentId와 content값만 있음, userFk와 nickName = null인 상태
 		detaildao.updateComment(commentvo);
 		
-		// 수정 후 닉네임과 수정 시간 세팅
-		String userId = detaildao.getNicknameByUserId(commentvo.getUserFk());
-		commentvo.setNickName(userId);
-		commentvo.setInDate(LocalDateTime.now());
-		return commentvo;
+		// 수정된 댓글을 DB에서 다시 조회해서 반환 (userFk와 nickName도 view에 반환해줘야 하기 때문에 이 작업이 필요)
+		JYCommentVO updatedComment = detaildao.getOneCommentById(commentvo.getId());
+		return updatedComment;
 	}
 
 	// 댓글 삭제

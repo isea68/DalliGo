@@ -164,7 +164,7 @@ public class JYDetailController {
 	public JYCommentVO updateComment(@PathVariable("commentId") int commentId, 
 									 @RequestBody JYCommentVO commentvo) {
 		
-		commentvo.setId(commentId); // PathVariable로 받은 id 설정		
+		commentvo.setId(commentId); // PathVariable로 받은 id 설정
 		JYCommentVO updatedComment = detailservice.updateComment(commentvo);
 		
 		return updatedComment;
