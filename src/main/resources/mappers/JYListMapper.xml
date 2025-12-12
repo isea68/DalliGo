@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<!-- 수동으로 Mapping 처리 -->
 		<id property="id" column="id"/>
 		<result property="nickName" column="nick_name"/>
+		<result property="isAdmin" column="is_admin"/>
 		<result property="title" column="title"/>
 		<result property="content" column="content"/>
 		<result property="countLikes" column="count_likes"/>
@@ -18,10 +19,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<sql id="postListSelect">
 	    p.id,
+	    p.category,
 	    p.title,
 	    p.content,
 	    p.in_date,
 	    u.nick_name,
+	    u.is_admin,
 	    (SELECT COUNT(*) FROM post_likes WHERE post_id = p.id) AS count_likes,
 	    (SELECT COUNT(*) FROM post_comments WHERE post_id = p.id) AS count_comments
 	</sql>
@@ -29,9 +32,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 전체 게시글 조회 -->
 	<select id="selectAll" resultMap="ListResult">
 	 	SELECT 
-	 		<include refid="postListSelect"/> 
+	 		<include refid="postListSelect"/>  <!-- refid: reference Id-->
 	 	FROM post p JOIN user u ON p.user_fk = u.id
-	 	ORDER BY p.in_date DESC
+	 	ORDER BY 
+	 		u.is_admin DESC, <!-- 관리자(1) 먼저 -->
+	 		p.in_date DESC <!-- 최신글 우선-->
 	</select>
 
 	<!-- 카테고리 별 게시글 조회 -->

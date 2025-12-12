@@ -1,84 +1,173 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title th:text="${event.title} + ' - 신청'">Trip Detail</title>
+    <meta charset="UTF-8">
+    <title th:text="${event.title} + ' - 신청'">Trip Detail</title>
 
-  <style>
-    .modal { 
-      display:none; position:fixed; inset:0; 
-      background:rgba(0,0,0,0.5); 
-      align-items:center; justify-content:center; 
-    }
-    .modal .box { width:80%; height:70%; background:white; padding:10px; }
-  </style>
+    <!-- fragment/header.css만 사용 -->
+    <link rel="stylesheet" th:href="@{/css/header.css}" />
+
+    <!-- detail.html 전용 CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .page-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #aaa;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        button, a {
+            margin-top: 20px;
+        }
+
+        /* 모달 */
+        .modal { 
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal .box {
+            width: 80%;
+            height: 70%;
+            background: white;
+            padding: 10px;
+        }
+		
+		/* 신청 버튼을 텍스트 링크처럼 보이도록 변경 */
+		#applyBtn {
+		    background: none;
+		    border: none;
+		    color: #0066cc;
+		    font-weight: bold;
+		    font-size: 1em;
+		    cursor: pointer;
+		    padding: 0;
+		    margin-right: 15px;
+		    text-decoration: none;
+			font-size: 1.5em;
+		}
+
+		/* 신청현황 보기 링크 스타일 */
+		.link-btn {
+		    text-decoration: none;
+		    color: #0066cc;
+		    font-weight: bold;
+			font-size: 1.5em;
+		}
+		
+    </style>
 </head>
 
 <body>
 
-<h1 th:text="${event.title}">대회명</h1>
+<!-- fragment/header.html을 그대로 적용 -->
+<header th:replace="fragment/header :: headerDiv"></header>
 
-<table border="1">
-  <tr>
-    <td><b>대회명</b></td>
-    <td th:text="${event.title}"></td>
-  </tr>
+<div class="page-container">
 
-  <tr>
-    <td><b>출발지</b></td>
-    <td>
-      <span id="startName" th:text="${startCity}"></span>
-      <button id="btnStartMap">지도 보기</button>
-    </td>
-  </tr>
+    <h1 th:text="${event.title}">대회명</h1>
 
-  <tr>
-    <td><b>도착지</b></td>
-    <td>
-      <span id="endName" th:text="${endCity}"></span>
-      <button id="btnEndMap">지도 보기</button>
-    </td>
-  </tr>
+    <table>
+        <tr>
+            <td><b>대회명</b></td>
+            <td th:text="${event.title}"></td>
+        </tr>
 
-  <tr>
-    <td><b>일정</b></td>
-    <td th:text="${#dates.format(startDate,'yyyy-MM-dd')} 
-                 + ' ~ ' + 
-                 ${#dates.format(endDate,'yyyy-MM-dd')}"></td>
-  </tr>
+        <tr>
+            <td><b>출발지</b></td>
+            <td>
+                <span id="startName" th:text="${startCity}"></span>
+                <button id="btnStartMap">지도 보기</button>
+            </td>
+        </tr>
 
-  <tr>
-    <td><b>거리 (km)</b></td>
-    <td id="distanceCell"
-        th:text="${trip != null ? trip.distance : '-'}">-</td>
-  </tr>
+        <tr>
+            <td><b>도착지</b></td>
+            <td>
+                <span id="endName" th:text="${endCity}"></span>
+                <button id="btnEndMap">지도 보기</button>
+            </td>
+        </tr>
 
-  <tr>
-    <td><b>비용 (인당)</b></td>
-    <td id="costCell"
-        th:text="${trip != null ? trip.cost : '-'}">-</td>
-  </tr>
+        <tr>
+            <td><b>일정</b></td>
+            <td th:text="${#dates.format(startDate,'yyyy-MM-dd')} 
+                         + ' ~ ' + 
+                         ${#dates.format(endDate,'yyyy-MM-dd')}"></td>
+        </tr>
 
-  <tr>
-    <td><b>현재 신청인원</b></td>
-    <td id="currentPeople"
-        th:text="${trip != null && trip.currentPeople != null ? trip.currentPeople : 0}">0</td>
-  </tr>
+        <tr>
+            <td><b>거리 (km)</b></td>
+            <td id="distanceCell"
+                th:text="${trip != null ? trip.distance : '-'}">-</td>
+        </tr>
 
-  <tr>
-    <td><b>최소 출발인원</b></td>
-    <td><span th:text="25">25</span></td>
-  </tr>
+        <tr>
+            <td><b>비용 (인당)</b></td>
+            <td id="costCell"
+                th:text="${trip != null ? trip.cost : '-'}">-</td>
+        </tr>
 
-  <tr>
-    <td><b>상태</b></td>
-    <td id="statusCell"
-        th:text="${trip != null ? trip.status : '-'}">-</td>
-  </tr>
-</table>
+        <tr>
+            <td><b>현재 신청인원</b></td>
+            <td id="currentPeople"
+                th:text="${trip != null && trip.currentPeople != null ? trip.currentPeople : 0}">0</td>
+        </tr>
 
-<button id="applyBtn">신청</button>
-<a href="/applylist">신청현황 보기</a>
+        <tr>
+            <td><b>최소 출발인원</b></td>
+            <td>25</td>
+        </tr>
+
+        <tr>
+            <td><b>상태</b></td>
+            <td id="statusCell"
+                th:text="${trip != null ? trip.status : '-'}">-</td>
+        </tr>
+    </table>
+
+    <button id="applyBtn">신청</button>
+	<!-- 취소 버튼 -->
+	<button id="cancelBtn" style="
+		background: none;
+		border: none;
+		color: #ff3333;       /* 빨간색으로 구분 */
+		font-weight: bold;
+		font-size: 1.5em;
+		cursor: pointer;
+		margin-left: 15px;
+		text-decoration: none;">
+		취소
+	</button>
+    <a href="/trip/list" class="link-btn" style="margin-left: 15px;">신청현황 보기</a>
+
+</div>
 
 <!-- 지도 모달 -->
 <div id="mapModal" class="modal">
@@ -89,29 +178,60 @@
 </div>
 
 <script>
-	document.getElementById("applyBtn").addEventListener("click", function () {
+    document.getElementById("applyBtn").addEventListener("click", function () {
+
+        if (!eventId || !userId) {
+            alert("로그인 정보 또는 이벤트 정보가 올바르지 않습니다.");
+            return;
+        }
+
+        if (confirm("정말 신청하시겠습니까?")) {
+
+            fetch("/apply", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ event_id: eventId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.ok) {
+                    document.getElementById("currentPeople").textContent = data.currentPeople;
+                }
+            })
+            .catch(err => {
+                alert("신청 중 오류 발생");
+                console.error(err);
+            });
+
+        }
+    });
+	
+	document.getElementById("cancelBtn").addEventListener("click", function () {
 
 	    if (!eventId || !userId) {
 	        alert("로그인 정보 또는 이벤트 정보가 올바르지 않습니다.");
 	        return;
 	    }
 
-	    if (confirm("정말 신청하시겠습니까?")) {
+	    if (confirm("신청을 취소하시겠습니까?")) {
 
-	        fetch("/apply", {
+	        fetch("/trip/cancel", {
 	            method: "POST",
 	            headers: { "Content-Type": "application/json" },
-	            body: JSON.stringify({ event_id: eventId })
+	            body: JSON.stringify({ tripId: eventId, userId: userId })
 	        })
 	        .then(res => res.json())
 	        .then(data => {
 	            alert(data.message);
 	            if (data.ok) {
-	                document.getElementById("currentPeople").textContent = data.currentPeople;
+	                // 신청인원 감소
+	                let current = parseInt(document.getElementById("currentPeople").textContent);
+	                document.getElementById("currentPeople").textContent = Math.max(current - 1, 0);
 	            }
 	        })
 	        .catch(err => {
-	            alert("신청 중 오류 발생");
+	            alert("취소 중 오류 발생");
 	            console.error(err);
 	        });
 
@@ -120,21 +240,15 @@
 
 </script>
 
-<!-- ★ 여기에는 오직 JS 변수 선언만 -->
 <script th:inline="javascript">
 /*<![CDATA[*/
-	const startCity = /*[[${startCity}]]*/ '서울';
+    const startCity = /*[[${startCity}]]*/ '서울';
     const endCity   = /*[[${endCity}]]*/ '강릉';
-	const eventId = /*[[${event.id}]]*/ 0;
-	const userId  = /*[[${loginUser.userId}]]*/ '';
-	
-	const applyBtn = document.getElementById("applyBtn");
-	const currentPeopleEl = document.getElementById("currentPeople");
-	
+    const eventId = /*[[${event.id}]]*/ 0;
+    const userId  = /*[[${loginUser.userId}]]*/ '';
 /*]]>*/
 </script>
 
-<!-- 실제 동작 JS -->
 <script src="/js/trip-detail.js"></script>
 
 </body>

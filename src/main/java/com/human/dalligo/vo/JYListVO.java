@@ -7,7 +7,9 @@ import lombok.Data;
 @Data
 public class JYListVO {
 	private int id;
+	private String category;
 	private String nickName;
+	private int isAdmin;
 	private String title;
 	private String content;
 	private int countLikes;

@@ -58,11 +58,8 @@ public class JYPostController {
 		// 세션에 저장된 userFk를 postvo에 세팅
 		JSUserVO loginUser = (JSUserVO) session.getAttribute("loginUser");
 		postvo.setUserFk(loginUser.getId());
-	
-		// 1. 파일 경로 저장
-		List<String> fileList = new ArrayList<>();
 		
-		// 3. DB에 저장
+		// DB에 저장
 		postservice.insert(postvo, files);
 		
 		return "redirect:/community/list";

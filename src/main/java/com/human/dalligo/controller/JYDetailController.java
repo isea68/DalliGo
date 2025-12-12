@@ -52,7 +52,7 @@ public class JYDetailController {
 		JYDetailVO detail = detailservice.detailById(postId);
 		List<JYCommentVO> commentList = detailservice.getCommentsById(postId);
 		
-		model.addAttribute("detail", detail);
+		model.addAttribute("detail", detail);		
 		model.addAttribute("commentList", commentList);
 		
 		// 로그인 사용자 정보 가져오기
@@ -103,7 +103,7 @@ public class JYDetailController {
 	// 수정할 단일 게시글 조회
 	@GetMapping("/update/{id}")
 	public String updatePost(@PathVariable("id") int id, Model model) {
-		JYPostVO detailvo = detailservice.getDetailById(id);
+		JYPostVO detailvo = detailservice.getDetailByPostId(id);
 		
 		model.addAttribute("detailvo", detailvo);
 		return "/community/detailMod";
@@ -115,7 +115,8 @@ public class JYDetailController {
 						 @RequestParam(value = "category", required = false) String category,
 						 @RequestParam(value = "search", required = false) String search,
 						 @RequestParam(value="files", required=false) List<MultipartFile> files) throws IOException {
-				
+		
+
 		detailservice.update(postvo, files);
 		
 		// 수정 후 detail.html로 redirect, list 상태 유지
@@ -163,7 +164,7 @@ public class JYDetailController {
 	public JYCommentVO updateComment(@PathVariable("commentId") int commentId, 
 									 @RequestBody JYCommentVO commentvo) {
 		
-		commentvo.setId(commentId); // PathVariable로 받은 id 설정		
+		commentvo.setId(commentId); // PathVariable로 받은 id 설정
 		JYCommentVO updatedComment = detailservice.updateComment(commentvo);
 		
 		return updatedComment;

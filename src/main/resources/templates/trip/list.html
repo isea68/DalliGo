@@ -3,37 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <title>대회 신청 현황</title>
+
+<!-- header 스타일 적용 -->
+<link rel="stylesheet" th:href="@{/css/header.css}" />
+
+<!-- event/list.html과 동일한 페이지용 CSS -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    /* 페이지 전체 콘텐츠 영역 */
+    .page-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    table {
+        margin: 20px auto;
+        border-collapse: collapse;
+        width: 80%;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #aaa;
+        text-align: center;
+    }
+
+    h1 {
+        margin-top: 30px;
+    }
+
+    a {
+        display: inline-block;
+        margin-top: 25px;
+        color: #0066cc;
+        font-weight: bold;
+        text-decoration: none;
+		font-size: 1.5em;
+    }
+</style>
 </head>
+
 <body>
 
-<h1>대회 신청 현황</h1>
+<!-- ✔ event/list.html과 동일 -->
+<header th:replace="fragment/header :: headerDiv"></header>
 
-<table border="1">
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Start City</th>
-            <th>End City</th>
-            <th>Title</th>
-            <th>Date</th>
-            <th>신청인원</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="app : ${apps}">
-            <td th:text="${app.applyId}"></td>
-            <td th:text="${app.startCity}"></td>
-            <td th:text="${app.endCity}"></td>
-            <td th:text="${app.title}"></td>
-            <td th:text="${#dates.format(app.date,'yyyy-MM-dd')}"></td>
-            <td th:text="${app.applyCount}"></td>
-            <td th:text="${app.status}"></td>
-        </tr>
-    </tbody>
-</table>
+<div class="page-container">
 
-<a href="/events">대회 목록으로 돌아가기</a>
+    <h1>대회 신청 현황</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>출발지</th>
+                <th>도착지</th>
+                <th>대회명</th>
+                <th>일정</th>
+                <th>신청인원</th>
+                <th>상태</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="item, stat : ${sumList}">
+                <td th:text="${stat.count}"></td>
+                <td th:text="${item.startCity}"></td>
+                <td th:text="${item.endCity}"></td>
+                <td th:text="${item.title}"></td>
+                <td th:text="${#dates.format(item.tripDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${item.totalPeople}"></td>
+                <td th:text="${item.status}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/events">대회 목록으로 돌아가기</a>
+
+</div>
 
 </body>
 </html>

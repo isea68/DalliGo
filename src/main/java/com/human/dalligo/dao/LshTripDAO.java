@@ -29,7 +29,7 @@ public interface LshTripDAO {
     void increaseCurrentPeople(int tripId);
     
     // 게시판의 신청인원 합산
-    List<Map<String, Object>> selectGroupedTripStatus();
+    List<LshTripSumVO> selectGroupedTripStatus();
     
     LshTripVO getTripByEvent(@Param("eventId") int eventId);
     int incrementTripCurrentPeople(@Param("eventId") int eventId);
@@ -46,6 +46,8 @@ public interface LshTripDAO {
             @Param("userId") String userId,
             @Param("eventId") int eventId
     );
+    
+	int deleteTripApplication(@Param("tripId") int tripId, @Param("userId") String userId);
 
 }
 

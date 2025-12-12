@@ -102,50 +102,49 @@
 
 		/* 기능 카드 섹션 */
 		.features {
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			padding: 50px 20px;
-			gap: 25px;
+		    display: flex;
+		    justify-content: center;
+		    flex-wrap: wrap;
+		    padding: 50px 20px;
+		    gap: 25px;
 		}
 
 		.card {
-			background-color: white;
-			border-radius: 12px;
-			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-			width: 300px;
-			padding: 25px;
-			text-align: center;
-			transition: transform 0.3s, box-shadow 0.3s;
+		    background-color: rgb(185, 248, 255);
+		    border-radius: 12px;
+		    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+		    width: 300px;
+		    padding: 25px;
+		    text-align: center;
+		    transition: transform 0.3s, box-shadow 0.3s;
 		}
 
 		.card:hover {
-			transform: translateY(-7px);
-			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+		    transform: translateY(-7px);
+		    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 		}
 
 		.card h3 {
-			margin-top: 0;
-			font-size: 1.5em;
+		    margin-top: 0;
+			margin-bottom: 3px;
+		    font-size: 1.5em;
 		}
 
-		.card p {
-			font-size: 1em;
-			margin: 15px 0;
+		.weather-content {
+		    display: flex;
+		    gap: 15px;
+		    align-items: center;
+		    margin-top: 15px;
+		    justify-content: center;
 		}
 
-		.card button {
-			padding: 10px 20px;
-			border: none;
-			border-radius: 6px;
-			background-color: #00acc1;
-			color: white;
-			cursor: pointer;
-			transition: background 0.3s;
+		.weather-content img {
+		    width: 60px;
+		    height: 60px;
 		}
 
-		.card button:hover {
-			background-color: #00838f;
+		.weather-info p {
+		    margin: 4px 0;
 		}
 
 		/* 푸터 */
@@ -194,45 +193,55 @@
 		</div>
 
 		<div class="login-box">
-		    <!-- 로그인 전 -->
-		    <div th:if="${loginUser} == null">
-		        <h3>로그인</h3>
-		        <form th:action="@{/login}" method="post">
-		            <input type="text" name="userId" placeholder="아이디">
-		            <input type="password" name="password" placeholder="비밀번호">
-		            <button type="submit">로그인</button>
-		        </form>
-		        <a th:href="@{/signup}"><button>회원 가입</button></a>
-		        <p th:if="${error}" th:text="${error}" style="color:red; margin-top:10px;"></p>
-		    </div>
+			<!-- 로그인 전 -->
+			<div th:if="${loginUser} == null">
+				<h3>로그인</h3>
+				<form th:action="@{/login}" method="post">
+					<input type="text" name="userId" placeholder="아이디">
+					<input type="password" name="password" placeholder="비밀번호">
+					<button type="submit">로그인</button>
+				</form>
+				<a th:href="@{/signup}"><button>회원 가입</button></a>
+				<p th:if="${error}" th:text="${error}" style="color:red; margin-top:10px;"></p>
+			</div>
 
-		    <!-- 로그인 후 -->
-		    <div th:if="${loginUser} != null">
-		        <h3 th:text="'안녕하세요, ' + ${loginUser.nickName} + '님!'">안녕하세요, 사용자님!</h3>
-		        <a th:href="@{/mypage}"><button>마이페이지</button></a>
-		        <a th:href="@{/logout}"><button style="background-color:#f4511e;">로그아웃</button></a>
-		    </div>
+			<!-- 로그인 후 -->
+			<div th:if="${loginUser} != null">
+				<h3 th:text="'안녕하세요, ' + ${loginUser.nickName} + '님!'">안녕하세요, 사용자님!</h3>
+				<a th:href="@{/mypage}"><button>마이페이지</button></a>
+				<a th:href="@{/logout}"><button style="background-color:#f4511e;">로그아웃</button></a>
+			</div>
 		</div>
 	</section>
 
 	<section class="features">
-		<div class="card">
-			<h3>마라톤 일정</h3>
-			<p>2026년 주요 마라톤과 러닝 이벤트 확인</p>
-			<a th:href="@{/schedule}">
-				<button>자세히 보기</button>
-			</a>
-		</div>
-		<div class="card">
-			<h3>러닝 친구 찾기</h3>
-			<p>같이 달릴 친구를 찾아보세요</p>
-			<button>친구 찾기</button>
-		</div>
-		<div class="card">
-			<h3>커뮤니티</h3>
-			<p>러너들과 경험과 팁을 공유하세요</p>
-			<button>커뮤니티 참여</button>
-		</div>
+	    <!-- 오늘 날씨 카드 -->
+	    <div class="card" id="today-weather-card">
+	        <h3>달리기 전</h3>
+			<h3>오늘 날씨 확인</h3>
+	        <div class="weather-content" id="today-weather-container">
+	            <img id="today-icon" />
+	            <div class="weather-info">
+	                <p id="today-main"></p>
+	                <p id="today-temp"></p>
+	                <p id="today-humidity"></p>
+	            </div>
+	        </div>
+	    </div>
+
+	    <!-- 내일 날씨 예보 카드 -->
+	    <div class="card" id="forecast-card">
+			<h3>달리기 전</h3>
+			<h3>내일 날씨 확인</h3>
+	        <div class="weather-content" id="forecast-container">
+	            <img id="forecast-icon" />
+	            <div class="weather-info">
+	                <p id="forecast-main"></p>
+	                <p id="forecast-temp"></p>
+	                <p id="forecast-humidity"></p>
+	            </div>
+	        </div>
+	    </div>
 	</section>
 
 	<footer>
@@ -240,5 +249,49 @@
 	</footer>
 
 </body>
+<script>
+	const apiKey = "1120e0727bb70147b0322a600a26dd95";
+	const lat = 37.5665; // 서울
+	const lon = 126.9780;
+
+	// 오늘의 날씨
+	async function getTodayWeather() {
+		const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=kr&appid=${apiKey}`;
+		const response = await fetch(url);
+		return await response.json();
+	}
+
+	// 내일 날씨 예보
+	async function getTomorrowForecast() {
+		const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=kr&appid=${apiKey}`;
+		const response = await fetch(url);
+		const data = await response.json();
+
+		// 내일 오전 첫 데이터
+		const tomorrow = data.list[16];
+		return tomorrow;
+	}
+
+	// UI 랜더링
+	async function renderWeather() {
+	    const today = await getTodayWeather();
+	    const forecast = await getTomorrowForecast();
+
+	    // 오늘 날씨
+	    document.getElementById("today-icon").src = `https://openweathermap.org/img/wn/${today.weather[0].icon}@2x.png`;
+	    document.getElementById("today-main").innerText = today.weather[0].description;
+	    document.getElementById("today-temp").innerText = `온도: ${today.main.temp}°C`;
+	    document.getElementById("today-humidity").innerText = `습도: ${today.main.humidity}%`;
+
+	    // 내일 날씨
+	    document.getElementById("forecast-icon").src = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`;
+	    document.getElementById("forecast-main").innerText = forecast.weather[0].description;
+	    document.getElementById("forecast-temp").innerText = `온도: ${forecast.main.temp}°C`;
+	    document.getElementById("forecast-humidity").innerText = `습도: ${forecast.main.humidity}%`;
+	}
+
+	renderWeather();
+
+</script>
 
 </html>

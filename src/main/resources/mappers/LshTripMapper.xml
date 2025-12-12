@@ -151,18 +151,25 @@
         WHERE event_id = #{eventId}
     </update>
     
-    <select id="selectGroupedTripStatus" resultType="map">
+    <select id="selectGroupedTripStatus" resultType="com.human.dalligo.vo.LshTripSumVO">
 		SELECT
 			t.start_city AS startCity,
 			t.end_city AS endCity,
-		SUM(t.current_people) AS totalPeople,
-		MAX(e.title) AS title,
-		MAX(t.trip_date) AS tripDate,
-		MAX(t.status) AS status
+			MAX(e.title) AS title,
+			MAX(t.trip_date) AS tripDate,
+			SUM(t.current_people) AS totalPeople,
+			MAX(t.status) AS status
 		FROM trips t
+		JOIN event e ON t.event_id = e.id
 		GROUP BY t.start_city, t.end_city
 		ORDER BY t.start_city, t.end_city;
 	</select>
+
+	<delete id="deleteTripApplication">
+		DELETE FROM trip_applications
+		WHERE trip_id = #{tripId} AND user_id = #{userId}
+	</delete>
+
 
 
 </mapper>
