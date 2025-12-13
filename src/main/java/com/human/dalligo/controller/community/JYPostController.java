@@ -1,7 +1,6 @@
-package com.human.dalligo.controller;
+package com.human.dalligo.controller.community;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.human.dalligo.service.JYPostService;
+import com.human.dalligo.service.community.JYPostService;
 import com.human.dalligo.vo.JSUserVO;
-import com.human.dalligo.vo.JYPostVO;
+import com.human.dalligo.vo.community.JYPostVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

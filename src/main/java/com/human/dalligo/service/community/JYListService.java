@@ -1,13 +1,13 @@
-package com.human.dalligo.service;
+package com.human.dalligo.service.community;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.human.dalligo.dao.JYListDAO;
+import com.human.dalligo.dao.community.JYListDAO;
 import com.human.dalligo.util.JYCategoryUtil;
-import com.human.dalligo.vo.JYListVO;
-import com.human.dalligo.vo.JYPostVO;
+import com.human.dalligo.vo.community.JYListVO;
+import com.human.dalligo.vo.community.JYPostVO;
 
 import lombok.RequiredArgsConstructor;
 

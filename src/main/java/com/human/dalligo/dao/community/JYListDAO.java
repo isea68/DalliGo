@@ -1,4 +1,4 @@
-package com.human.dalligo.dao;
+package com.human.dalligo.dao.community;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.human.dalligo.vo.JYListVO;
-import com.human.dalligo.vo.JYPostVO;
+import com.human.dalligo.vo.community.JYListVO;
+import com.human.dalligo.vo.community.JYPostVO;
 
 @Repository
 public class JYListDAO {
@@ -15,7 +15,7 @@ public class JYListDAO {
     @Autowired
     private SqlSession sqlSession;
 
-    private static final String MAPPER = "com.human.dalligo.dao.JYListDAO";
+    private static final String MAPPER = "com.human.dalligo.dao.community.JYListDAO";
 
     // 전체 조회
     public List<JYListVO> getListAll(String category, String search) {

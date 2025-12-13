@@ -1,11 +1,10 @@
-package com.human.dalligo.service;
+package com.human.dalligo.service.community;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,13 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.human.dalligo.dao.JYDetailDAO;
-import com.human.dalligo.dao.JYPostDAO;
-import com.human.dalligo.vo.JYCommentVO;
-import com.human.dalligo.vo.JYDetailVO;
-import com.human.dalligo.vo.JYFileVO;
-import com.human.dalligo.vo.JYLikeVO;
-import com.human.dalligo.vo.JYPostVO;
+import com.human.dalligo.dao.community.JYDetailDAO;
+import com.human.dalligo.dao.community.JYPostDAO;
+import com.human.dalligo.vo.community.JYDetailVO;
+import com.human.dalligo.vo.community.JYFileVO;
+import com.human.dalligo.vo.community.JYPostVO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +34,7 @@ public class JYDetailService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
 
+	// DB에서 파일 정보 가져오기
 	@Transactional(readOnly = true)
 	public JYDetailVO detailById(int id) {
 		JYDetailVO detail = detaildao.detailById(id);
@@ -181,71 +179,5 @@ public class JYDetailService {
 	    String url = amazonS3.getUrl(bucketName, savedName).toString();
 	    return url + "?v=" + System.currentTimeMillis();
 	}
-
-
-	// 댓글 달기
-	public JYCommentVO insertComment(JYCommentVO commentvo) {
-		detaildao.insertComment(commentvo);
-		
-		// DB에서 insertComment한 DB 정보 불러와서 세팅해서 Controller에 전달
-		// insert 시 id, inDate가 자동 세팅된다면 commentvo에 이미 들어있음 - MAPPER에서 useGeneratedKeys="true" keyProperty="id"
-		JYCommentVO insertedComment = detaildao.getOneCommentById(commentvo.getId());
-		
-		return insertedComment;
-	}
-
-
-	public List<JYCommentVO> getCommentsById(int postId) {
-		List<JYCommentVO> commentList = detaildao.getCommentsById(postId);
-		return commentList;
-	}
-
-	// 댓글 수정
-	public JYCommentVO updateComment(JYCommentVO commentvo) {
-		// 댓글 내용 업데이트 - commentId와 content값만 있음, userFk와 nickName = null인 상태
-		detaildao.updateComment(commentvo);
-		
-		// 수정된 댓글을 DB에서 다시 조회해서 반환 (userFk와 nickName도 view에 반환해줘야 하기 때문에 이 작업이 필요)
-		JYCommentVO updatedComment = detaildao.getOneCommentById(commentvo.getId());
-		return updatedComment;
-	}
-
-	// 댓글 삭제
-	public void deleteComment(int id) {
-		detaildao.deleteComment(id);
-		
-	}
 	
-	// 초기 좋아요수 상태 확인
-	public boolean isLiked(int postId, String userId) {
-		JYLikeVO likevo = new JYLikeVO();
-		likevo.setPostId(postId);
-		likevo.setUserId(userId);
-		return detaildao.isLiked(likevo) > 0;
-	}
-	
-	// 좋아요 있는지 없는지 확인
-	public boolean toggleLike(int postId, String userId) {
-		//JYLikeVO로 한번에 보내주는 작업
-		JYLikeVO likevo = new JYLikeVO();
-		likevo.setPostId(postId);
-		likevo.setUserId(userId);
-		int liked = detaildao.isLiked(likevo);
-		
-		// 0은 좋아요가 안 눌려있어서 count = 0 로 나온 결과
-		if(liked == 0) {
-			detaildao.insertLike(likevo);
-			return true; // 좋아요 추가됨
-		// 1은 좋아요가 눌려있어서 count = 1 로 나온 결과
-		}else {
-			detaildao.deleteLike(likevo);
-			return false; // 좋아요 취소됨
-		}
-	}
-	
-	// 좋아요수 조회
-	public int countLikes(int postId) {
-		int countLikes = detaildao.countLikes(postId); 
-		return countLikes;
-	}
 }

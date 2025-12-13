@@ -1,20 +1,18 @@
-package com.human.dalligo.vo;
+package com.human.dalligo.vo.community;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class JYDetailVO {
+public class JYListVO {
 	private int id;
-	private int userFk;
-	private String userId;
+	private String category;
 	private String nickName;
+	private int isAdmin;
 	private String title;
 	private String content;
 	private int countLikes;
 	private int countComments;
 	private LocalDateTime inDate;
-	private List<JYFileVO> fileList;
 }

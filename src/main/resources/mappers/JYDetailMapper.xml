@@ -3,9 +3,9 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.human.dalligo.dao.JYDetailDAO">
+<mapper namespace="com.human.dalligo.dao.community.JYDetailDAO">
 	<!-- 게시글 자세히 보기 -->
-	<resultMap id="ResultDetail" type="com.human.dalligo.vo.JYDetailVO">
+	<resultMap id="ResultDetail" type="com.human.dalligo.vo.community.JYDetailVO">
 		<id property="id" column="id"/>
 		<result property="userId" column="user_id"/>
 		<result property="nickName" column="nick_name"/>
@@ -17,23 +17,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<!-- 게시글 자세히 보기에서 파일 List -->
-	<resultMap id="ResultFile" type="com.human.dalligo.vo.JYFileVO">
+	<resultMap id="ResultFile" type="com.human.dalligo.vo.community.JYFileVO">
 	<id property="id" column="id"/>
     <result property="savedName" column="saved_name"/>
     <result property="originalName" column="original_name"/>
     <result property="postId" column="post_id"/>
 	</resultMap>
-	
-	<!-- 자세히 보기 게시글의 댓글 -->
-	<resultMap id="ResultComment" type="com.human.dalligo.vo.JYCommentVO">
-		<id property="id" column="id"/>
-		<result property="postId" column="post_id"/>
-		<result property="userId" column="user_id"/>
-		<result property="userFk" column="user_fk"/>
-		<result property="nickName" column="nick_name"/>
-		<result property="content" column="content"/>
-		<result property="inDate" column="in_date"/>
-	</resultMap>
+
 	
 	<select id="selectDetailById" parameterType="int" resultMap="ResultDetail">
 		SELECT p.id, p.user_fk, u.user_id AS user_id, u.nick_name AS nick_name, p.in_date, p.title, p.content FROM post p JOIN user u ON p.user_fk = u.id
@@ -44,59 +34,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		DELETE FROM post where id = #{id}
 	</delete>
 	
-	<select id="selectFilesById" parameterType="Integer" resultType="com.human.dalligo.vo.JYFileVO">
+	<select id="selectFilesById" parameterType="Integer" resultType="com.human.dalligo.vo.community.JYFileVO">
 		SELECT id, post_id as postId, original_name as originalName, saved_name as savedName
 		FROM post_files WHERE post_id = #{id}
-	</select>
-	
-	<insert id="insertComment" parameterType="com.human.dalligo.vo.JYCommentVO"
-			useGeneratedKeys="true" keyProperty="id">
-		INSERT INTO post_comments (post_id, user_fk, content) VALUES (#{postId}, #{userFk}, #{content}) 
-	</insert>
-	
-	<select id="selectCommentsById" parameterType="int" resultMap="ResultComment">
-		SELECT c.id, c.post_id, c.user_fk, u.user_id AS user_id, u.nick_name AS nick_name, c.content, c.in_date 
-		FROM post_comments c JOIN user u ON c.user_fk = u.id
-		WHERE c.post_id = #{postId}
-		ORDER BY c.in_date DESC
 	</select>
 	
 	<select id="selectNicknameByUserId" parameterType="int" resultType="String">
 		SELECT nick_name as nickName FROM user WHERE id = #{userFk}
 	</select>
 	
-	<select id="selectOneCommentById" parameterType="int" resultMap="ResultComment">
-		SELECT c.id, c.post_id, c.user_fk, u.user_id, u.nick_name, c.content, c.in_date
-		FROM post_comments c JOIN user u ON c.user_fk = u.id
-		WHERE c.id = #{id}
-	</select>
-	
-	<update id="updateComment" parameterType="com.human.dalligo.vo.JYCommentVO">
-		UPDATE post_comments SET content = #{content}, in_date = NOW()
-		WHERE id = #{id}
-	</update>
-	
-	<delete id="deleteComment" parameterType="int">
-		DELETE FROM post_comments WHERE id = #{id}
-	</delete>
-	
-	<select id="isLikedByUserId" parameterType="com.human.dalligo.vo.JYLikeVO" resultType="int">
-		SELECT COUNT(*) FROM post_likes WHERE post_id = #{postId} AND user_id = #{userId}
-	</select>
-	
-	<insert id="insertLike" parameterType="com.human.dalligo.vo.JYLikeVO">
-		INSERT INTO post_likes (post_id, user_id) VALUES (#{postId}, #{userId})
-	</insert>
-	
-	<delete id="deleteLike" parameterType="com.human.dalligo.vo.JYLikeVO">
-		DELETE FROM post_likes where post_id = #{postId} AND user_id = #{userId}
-	</delete>
-	
-	<select id="selectCountLikes" parameterType="int" resultType="int">
-		SELECT COUNT(*) FROM post_likes WHERE post_id = #{postId}
-	</select>
-	
-	<update id="update" parameterType="com.human.dalligo.vo.JYPostVO">
+	<update id="update" parameterType="com.human.dalligo.vo.community.JYPostVO">
 		UPDATE post SET category = #{category}, title = #{title}, content = #{content}
 		WHERE id = #{id}
 	</update>

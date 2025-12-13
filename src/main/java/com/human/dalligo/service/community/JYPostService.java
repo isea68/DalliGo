@@ -1,4 +1,4 @@
-package com.human.dalligo.service;
+package com.human.dalligo.service.community;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,9 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.human.dalligo.dao.JYPostDAO;
-import com.human.dalligo.vo.JYFileVO;
-import com.human.dalligo.vo.JYPostVO;
+import com.human.dalligo.dao.community.JYPostDAO;
+import com.human.dalligo.vo.community.JYFileVO;
+import com.human.dalligo.vo.community.JYPostVO;
 
 import lombok.RequiredArgsConstructor;
 

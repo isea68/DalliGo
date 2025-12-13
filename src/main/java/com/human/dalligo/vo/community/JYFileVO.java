@@ -1,4 +1,4 @@
-package com.human.dalligo.vo;
+package com.human.dalligo.vo.community;
 
 import lombok.Data;
 

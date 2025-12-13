@@ -1,4 +1,4 @@
-package com.human.dalligo.controller;
+package com.human.dalligo.controller.community;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.human.dalligo.service.JYListService;
-import com.human.dalligo.vo.JYListVO;
+import com.human.dalligo.service.community.JYListService;
+import com.human.dalligo.vo.community.JYListVO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
