@@ -1,4 +1,5 @@
-package com.human.dalligo.dao;
+package com.human.dalligo.dao.academy;
+
 
 import java.util.List;
 
@@ -6,26 +7,28 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.human.dalligo.vo.RRcourseVO;
+import com.human.dalligo.vo.academy.CourseVO;
+
+
 
 @Repository
-public class RRcourseDAO {
+public class CourseDAO {
 	
 	@Autowired
 	SqlSession sqlsession;
-	private static final String Mapper ="com.human.dalligo.dao.RRcourseMapper";
+	private static final String Mapper ="com.human.dalligo.dao.academy.CourseMapper";
 	
-	public void insert(RRcourseVO coursevo) {
+	public void insert(CourseVO coursevo) {
 		sqlsession.insert(Mapper+".insertcourse", coursevo);
 	}
 	
-	public List<RRcourseVO> selectAll(){
-		List<RRcourseVO> courses=sqlsession.selectList(Mapper+".selectAllcourse");
+	public List<CourseVO> selectAll(){
+		List<CourseVO> courses=sqlsession.selectList(Mapper+".selectAllcourse");
 		return courses;
 	}
 	
-	public RRcourseVO selectById(Integer id) {
-		RRcourseVO course = sqlsession.selectOne(Mapper+".selectById",id);
+	public CourseVO selectById(Integer id) {
+		CourseVO course = sqlsession.selectOne(Mapper+".selectById",id);
 		return course;
 	}
 
@@ -38,9 +41,10 @@ public class RRcourseDAO {
 	
 }
 
-	public List<RRcourseVO> findByTrainerId(Integer trainerPk) {
+	public List<CourseVO> findByTrainerId(Integer trainerPk) {
 		return sqlsession.selectList(Mapper+".findByTrainerId", trainerPk);
 	}
 	
 	
+
 }

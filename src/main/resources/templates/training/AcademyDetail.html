@@ -151,7 +151,7 @@
 						<span class="close">&times;</span> <!--X 버튼으로 닫기-->
 				<!--	<h2 th:text="${user.name}"> 님 신청은 다음과 같습니다. </h2>	
 						<h2 > 유느님 신청은 다음과 같습니다. </h2>	-->		
-						<h2 th:if="${!isGuest}" th:text="${user.name}+'님 신청은 다음과 같습니다'">신청정보</h2>					
+						<h2 th:if="${!isGuest && user!=null}" th:text="${user.name}+'님 신청은 다음과 같습니다'">신청정보</h2>					
 						<h2 th:if="${isGuest}">회원만 신청할 수 있습니다.</h2>
 						<div class="enroll-content" th:if="${!isGuest}">									
 							<p>신청과정 : <span th:text ="${cId.title}"></span> </p>

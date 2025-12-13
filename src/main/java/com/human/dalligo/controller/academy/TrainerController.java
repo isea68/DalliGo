@@ -1,5 +1,4 @@
-package com.human.dalligo.controller;
-
+package com.human.dalligo.controller.academy;
 
 import java.io.IOException;
 import org.springframework.stereotype.Controller;
@@ -11,19 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.human.dalligo.service.RRtrainerService;
-import com.human.dalligo.vo.RRtrainerVO;
+import com.human.dalligo.service.academy.TrainerService;
+import com.human.dalligo.vo.academy.TrainerVO;
+
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+
 
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/training")
 
-public class RRtrainerController {
+public class TrainerController {
 	
-	 private final  RRtrainerService trainerservice;
+	 private final  TrainerService trainerservice;
 
 	 //강사회원가입 화면---------------------------------------------
 	  @GetMapping("/trainerRegister")
@@ -41,7 +42,7 @@ public class RRtrainerController {
 	  
 	  //강사회원가입---------------------------------------------
 	  @PostMapping("/trainerRegister")
-	  public String registerTrainer(@ModelAttribute RRtrainerVO trainervo,
+	  public String registerTrainer(@ModelAttribute TrainerVO trainervo,
 			  @RequestParam("photoFile") MultipartFile photoFile
 			  ) throws IOException {
 		  if(!photoFile.isEmpty()) {
@@ -65,10 +66,10 @@ public class RRtrainerController {
 	  
 	  // 강사로그인-->목적지가 2군데 (강좌등록시/강사페이지볼때) 판별하는 기능
 	  @PostMapping("/trlogin")
-	  public String postlogin(@ModelAttribute RRtrainerVO trainervo,
+	  public String postlogin(@ModelAttribute TrainerVO trainervo,
 	                          @RequestParam(name="dest",required = false) String dest,
 	                          HttpSession session) {
-	      RRtrainerVO loginvo = trainerservice.selectForLogin(trainervo);
+	      TrainerVO loginvo = trainerservice.selectForLogin(trainervo);
 	      if (loginvo != null) {
 	    	  
 	        //  session.setAttribute("trainerPk", loginvo.getId());	

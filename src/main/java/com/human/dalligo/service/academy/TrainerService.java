@@ -1,4 +1,5 @@
-package com.human.dalligo.service;
+package com.human.dalligo.service.academy;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -9,18 +10,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.human.dalligo.dao.RRtrainerDAO;
-import com.human.dalligo.vo.RRcourseVO;
-import com.human.dalligo.vo.RRtrainerVO;
+import com.human.dalligo.dao.academy.TrainerDAO;
+import com.human.dalligo.vo.academy.TrainerVO;
 
 import lombok.RequiredArgsConstructor;
 
 
 @Service
 @RequiredArgsConstructor
-public class RRtrainerService {
-	
-	private final RRtrainerDAO trainerdao;
+public class TrainerService {
+
+	private final TrainerDAO trainerdao;
 	
 	//S3 객체 주입
 	private final AmazonS3 amazonS3;
@@ -29,7 +29,7 @@ public class RRtrainerService {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucketName;
 	
-	public void insert(RRtrainerVO trainervo) {		
+	public void insert(TrainerVO trainervo) {		
 		trainerdao.insert(trainervo);
 	}
 		
@@ -54,15 +54,15 @@ public class RRtrainerService {
 	}
 	
 	
-	public List<RRtrainerVO> selectList(){
-		List<RRtrainerVO> trainervo = trainerdao.selectAll();	
+	public List<TrainerVO> selectList(){
+		List<TrainerVO> trainervo = trainerdao.selectAll();	
 		return  trainervo;		
 	}	
 	
 
 	
-	public RRtrainerVO selectForLogin( RRtrainerVO trainervo ) {
-		RRtrainerVO tvo = trainerdao.selectForLogin(trainervo);
+	public TrainerVO selectForLogin( TrainerVO trainervo ) {
+		TrainerVO tvo = trainerdao.selectForLogin(trainervo);
 		if (tvo!=null && tvo.getPassword().equals(trainervo.getPassword())) {
 			return tvo; //로고인 성공
 		}else {
@@ -70,8 +70,8 @@ public class RRtrainerService {
 		}			
 	}
 	
-	public RRtrainerVO select(Integer id) {
-		RRtrainerVO tvo = trainerdao.selectById(id);
+	public TrainerVO select(Integer id) {
+		TrainerVO tvo = trainerdao.selectById(id);
 		
 		return tvo;
 	}

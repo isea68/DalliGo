@@ -1,4 +1,4 @@
-package com.human.dalligo.controller;
+package com.human.dalligo.controller.academy;
 
 
 import java.io.IOException;
@@ -16,16 +16,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.human.dalligo.service.RRcourseService;
-import com.human.dalligo.service.RRtrainerService;
+import com.human.dalligo.service.academy.CourseService;
+import com.human.dalligo.service.academy.TrainerService;
 import com.human.dalligo.vo.JSUserVO;
-import com.human.dalligo.vo.RRcourseVO;
-import com.human.dalligo.vo.RRtrainerVO;
+import com.human.dalligo.vo.academy.CourseVO;
+import com.human.dalligo.vo.academy.TrainerVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +36,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Controller
-public class RRcourseController {
+//@RequestMapping(/academy)
+public class CourseController {
 	
- private final  RRcourseService courseservice;
- private final RRtrainerService trainerservice;
+	
+ private final CourseService courseservice;
+ private final TrainerService trainerservice;
 	
 	
  	//강좌의 main화면---------------------------------------------
+  
   @GetMapping("/academy")
   public String getTrain(Model model) {	  
-	  List<RRcourseVO> courses = courseservice.selectList();
+	  List<CourseVO> courses = courseservice.selectList();
 
 	  model.addAttribute("courses", courses);	  
       return "/training/AcademyBoard";
@@ -58,13 +62,13 @@ public class RRcourseController {
 		  							Model model) {	    
 	  
 	  //1.강좌 정보갖고 오기
-	  RRcourseVO courseId = courseservice.selectById(id) ;
+	  CourseVO courseId = courseservice.selectById(id) ;
 	  
 	  //2.강좌정보에서 TrainerId 조회
 	  int trainerId =courseId.getTrainerId();
 	  
 	  //3.트레이너 정보 조회	  
-	  RRtrainerVO trainervo =trainerservice.select(trainerId);    
+	  TrainerVO trainervo =trainerservice.select(trainerId);    
 	  if (trainervo==null) {			  
 		  //개발용 sysout 대신 로그 사용
 		  log.warn("조회 트레이너 없음:id={}",trainerId );	
@@ -93,7 +97,9 @@ public class RRcourseController {
 	  JSUserVO loginUser = (JSUserVO)session.getAttribute("loginUser");
 	  if(loginUser==null) {
 		  model.addAttribute("isGuest",true);// 비회원임
+		  model.addAttribute("user", null); //예외처리
 	  }else {
+		  model.addAttribute("isGuest", false);
 		  model.addAttribute("user", loginUser); 
 	  }
 	  
@@ -118,7 +124,7 @@ public class RRcourseController {
 
   	//post--> 강좌등록 데이터  ---------------------------------------------
   @PostMapping("/course") 
-  public String postcourse(@ModelAttribute RRcourseVO coursevo, 
+  public String postcourse(@ModelAttribute CourseVO coursevo, 
 		  					HttpSession session,
 		  					@RequestParam("prphotoFile") MultipartFile prphotoFile
 		  ) throws IOException {
@@ -126,7 +132,7 @@ public class RRcourseController {
 	  //---트레이너 ID 점검부분-----
 	  // CourseVO에 trainerId부분은 트레이너의 PK를 갖고와야한다.
 	  // 그래서 세션에서 trainerPK라 명명하고 갖고와서 CourserVO에 저장해준다
-	  RRtrainerVO trCall =(RRtrainerVO)session.getAttribute("trainerlogin");
+	  TrainerVO trCall =(TrainerVO)session.getAttribute("trainerlogin");
 	  
 	  if(trCall==null) {
 		  //로그인 안돼음
@@ -188,7 +194,7 @@ public class RRcourseController {
 	  //강사 마이페이지 만들기---------------------------------------------
 	  @GetMapping("/trainerPage")
 	  public String trainerpage(
-			  	@SessionAttribute(name="trainerlogin", required=false) RRtrainerVO trCall
+			  	@SessionAttribute(name="trainerlogin", required=false) TrainerVO trCall
 			  	, Model model) {
 		  
 		  //로그인한 강사ID 가져오기
@@ -200,10 +206,10 @@ public class RRcourseController {
 			  return "redirect:/academy?needTrlog=Notrainer";
 		  }
 		  //해당 강사가 등록한 모든 강좌 가져오기
-		  List<RRcourseVO> myCourseList = courseservice.findByTrainerId(trainerPK);
+		  List<CourseVO> myCourseList = courseservice.findByTrainerId(trainerPK);
 		   
 	//	  System.out.println("조회된 강좌수:"+myCourseList);
-	//	  for(RRcourseVO vo :myCourseList) {
+	//	  for(CourseVO vo :myCourseList) {
 	//		  System.out.println("강좌:"+vo);
 	//	  }
 		  
@@ -211,6 +217,5 @@ public class RRcourseController {
 	  	 return  "training/trainerPage";
 	  }
    
-  
-  
+
 }

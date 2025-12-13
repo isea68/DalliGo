@@ -1,4 +1,5 @@
-package com.human.dalligo.service;
+package com.human.dalligo.service.academy;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -9,16 +10,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.human.dalligo.dao.RRcourseDAO;
-import com.human.dalligo.vo.RRcourseVO;
+import com.human.dalligo.dao.academy.CourseDAO;
+import com.human.dalligo.vo.academy.CourseVO;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class RRcourseService {
-	
-	private final RRcourseDAO coursedao;
+public class CourseService {
+
+private final CourseDAO coursedao;
 	
 	//S3 객체 주입
 	private final AmazonS3 amazonS3;
@@ -28,7 +29,7 @@ public class RRcourseService {
 	private String bucketName;
 	
 	
-	public void insert(RRcourseVO coursevo) {
+	public void insert(CourseVO coursevo) {
 		coursedao.insert(coursevo);
 		
 	}
@@ -58,14 +59,14 @@ public class RRcourseService {
 	
 	//전체조회
 	            
-	public List<RRcourseVO> selectList() {
-		List<RRcourseVO> courses=coursedao.selectAll();	
+	public List<CourseVO> selectList() {
+		List<CourseVO> courses=coursedao.selectAll();	
 		return  courses;
 		
 	}
 	
-	public RRcourseVO selectById(Integer id) {
-		RRcourseVO course = coursedao.selectById(id);
+	public CourseVO selectById(Integer id) {
+		CourseVO course = coursedao.selectById(id);
 		System.out.println("DB token="+course.getDeleteToken());
 
 		return course;
@@ -82,7 +83,7 @@ public class RRcourseService {
 	    System.out.println("입력받은 token = " + token);
 		
 		//강좌 존재유무확인
-		RRcourseVO course = coursedao.selectById(courseId);
+		CourseVO course = coursedao.selectById(courseId);
 		System.out.println("삭제할 강좌번호:"+ course);	
 		
 		if (course==null) {
@@ -128,7 +129,7 @@ public class RRcourseService {
 	
 	}
 
-	public List<RRcourseVO> findByTrainerId(Integer trainerPk) {		
+	public List<CourseVO> findByTrainerId(Integer trainerPk) {		
 		return coursedao.findByTrainerId(trainerPk);
 	}	
 

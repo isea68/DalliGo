@@ -1,32 +1,46 @@
-
 <body>
   <div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
-    
-    <h2>내 강좌 목록</h2>
 
-    <div th:if="${#lists.isEmpty(myCourseList)}">
+    <h2 style="margin-bottom: 30px;">내 강좌 목록</h2>
+
+    <div th:if="${#lists.isEmpty(myCourseList)}" style="color: #777;">
         등록된 강좌가 없습니다.
     </div>
 
-    <table th:if="${!#lists.isEmpty(myCourseList)}" border="1" style="width: 600px; text-align: center;">
-        <tr>
-            <th>강좌명</th>
-            <th>장소</th>
-            <th>시작일</th>
-            <th>관리</th>
+    <table th:if="${!#lists.isEmpty(myCourseList)}"
+           style="width: 700px; border-collapse: collapse; text-align: center;">
+        <tr style="background-color: #f5f5f5;">
+            <th style="border-bottom: 1px solid #ddd; padding: 10px;">강좌명</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 10px;">장소</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 10px;">시작일</th>
+            <th style="border-bottom: 1px solid #ddd; padding: 10px;">관리</th>
         </tr>
 
         <tr th:each="c : ${myCourseList}">
-            <td th:text="${c.title}"></td>
-            <td th:text="${c.location}"></td>
-            <td th:text="${c.startDate}"></td>
-            <td>
+            <td style="border-bottom: 1px solid #eee; padding: 10px;"
+                th:text="${c.title}"></td>
+            <td style="border-bottom: 1px solid #eee; padding: 10px;"
+                th:text="${c.location}"></td>
+            <td style="border-bottom: 1px solid #eee; padding: 10px;"
+                th:text="${#temporals.format(c.startDate, 'yyyy-MM-dd')}"></td>
+            <td style="border-bottom: 1px solid #eee; padding: 10px;">
                 <a th:href="@{/trainer/ad/del/{id}(id=${c.id}, token=${c.deleteToken})}">
-                    <button>삭제</button>
+                    <button style="padding: 5px 12px; border: none; background-color: #ff6b6b; color: white; border-radius: 4px; cursor: pointer;">
+                        삭제
+                    </button>
                 </a>
             </td>
         </tr>
     </table>
+
+    <!-- 하단 버튼 -->
+    <div style="margin-top: 40px;">
+        <a th:href="@{/academy}">
+            <button style="padding: 10px 25px; border: 1px solid #ccc; background-color: white; border-radius: 20px; cursor: pointer;">
+                게시판으로 돌아가기
+            </button>
+        </a>
+    </div>
 
   </div>
 </body>

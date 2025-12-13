@@ -1,11 +1,12 @@
-package com.human.dalligo.vo;
+package com.human.dalligo.vo.academy;
+
 
 import java.time.LocalDateTime;
 
 import lombok.Data;
 
 @Data
-public class RRcourseVO {
+public class CourseVO {
 	private Integer id;
 	private Integer trainerId;
 	private String title;
