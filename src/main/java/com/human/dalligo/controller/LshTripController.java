@@ -37,14 +37,21 @@ public class LshTripController {
     private final LshDistanceService distanceService;
 
 
-    /** 이벤트의 Trip 상세 조회 */
+    /** 이벤트의 Trip 상세 조회 
+     * @param startCity */
     @GetMapping("/events/{id}/trips")
     public String tripDetailForEvent(
             @PathVariable("id") int eventId,
             @SessionAttribute("loginUser") JSUserVO loginUser,
-            Model model) {
+            Model model, Object startCity) {
+    	
+    	// 🔐 비회원 접근 차단 (Whitelabel 방지)
+        if (loginUser == null) {
+            return "redirect:/events";
+        }
 
         String userAddr = loginUser.getAddress();
+        System.out.printf("userAddr = "+userAddr);
         model.addAttribute("loginUser", loginUser);
 
         LshEventVO event = eventService.getEvent(eventId);
@@ -66,6 +73,12 @@ public class LshTripController {
         // 출발/도착 도시 계산
         model.addAttribute("startCity", tripService.extractCity(userAddr));
         model.addAttribute("endCity", tripService.extractCity(event.getLocation()));
+        
+		// ✅ cities 테이블의 주소 조회 (이미 있는 서비스 가정)
+        String cityName=tripService.extractCity(event.getLocation());
+        System.out.println("cityName = "+cityName);
+        model.addAttribute("startCityAddr", userAddr);
+        model.addAttribute("endCityAddr", tripService.getCityAddress(cityName));
 
         return "trip/detail";
     }

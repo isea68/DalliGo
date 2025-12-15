@@ -1,15 +1,12 @@
 package com.human.dalligo.service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.time.LocalDate;
-import java.sql.Timestamp;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +15,10 @@ import com.human.dalligo.dao.LshTripDAO;
 import com.human.dalligo.vo.LshApplyListVO;
 import com.human.dalligo.vo.LshApplyVO;
 import com.human.dalligo.vo.LshCityVO;
-import com.human.dalligo.vo.LshDistanceVO;
 import com.human.dalligo.vo.LshEventVO;
-import com.human.dalligo.vo.LshTripSumVO;
 import com.human.dalligo.vo.LshTripVO;
 import com.human.dalligo.vo.LshUserVO;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -132,7 +126,8 @@ public class LshTripService {
         tripDAO.insertApply(userId, eventId);
         return true;
     }
-
+    
+    // 특정 이벤트의 현재 신청자 수 조회
     public int getApplicationCount(int eventId) {
         return tripDAO.countApplicationsByEvent(eventId);
     }
@@ -342,6 +337,21 @@ public class LshTripService {
 
         return trip;
     }
+
+	public String getCityAddress(String cityName) {
+		
+		if (cityName == null || cityName.isBlank()) {
+            return "&&&&&";
+        }
+
+        LshCityVO city = tripDAO.selectCity(cityName.trim());
+
+        if (city == null) {
+            return "@@@@@@@";
+        }
+
+	    return city.getCityAddr();
+	}
 
 }
 
