@@ -51,7 +51,7 @@ public class LshTripController {
         }
 
         String userAddr = loginUser.getAddress();
-        System.out.printf("userAddr = "+userAddr);
+        //System.out.printf("userAddr = "+userAddr);
         model.addAttribute("loginUser", loginUser);
 
         LshEventVO event = eventService.getEvent(eventId);
@@ -75,10 +75,11 @@ public class LshTripController {
         model.addAttribute("endCity", tripService.extractCity(event.getLocation()));
         
 		// ✅ cities 테이블의 주소 조회 (이미 있는 서비스 가정)
-        String cityName=tripService.extractCity(event.getLocation());
-        System.out.println("cityName = "+cityName);
-        model.addAttribute("startCityAddr", userAddr);
-        model.addAttribute("endCityAddr", tripService.getCityAddress(cityName));
+        String cityName1=tripService.extractCity(userAddr);
+        String cityName2=tripService.extractCity(event.getLocation());
+        //System.out.println("cityName = "+cityName);
+        model.addAttribute("startCityAddr", tripService.getCityAddress(cityName1));
+        model.addAttribute("endCityAddr", tripService.getCityAddress(cityName2));
 
         return "trip/detail";
     }
