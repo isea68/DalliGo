@@ -152,9 +152,11 @@
 
         <tr>
             <td><b>일정</b></td>
-            <td th:text="${#dates.format(startDate,'yyyy-MM-dd')} 
-                         + ' ~ ' + 
-                         ${#dates.format(endDate,'yyyy-MM-dd')}"></td>
+			<td th:text="${#dates.format(startDate,'yyyy-MM-dd') == #dates.format(endDate,'yyyy-MM-dd')}
+			             ? ${#dates.format(startDate,'yyyy-MM-dd')}
+			             : ${#dates.format(startDate,'yyyy-MM-dd')} + ' ~ ' + ${#dates.format(endDate,'yyyy-MM-dd')}">
+			</td>
+
         </tr>
 
         <tr>
@@ -306,6 +308,28 @@
         	})
         	.catch(err => console.error(err));
 	}
+	
+	document.addEventListener("DOMContentLoaded", function () {
+
+	    /* 거리 (km) : 소수점 제거 */
+	    const distanceCell = document.getElementById("distanceCell");
+	    if (distanceCell && distanceCell.textContent !== "-") {
+	        const distance = parseFloat(distanceCell.textContent);
+	        if (!isNaN(distance)) {
+	            distanceCell.textContent = Math.floor(distance);
+	        }
+	    }
+		
+		/* 비용 (인당) : 천 단위 콤마 */
+		const costCell = document.getElementById("costCell");
+		if (costCell && costCell.textContent !== "-") {
+		    const cost = parseInt(costCell.textContent, 10);
+		    if (!isNaN(cost)) {
+		        costCell.textContent = cost.toLocaleString("ko-KR");
+		    }
+		}
+
+	});
 
 </script>
 
