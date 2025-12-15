@@ -41,20 +41,49 @@
         }
 
         /* 모달 */
-        .modal { 
+        .modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+			
+			align-items: center;
+			justify-content: center;
         }
         .modal .box {
-            width: 80%;
-            height: 70%;
-            background: white;
-            padding: 10px;
+            width: 800px;
+			max-width: 90%;
+            height: 600px;
+			background: #fff;
+			border-radius: 8px;
+			position: relative;
+			display: flex;
+			flex-direction: column;
         }
+		/* 주소 영역 */
+		#mapAddress {
+			position: relative;      /* ⭐ 기준점 */
+		    padding: 10px 14px;
+		    font-weight: bold;
+		    border-bottom: 1px solid #ddd;
+		    text-align: left;
+		}
+		/* 지도 영역 */
+		#map {
+		    flex: 1;
+		}
+		/* 닫기 버튼 */
+		.modal-close {
+		    position: absolute;
+		    top: 8px;
+		    right: 12px;
+		    background: none;
+		    border: none;
+		    font-size: 20px;
+		    cursor: pointer;
+		    z-index: 10000;
+		}
 		
 		/* 신청 버튼을 텍스트 링크처럼 보이도록 변경 */
 		#applyBtn {
@@ -86,6 +115,9 @@
 <!-- fragment/header.html을 그대로 적용 -->
 <header th:replace="fragment/header :: headerDiv"></header>
 
+<script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=43652f0566b534bd3247a96af0d13514&libraries=services"></script>
+
+
 <div class="page-container">
 
     <h1 th:text="${event.title}">대회명</h1>
@@ -103,7 +135,7 @@
 				/
 				<span>(버스정차위치)</span>
 				<span th:text="${startCityAddr}"></span>
-                <button id="btnStartMap">지도 보기</button>
+                <button onclick="openMapModal('start')">지도 보기</button>
             </td>
         </tr>
 
@@ -114,7 +146,7 @@
 				/
 				<span>(버스정차위치)</span>
 				<span th:text="${endCityAddr}"></span>
-                <button id="btnEndMap">지도 보기</button>
+                <button onclick="openMapModal('end')">지도 보기</button>
             </td>
         </tr>
 
@@ -172,12 +204,16 @@
 
 </div>
 
-<!-- 지도 모달 -->
-<div id="mapModal" class="modal">
-  <div class="box">
-    <div id="map" style="width:100%; height:100%;"></div>
-    <button onclick="closeModal()">닫기</button>
-  </div>
+<!-- 지도 모달 : Modal UI (detail.html 하단), 발표용이면 Bootstrap Modal이 가장 무난 -->
+<div id="mapModal" class="modal" onclick="closeMapModal()">
+	<div class="box" onclick="event.stopPropagation()">
+		<button class="modal-close" onclick="closeMapModal()">✕</button>
+		<!-- 주소 표시 -->
+		<div id="mapAddress">
+		    버스정차 위치 :
+		</div>
+	<div id="map"></div>
+	</div>
 </div>
 
 <script>
@@ -277,11 +313,54 @@
 /*<![CDATA[*/
     const startCity = /*[[${startCity}]]*/ '서울';
     const endCity   = /*[[${endCity}]]*/ '강릉';
+	const startAddr = /*[[${startCityAddr}]]*/ '';
+	const endAddr   = /*[[${endCityAddr}]]*/ '';
     const eventId = /*[[${event.id}]]*/ 0;
     const userId  = /*[[${loginUser.userId}]]*/ '';
 	const tripId = /*[[${trip != null ? trip.tripId : 0}]]*/ 0;
 /*]]>*/
 </script>
+
+<script>
+function openMapModal(type) {
+    const modal = document.getElementById("mapModal");
+    modal.style.display = "flex";
+
+    const address = (type === 'start') ? startAddr : endAddr;
+
+    document.getElementById("mapAddress").innerText =
+        "버스정차 위치 : " + address;
+
+    setTimeout(() => {
+        const mapContainer = document.getElementById("map");
+
+        const map = new kakao.maps.Map(mapContainer, {
+            center: new kakao.maps.LatLng(37.5665, 126.9780),
+            level: 5
+        });
+
+        const geocoder = new kakao.maps.services.Geocoder();
+
+        geocoder.addressSearch(address, function(result, status) {
+            if (status === kakao.maps.services.Status.OK) {
+                const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+                new kakao.maps.Marker({
+                    map: map,
+                    position: coords
+                });
+
+                map.setCenter(coords);
+            }
+        });
+    }, 200);
+}
+
+function closeMapModal() {
+    document.getElementById("mapModal").style.display = "none";
+}
+</script>
+
 
 </body>
 </html>
