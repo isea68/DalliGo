@@ -71,11 +71,25 @@
         <td th:text="${iterStat.index + 1}"></td>
 
         <td>
-          <a th:href="@{/events/{eventId}/trips(eventId=${e.id})}" 
-		  style="text-decoration:none; color:#007bff; font-weight:bold;"
-		  onmouseover="this.style.color='#800080';"
-		  onmouseout="this.style.color='#007bff';"
-		  th:text="${e.title}"></a>
+		  <!-- 로그인 상태 -->
+		  <a th:if="${isLogin}"
+		     th:href="@{/events/{eventId}/trips(eventId=${e.id})}"
+		     style="text-decoration:none; color:#007bff; font-weight:bold;"
+		     onmouseover="this.style.color='#800080';"
+		     onmouseout="this.style.color='#007bff';"
+		     th:text="${e.title}">
+		  </a>
+
+		  <!-- 비회원 -->
+		  <a th:if="${!isLogin}"
+		     href="#"
+		     style="text-decoration:none; color:#007bff; font-weight:bold;"
+		     onclick="alert('로그인 후 이용 가능한 서비스입니다.'); return false;"
+		     onmouseover="this.style.color='#800080';"
+		     onmouseout="this.style.color='#007bff';"
+		     th:text="${e.title}">
+		  </a>
+
         </td>
 
         <td th:text="${e.location}"></td>

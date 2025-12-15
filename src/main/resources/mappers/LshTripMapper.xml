@@ -29,6 +29,13 @@
             status = #{status}
         WHERE trip_id = #{tripId}
     </update>
+    
+    <!-- 6) trips.status 업데이트 -->
+    <update id="updateTripStatus" parameterType="map">
+        UPDATE trips
+        SET status = #{status}
+        WHERE event_id = #{eventId}
+    </update>
 
     <!-- Trip 단건 조회 -->
     <select id="selectTrip" parameterType="int"
@@ -56,18 +63,13 @@
     <!-- City 단건 -->
     <select id="selectCity" parameterType="string"
             resultType="com.human.dalligo.vo.LshCityVO">
-        SELECT *
+        SELECT
+        	city_name AS cityName,
+        	city_place AS cityPlace,
+        	city_addr AS cityAddr
         FROM cities
-        WHERE city_name = #{cityName}
+        WHERE #{cityName} LIKE CONCAT('%', city_name, '%')
     </select>
-
-    <!-- 현재 신청인원수 카운팅 -->
-	<select id="getApplicationCount" resultType="int">
-		SELECT COUNT(*)
-		FROM trip_applications
-		WHERE event_id = #{eventId}
-	</select>
-
 
 	<!-- 신청 리스트 + 이벤트 정보 -->
     <select id="selectAllApplicationsWithEvent" resultType="com.human.dalligo.vo.LshApplyListVO">
@@ -113,13 +115,6 @@
         VALUES
         (#{userId}, #{eventId}, NOW(), #{status})
     </insert>
-    
-    <insert id="insertApply">
-        INSERT INTO trip_applications
-        (user_id, event_id, apply_date, status)
-        VALUES
-        (#{userId}, #{eventId}, '신청')
-    </insert>
 
 	<!-- ★ 특정 이벤트의 현재 신청자 수 조회 -->
     <select id="countApplicationsByEvent" parameterType="int" resultType="int">
@@ -145,33 +140,14 @@
         WHERE event_id = #{eventId}
         LIMIT 1
     </select>
-
-	<!-- 6) trips.status 업데이트 -->
-    <update id="updateTripStatus" parameterType="map">
-        UPDATE trips
-        SET status = #{status}
-        WHERE event_id = #{eventId}
-    </update>
-    
-    <select id="selectGroupedTripStatus" resultType="com.human.dalligo.vo.LshTripSumVO">
-		SELECT
-			t.start_city AS startCity,
-			t.end_city AS endCity,
-			MAX(e.title) AS title,
-			MAX(t.trip_date) AS tripDate,
-			SUM(t.current_people) AS totalPeople,
-			MAX(t.status) AS status
-		FROM trips t
-		JOIN event e ON t.event_id = e.id
-		GROUP BY t.start_city, t.end_city
-		ORDER BY t.start_city, t.end_city;
-	</select>
-
+	
+	<!-- 신청한 것 취소할 때 -->
 	<delete id="deleteTripApplication">
 		DELETE FROM trip_applications
 		WHERE event_id = #{eventId} AND user_id = #{userId}
 	</delete>
-	<!-- 상태 저장 -->
+	
+	<!-- 신청 상태만 '신청'→'취소' 같은 식으로 변경 -->
 	<update id="updateApplicationStatus">
 		UPDATE trip_applications
 		SET status = #{status}
@@ -186,11 +162,6 @@
 		WHERE event_id = #{eventId}
 	</update>
 	
-	<!-- 거리 업데이트 : trip객체에 distance를 같이 넘겨야 함 -->
-	<select id="getTripById" parameterType="int"
-		resultType="com.human.dalligo.vo.LshTripVO">
-		SELECT * FROM trips WHERE trip_id = #{tripId}
-	</select>
-
+	
 
 </mapper>
