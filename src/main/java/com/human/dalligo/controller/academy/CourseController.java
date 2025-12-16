@@ -175,10 +175,7 @@ public class CourseController {
    @GetMapping("/trainer/ad/del/{id}")
 	public String deleteAd(@PathVariable("id") Integer id, 
 							@RequestParam("token") String token,
-							RedirectAttributes rttr) {
-		
-	//	System.out.println("Url token ="+token);
-		
+							RedirectAttributes rttr) {		
 		try {
 			courseservice.deleteByToken(id, token);
 			
