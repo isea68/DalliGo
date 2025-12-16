@@ -10,14 +10,10 @@ import com.human.dalligo.vo.LshEventVO;
 
 @Mapper
 public interface LshEventDAO {
-	List<LshEventVO> selectAll();
-
-	LshEventVO selectOne(int id);
-
-	//int insert(LshEventVO vo);
 	
-	LshEventVO selectEventById(int id);
-
-	LocalDateTime getStartDate();
+	// 전체 이벤트 조회
+	List<LshEventVO> selectAll();
+	// id로 단일 이벤트 조회
+	LshEventVO selectOne(int id);
 
 }

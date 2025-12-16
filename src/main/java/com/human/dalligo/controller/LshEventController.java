@@ -13,6 +13,7 @@ import com.human.dalligo.service.LshTripService;
 import com.human.dalligo.vo.LshEventVO;
 import com.human.dalligo.vo.LshTripVO;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -27,9 +28,10 @@ public class LshEventController {
 
 // 전체 이벤트 목록 페이지
 	@GetMapping({"/events"})
-	public String rootToEvents(Model model) {
+	public String rootToEvents(Model model, HttpSession session) {
 		//List<LshEventVO> list = eventService.getAllEvents();
 		model.addAttribute("events", eventService.getAllEvents());
+		model.addAttribute("isLogin", session.getAttribute("loginUser") != null);
 		return "event/list"; // event/list.html
 	}
 

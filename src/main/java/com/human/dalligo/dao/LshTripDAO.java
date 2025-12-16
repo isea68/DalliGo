@@ -27,7 +27,7 @@ public interface LshTripDAO {
 
     // City
     List<LshCityVO> selectAllCities();
-    LshCityVO selectCity(String cityName);
+    LshCityVO selectCity(@Param("cityName") String cityName);
     
     // 중복 신청 여부 체크
     int existsApplication(
