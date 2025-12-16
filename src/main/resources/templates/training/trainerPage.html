@@ -1,4 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<!--	<link rel="stylesheet" href ="/css/RRtrainerRegister.css">-->
+
+
+</head>
+<style>
+	
+	h2 {
+	    margin-top: 120px;
+	}
+
+	
+</style>
 <body>
+	
+	<div th:replace="fragment/header :: headerDiv"></div>	
+		
   <div style="display: flex; flex-direction: column; align-items: center; margin-top: 50px;">
 
     <h2 style="margin-bottom: 30px;">내 강좌 목록</h2>
@@ -24,6 +46,7 @@
             <td style="border-bottom: 1px solid #eee; padding: 10px;"
                 th:text="${#temporals.format(c.startDate, 'yyyy-MM-dd')}"></td>
             <td style="border-bottom: 1px solid #eee; padding: 10px;">
+				
                 <a th:href="@{/trainer/ad/del/{id}(id=${c.id}, token=${c.deleteToken})}">
                     <button style="padding: 5px 12px; border: none; background-color: #ff6b6b; color: white; border-radius: 4px; cursor: pointer;">
                         삭제
@@ -36,7 +59,7 @@
     <!-- 하단 버튼 -->
     <div style="margin-top: 40px;">
         <a th:href="@{/academy}">
-            <button style="padding: 10px 25px; border: 1px solid #ccc; background-color: white; border-radius: 20px; cursor: pointer;">
+            <button style="padding: 10px 25px; border: 1px solid rgb(128, 255, 255); background-color: rgb(128, 255, 255); border-radius: 20px; cursor: pointer;">
                 게시판으로 돌아가기
             </button>
         </a>
