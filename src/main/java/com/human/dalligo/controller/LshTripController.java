@@ -1,12 +1,21 @@
 package com.human.dalligo.controller;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriUtils;
 
 import com.human.dalligo.service.LshDistanceService;
 import com.human.dalligo.service.LshEventService;
@@ -26,6 +37,7 @@ import com.human.dalligo.vo.LshApplyListVO;
 import com.human.dalligo.vo.LshEventVO;
 import com.human.dalligo.vo.LshTripVO;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -35,7 +47,7 @@ public class LshTripController {
     private final LshTripService tripService;
     private final LshEventService eventService;
     private final LshDistanceService distanceService;
-
+    private final RestTemplate restTemplate = new RestTemplate();
 
     /** 이벤트의 Trip 상세 조회 
      * @param startCity */
@@ -80,6 +92,10 @@ public class LshTripController {
         //System.out.println("cityName = "+cityName);
         model.addAttribute("startCityAddr", tripService.getCityAddress(cityName1));
         model.addAttribute("endCityAddr", tripService.getCityAddress(cityName2));
+        // cities 테이블에서 place 조회
+        model.addAttribute("startCityPlace", tripService.getCityPlace(cityName1));
+        model.addAttribute("endCityPlace", tripService.getCityPlace(cityName2));
+
 
         return "trip/detail";
     }
@@ -216,4 +232,185 @@ public class LshTripController {
 
         return "trip/detail";
     }
+    
+    
+    @Value("${kakao.rest.api-key}")
+    private String kakaoRestApiKey;
+    
+    @GetMapping("/kakao/route")
+    @ResponseBody
+    public Map<String, Object> getRoute(
+            @RequestParam("start") String start,
+            @RequestParam("end") String end) {
+
+    	// 1️⃣ 출발 / 도착 좌표 구하기
+        Map<String, Double> startCoord = getCoordinate(start);
+        Map<String, Double> endCoord   = getCoordinate(end);
+
+        // 2️⃣ Directions API 호출
+        String url = String.format(
+            "https://apis-navi.kakaomobility.com/v1/directions" +
+            "?origin=%f,%f&destination=%f,%f&priority=RECOMMEND",
+            startCoord.get("lng"), startCoord.get("lat"),
+            endCoord.get("lng"), endCoord.get("lat")
+        );
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response =
+        		restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+
+        Map<String, Object> body = response.getBody();
+
+        // 3️⃣ 응답 파싱
+        Map<String, Object> route =
+            (Map<String, Object>) ((List<?>) body.get("routes")).get(0);
+
+        Map<String, Object> summary =
+            (Map<String, Object>) route.get("summary");
+
+        int distance = (int) summary.get("distance");
+
+        List<Map<String, Object>> roads =
+            (List<Map<String, Object>>) ((Map<?, ?>)
+                ((List<?>) route.get("sections")).get(0)).get("roads");
+
+        List<Map<String, Double>> points = new ArrayList<>();
+
+        for (Map<String, Object> road : roads) {
+            List<Double> vertexes = (List<Double>) road.get("vertexes");
+            for (int i = 0; i < vertexes.size(); i += 2) {
+                points.add(Map.of(
+                    "lng", vertexes.get(i),
+                    "lat", vertexes.get(i + 1)
+                ));
+            }
+        }
+
+        // 4️⃣ 프론트로 보낼 데이터 구성
+        Map<String, Object> result = new HashMap<>();
+        result.put("distance", distance);
+        result.put("points", points);
+        result.put("center", Map.of(
+            "lat", startCoord.get("lat"),
+            "lng", startCoord.get("lng")
+        ));
+
+        return result;
+    }
+    
+    private Map<String, Double> getCoordinate(String query) {
+
+        //System.out.println("KAKAO KEY = [" + kakaoRestApiKey + "]");
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
+        //headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        List<String> candidates = buildSearchQueries(query);
+
+        for (String q : candidates) {
+            try {
+            	String encoded = q;
+
+                /* 1️⃣ Address API */
+                String addressUrl =
+                    "https://dapi.kakao.com/v2/local/search/address.json"
+                        + "?query=" + encoded
+                        + "&page=1"
+                        + "&size=1";
+
+                ResponseEntity<Map> response =
+                    restTemplate.exchange(addressUrl, HttpMethod.GET, entity, Map.class);
+
+                Map body = response.getBody();
+                System.out.println("ADDRESS TRY [" + q + "] => " + body);
+
+                List docs = (List) body.get("documents");
+                if (docs != null && !docs.isEmpty()) {
+                    Map first = (Map) docs.get(0);
+                    Map road = (Map) first.get("road_address");
+                    Map addr = (Map) first.get("address");
+                    Map target = (road != null) ? road : addr;
+
+                    if (target != null) {
+                        return Map.of(
+                            "lat", Double.parseDouble((String) target.get("y")),
+                            "lng", Double.parseDouble((String) target.get("x"))
+                        );
+                    }
+                }
+
+                /* 2️⃣ Keyword API */
+                String keywordUrl =
+                    "https://dapi.kakao.com/v2/local/search/keyword.json"
+                        + "?query=" + encoded
+                        + "&page=1"
+                        + "&size=1";
+
+                response =
+                    restTemplate.exchange(keywordUrl, HttpMethod.GET, entity, Map.class);
+
+                body = response.getBody();
+                System.out.println("KEYWORD TRY [" + q + "] => " + body);
+
+                docs = (List) body.get("documents");
+                if (docs != null && !docs.isEmpty()) {
+                    Map first = (Map) docs.get(0);
+                    return Map.of(
+                        "lat", Double.parseDouble((String) first.get("y")),
+                        "lng", Double.parseDouble((String) first.get("x"))
+                    );
+                }
+
+            } catch (Exception e) {
+                System.out.println("FAIL QUERY => " + q);
+                e.printStackTrace();
+            }
+        }
+
+        throw new RuntimeException("좌표 변환 실패: " + query);
+    }
+
+
+
+    private List<String> buildSearchQueries(String origin) {
+        List<String> list = new ArrayList<>();
+
+        if (origin == null || origin.isBlank()) {
+            return list;
+        }
+
+        origin = origin.trim();
+
+        // 1. 원본
+        list.add(origin);
+
+        // 2. "수원시 " 제거
+        list.add(origin.replaceAll("^.*?시\\s*", ""));
+
+        // 3. "권선구 " 제거
+        list.add(origin.replaceAll("^.*?구\\s*", ""));
+
+        // 4. 번지 제거
+        list.add(origin.replaceAll("\\s\\d+.*$", ""));
+
+        // 5. 도로명만
+        list.add(origin.replaceAll("^.*?(대로|로)", "$1"));
+
+        // 중복 제거
+        return list.stream().distinct().toList();
+    }
+
+//    @PostConstruct
+//    public void check() {
+//        System.out.println("KAKAO KEY = " + kakaoRestApiKey);
+//    }
+
+
 }

@@ -352,6 +352,14 @@ public class LshTripService {
 
 	    return city.getCityAddr();
 	}
+	
+	public String getCityPlace(String cityName) {
+		LshCityVO city = tripDAO.selectCity(cityName);
+		if (city == null) {
+	        return null;
+	    }
+		return city.getCityPlace();
+	}
 
 }
 

@@ -30,6 +30,7 @@
             padding: 10px;
             border: 1px solid #aaa;
             text-align: center;
+			vertical-align: middle;
         }
 
         h1 {
@@ -161,8 +162,13 @@
 
         <tr>
             <td><b>거리 (km)</b></td>
-            <td id="distanceCell"
-                th:text="${trip != null ? trip.distance : '-'}">-</td>
+            <td> 
+				<span id="distanceCell"
+                th:text="${trip != null ? trip.distance : '-'}">-</span>
+				<button onclick="openRouteModal()" style="margin-left:10px;">
+				    지도경로
+				</button>
+			</td>
         </tr>
 
         <tr>
@@ -188,21 +194,25 @@
                 th:text="${trip != null ? trip.status : '-'}">-</td>
         </tr>
     </table>
-
-    <button id="applyBtn">신청</button>
-	<!-- 취소 버튼 -->
-	<button id="cancelBtn" style="
-		background: none;
-		border: none;
-		color: #ff3333;       /* 빨간색으로 구분 */
-		font-weight: bold;
-		font-size: 1.5em;
-		cursor: pointer;
-		margin-left: 15px;
-		text-decoration: none;">
-		취소
-	</button>
-    <a href="/trip/list" class="link-btn" style="margin-left: 15px;">신청현황 보기</a>
+	
+	<div style="margin-top: 20px;">
+		<a href="javascript:history.back();" class="link-btn">앞페이지</a>
+		&nbsp;&nbsp;
+		<button id="applyBtn">신청</button>
+		<!-- 취소 버튼 -->
+		<button id="cancelBtn" style="
+			background: none;
+			border: none;
+			color: #ff3333;       /* 빨간색으로 구분 */
+			font-weight: bold;
+			font-size: 1.5em;
+			cursor: pointer;
+			margin-left: 15px;
+			text-decoration: none;">
+			취소
+		</button>
+		<a href="/trip/list" class="link-btn" style="margin-left: 15px;">신청현황 보기</a>
+	</div>
 
 </div>
 
@@ -339,6 +349,8 @@
     const endCity   = /*[[${endCity}]]*/ '강릉';
 	const startAddr = /*[[${startCityAddr}]]*/ '';
 	const endAddr   = /*[[${endCityAddr}]]*/ '';
+	const startPlace = /*[[${startCityPlace}]]*/ '';
+	const endPlace   = /*[[${endCityPlace}]]*/ '';
     const eventId = /*[[${event.id}]]*/ 0;
     const userId  = /*[[${loginUser.userId}]]*/ '';
 	const tripId = /*[[${trip != null ? trip.tripId : 0}]]*/ 0;
@@ -358,10 +370,13 @@ function openMapModal(type) {
     setTimeout(() => {
         const mapContainer = document.getElementById("map");
 
-        const map = new kakao.maps.Map(mapContainer, {
-            center: new kakao.maps.LatLng(37.5665, 126.9780),
-            level: 5
-        });
+        // ✅ 이미 생성된 routeMap 재사용
+        if (!routeMap) {
+            routeMap = new kakao.maps.Map(mapContainer, {
+                center: new kakao.maps.LatLng(37.5665, 126.9780),
+                level: 5
+            });
+        }
 
         const geocoder = new kakao.maps.services.Geocoder();
 
@@ -370,21 +385,94 @@ function openMapModal(type) {
                 const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 
                 new kakao.maps.Marker({
-                    map: map,
+                    map: routeMap,
                     position: coords
                 });
 
-                map.setCenter(coords);
+                routeMap.setCenter(coords);
             }
         });
     }, 200);
 }
-
+	
 function closeMapModal() {
     document.getElementById("mapModal").style.display = "none";
 }
 </script>
 
+
+<script>
+let routeMap = null;
+let routePolyline = null;
+
+function openRouteModal() {
+    const modal = document.getElementById("mapModal");
+    modal.style.display = "flex";
+
+    document.getElementById("mapAddress").innerText =
+        `도시 경로 : ${startCity} → ${endCity} (고속도로 우선)`;
+
+    // 서버 프록시 호출
+    fetch(`/kakao/route?start=${encodeURIComponent(startAddr)}&end=${encodeURIComponent(endAddr)}`)
+        .then(res => res.json())
+        .then(data => drawRouteOnMap(data))
+        .catch(err => {
+            alert("경로 조회 실패");
+            console.error(err);
+        });
+}
+</script>
+
+<script>
+function drawRouteOnMap(routeData) {
+
+    const mapContainer = document.getElementById("map");
+
+    // 1️⃣ 지도 생성 또는 중심 이동
+    if (!routeMap) {
+        routeMap = new kakao.maps.Map(mapContainer, {
+            center: new kakao.maps.LatLng(
+                routeData.center.lat,
+                routeData.center.lng
+            ),
+            level: 7
+        });
+    } else {
+        routeMap.setCenter(
+            new kakao.maps.LatLng(
+                routeData.center.lat,
+                routeData.center.lng
+            )
+        );
+    }
+
+    // 2️⃣ 기존 경로 제거
+    if (routePolyline) {
+        routePolyline.setMap(null);
+    }
+
+    // 3️⃣ 새 경로 생성
+    const path = routeData.points.map(p =>
+        new kakao.maps.LatLng(p.lat, p.lng)
+    );
+
+    routePolyline = new kakao.maps.Polyline({
+        path: path,
+        strokeWeight: 5,
+        strokeColor: '#0066ff',
+        strokeOpacity: 0.9,
+        strokeStyle: 'solid'
+    });
+
+    routePolyline.setMap(routeMap);
+
+    // 4️⃣ 거리 표시 (m → km)
+    if (routeData.distance) {
+        document.getElementById("distanceCell").textContent =
+            Math.round(routeData.distance / 1000);
+    }
+}
+</script>
 
 </body>
 </html>
