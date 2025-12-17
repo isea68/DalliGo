@@ -31,6 +31,22 @@ public class JYPostService {
 
 	@Transactional // 작업이 취소되면 DB로 롤백
 	public void insert(JYPostVO postvo, List<MultipartFile> files) {
+		
+		if(postvo == null) {
+			throw new IllegalArgumentException("Postvo is null");
+		}		
+		// 카테고리 방어
+		if(postvo.getCategory() == null || postvo.getCategory().equals("category")){
+			throw new IllegalArgumentException("Invalid category");
+		}
+		// 제목 방어
+		if(postvo.getTitle() == null || postvo.getTitle().isEmpty()) {
+			throw new IllegalArgumentException("Invalid title");
+		}
+		// 제목 길이 방어 - DB VARCHAR(255)
+		if(postvo.getTitle().length() > 255) {
+			throw new IllegalArgumentException("Title length exceeded");
+		}
 
 		// 1. 게시글 먼저 저장 -> 파일명 DB에 저장할 때 필요한 post_id 먼저 가져와서 세팅
 		postdao.insert(postvo);

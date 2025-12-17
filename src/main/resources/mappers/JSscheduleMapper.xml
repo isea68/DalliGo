@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.human.dalligo.dao.JSScheduleDAO">
+<mapper namespace="com.human.dalligo.dao.schedule.JSScheduleDAO">
 
-    <resultMap id="DetailResult" type="com.human.dalligo.vo.JSScheduleVO">
+    <resultMap id="DetailResult" type="com.human.dalligo.vo.schedule.JSScheduleVO">
         <id property="id" column="id" />
         <result property="title" column="title"/>
         <result property="location" column="location"/>

@@ -3,16 +3,16 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.human.dalligo.dao.SSOrderDAO">
+<mapper namespace="com.human.dalligo.dao.store.SSOrderDAO">
 
     <!-- 주문 저장 -->
-    <insert id="insertOrder" parameterType="com.human.dalligo.vo.SSOrderVO">
+    <insert id="insertOrder" parameterType="com.human.dalligo.vo.store.SSOrderVO">
         INSERT INTO orders (goods_id, goods_name, quantity, buyer, address, phone, pay_date)
         VALUES (#{goodsId}, #{goodsName}, #{quantity}, #{buyer}, #{address}, #{phone}, NOW())
     </insert>
 
     <!-- 관리자: 전체 주문 조회 -->
-    <select id="selectOrders" resultType="com.human.dalligo.vo.SSOrderVO">
+    <select id="selectOrders" resultType="com.human.dalligo.vo.store.SSOrderVO">
         SELECT
             order_id      AS orderId,
             goods_id      AS goodsId,

@@ -3,10 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.human.dalligo.dao.LshTripDAO">
+<mapper namespace="com.human.dalligo.dao.events.LshTripDAO">
 
     <!-- Trip 등록 -->
-    <insert id="insertTrip" parameterType="com.human.dalligo.vo.LshTripVO"
+    <insert id="insertTrip" parameterType="com.human.dalligo.vo.events.LshTripVO"
             useGeneratedKeys="true" keyProperty="tripId">
         INSERT INTO trips (
             event_id, user_id, start_city, end_city,
@@ -20,7 +20,7 @@
     </insert>
 
     <!-- Trip 수정 -->
-    <update id="updateTrip" parameterType="com.human.dalligo.vo.LshTripVO">
+    <update id="updateTrip" parameterType="com.human.dalligo.vo.events.LshTripVO">
         UPDATE trips
         SET 
             distance = #{distance},
@@ -32,7 +32,7 @@
 
     <!-- Trip 단건 조회 -->
     <select id="selectTrip" parameterType="int"
-            resultType="com.human.dalligo.vo.LshTripVO">
+            resultType="com.human.dalligo.vo.events.LshTripVO">
         SELECT *
         FROM trips
         WHERE trip_id = #{tripId}
@@ -40,14 +40,14 @@
 
     <!-- 특정 이벤트의 전체 Trip 목록 -->
     <select id="selectTripsByEvent" parameterType="int"
-            resultType="com.human.dalligo.vo.LshTripVO">
+            resultType="com.human.dalligo.vo.events.LshTripVO">
         SELECT *
         FROM trips
         WHERE event_id = #{eventId}
     </select>
 
     <!-- City 전체 목록 -->
-    <select id="selectAllCities" resultType="com.human.dalligo.vo.LshCityVO">
+    <select id="selectAllCities" resultType="com.human.dalligo.vo.events.LshCityVO">
         SELECT *
         FROM cities
         ORDER BY city_name
@@ -55,7 +55,7 @@
 
     <!-- City 단건 -->
     <select id="selectCity" parameterType="string"
-            resultType="com.human.dalligo.vo.LshCityVO">
+            resultType="com.human.dalligo.vo.events.LshCityVO">
         SELECT *
         FROM cities
         WHERE city_name = #{cityName}
@@ -86,7 +86,7 @@
 
     <!-- userId + eventId 기준 Trip 조회 -->
     <select id="selectTripByUserAndEvent" 
-            resultType="com.human.dalligo.vo.LshTripVO">
+            resultType="com.human.dalligo.vo.events.LshTripVO">
         SELECT *
         FROM trips
         WHERE user_id = #{userId}
@@ -96,7 +96,7 @@
 
     <!-- userId + eventId 기준 LshApply 조회 -->
     <select id="selectByUserAndEvent"
-            resultType="com.human.dalligo.vo.LshApplyVO">
+            resultType="com.human.dalligo.vo.events.LshApplyVO">
         SELECT *
         FROM trip_applications
         WHERE user_id = #{userId}
@@ -105,7 +105,7 @@
     </select>
     
     <!-- trip_applications INSERT -->
-    <insert id="insertApplication" parameterType="com.human.dalligo.vo.LshApplyVO" >
+    <insert id="insertApplication" parameterType="com.human.dalligo.vo.events.LshApplyVO" >
         INSERT INTO trip_applications
         (user_id, event_id, apply_date, status)
         VALUES
@@ -128,7 +128,7 @@
     </select>
 
     <!-- 4) eventId로 trips 레코드 조회 (trip_date 는 DATE -> LocalDate로 매핑) -->
-    <select id="getTripByEvent" parameterType="int" resultType="com.human.dalligo.vo.LshTripVO">
+    <select id="getTripByEvent" parameterType="int" resultType="com.human.dalligo.vo.events.LshTripVO">
         SELECT trip_id, event_id, user_id, start_city, end_city,
                distance, cost, current_people,
                trip_date, trip_time, status, created_at
@@ -151,7 +151,7 @@
         WHERE event_id = #{eventId}
     </update>
     
-    <select id="selectGroupedTripStatus" resultType="com.human.dalligo.vo.LshTripSumVO">
+    <select id="selectGroupedTripStatus" resultType="com.human.dalligo.vo.events.LshTripSumVO">
 		SELECT
 			t.start_city AS startCity,
 			t.end_city AS endCity,

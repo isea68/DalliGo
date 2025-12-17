@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.human.dalligo.dao.LshEventDAO">
+<mapper namespace="com.human.dalligo.dao.events.LshEventDAO">
 
     <!-- LocalDateTime 매핑을 위한 resultMap -->
-    <resultMap id="EventMap" type="com.human.dalligo.vo.LshEventVO">
+    <resultMap id="EventMap" type="com.human.dalligo.vo.events.LshEventVO">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="location" column="location"/>
@@ -39,7 +39,7 @@
     </select>
 
     <!-- 대회 등록 -->
-    <insert id="insert" parameterType="com.human.dalligo.vo.LshEventVO">
+    <insert id="insert" parameterType="com.human.dalligo.vo.events.LshEventVO">
         INSERT INTO event (title, location, start_date, end_date,
                             distance, price, org, reg_url, description, in_date, total)
         VALUES (#{title}, #{location}, #{startDate}, #{endDate},
@@ -48,7 +48,7 @@
     </insert>
 
     <!-- 이벤트별 Trip 조회 -->
-    <select id="selectTripsByEvent" resultType="com.human.dalligo.vo.LshTripVO">
+    <select id="selectTripsByEvent" resultType="com.human.dalligo.vo.events.LshTripVO">
         SELECT *
         FROM trips
         WHERE event_id = #{eventId}

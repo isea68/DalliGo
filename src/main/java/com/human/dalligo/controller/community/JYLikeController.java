@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.human.dalligo.service.community.JYLikeService;
-import com.human.dalligo.vo.JSUserVO;
+import com.human.dalligo.vo.user.JSUserVO;
 
 import lombok.RequiredArgsConstructor;
 

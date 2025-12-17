@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.human.dalligo.service.community.JYCommentService;
-import com.human.dalligo.vo.JSUserVO;
 import com.human.dalligo.vo.community.JYCommentVO;
+import com.human.dalligo.vo.user.JSUserVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

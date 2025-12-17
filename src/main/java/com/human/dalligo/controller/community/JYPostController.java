@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.human.dalligo.service.community.JYPostService;
-import com.human.dalligo.vo.JSUserVO;
 import com.human.dalligo.vo.community.JYPostVO;
+import com.human.dalligo.vo.user.JSUserVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

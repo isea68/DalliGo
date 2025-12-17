@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.human.dalligo.dao.RRcourseMapper">
+<mapper namespace="com.human.dalligo.dao.academy.RRcourseMapper">
 
 
-	<resultMap id="courseMap" type="com.human.dalligo.vo.RRcourseVO">
+	<resultMap id="courseMap" type="com.human.dalligo.vo.academy.RRcourseVO">
 		<id property="id" column="id" />  <!--기본키-->
 		<result property="trainerId" column="trainer_id" />
 		<result property="title" column="title" />
@@ -25,7 +25,7 @@
 	</resultMap>
 	
 
-	<insert id="insertcourse" parameterType="com.human.dalligo.vo.RRcourseVO"
+	<insert id="insertcourse" parameterType="com.human.dalligo.vo.academy.RRcourseVO"
 		useGeneratedKeys="true" keyProperty="id">
 		insert into rrcourse(trainer_id,title,start_date,select_day,location,place,support_item,price,duration, prphoto_ori, prphoto_new, capacity,edu_type,delete_token)
 		values(#{trainerId},#{title},#{startDate},#{selectDay},#{location},#{place},#{supportItem},#{price},#{duration}, #{prphotoOri}, #{prphotoNew},#{capacity},#{eduType},#{deleteToken})

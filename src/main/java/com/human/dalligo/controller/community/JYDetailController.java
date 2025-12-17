@@ -16,10 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.human.dalligo.service.community.JYCommentService;
 import com.human.dalligo.service.community.JYDetailService;
 import com.human.dalligo.service.community.JYLikeService;
-import com.human.dalligo.vo.JSUserVO;
 import com.human.dalligo.vo.community.JYCommentVO;
 import com.human.dalligo.vo.community.JYDetailVO;
 import com.human.dalligo.vo.community.JYPostVO;
+import com.human.dalligo.vo.user.JSUserVO;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

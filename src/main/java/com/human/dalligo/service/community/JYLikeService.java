@@ -13,7 +13,7 @@ public class JYLikeService {
 	
 	private final JYLikeDAO likedao;
 	
-	// 초기 좋아요수 상태 확인
+	// 초기 좋아요 상태(0인지 1인지) 확인 (게시글 상세 초기 진입 시 초기 하트상태 조회용)
 	public boolean isLiked(int postId, String userId) {
 		JYLikeVO likevo = new JYLikeVO();
 		likevo.setPostId(postId);
@@ -21,7 +21,7 @@ public class JYLikeService {
 		return likedao.isLiked(likevo) > 0;
 	}
 	
-	// 좋아요 있는지 없는지 확인
+	// 좋아요 있는지 없는지 확인 (사용자가 좋아요 버튼 클릭 시 상태를 보고 추가 or 삭제 로직 수행)
 	public boolean toggleLike(int postId, String userId) {
 		//JYLikeVO로 한번에 보내주는 작업
 		JYLikeVO likevo = new JYLikeVO();

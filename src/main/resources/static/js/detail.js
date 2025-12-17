@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				heart.innerText = '❤️'; // 빨간 하트
 			}else {
 				heart.innerText = '🤍'; // 빈 하트
-			}commentBtn
+			}
 			
 			// 좋아요 수도 함께 갱신
 			likeCountSpan.innerText = data.count;
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let editingCommentId = null; // null이면 새 댓글, 숫자면 수정 중
 
 	// 댓글 클릭 시 모달창 열기
-	if (commentBtn) {
+	if (commentBtn) { // JS에서는 truthy, falsy 평가 - 요소가 존재하면 실행
 		commentBtn.addEventListener('click', () => {
 			
 			// 비회원이 클릭했을 경우
