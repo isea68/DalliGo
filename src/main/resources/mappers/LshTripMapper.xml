@@ -72,21 +72,19 @@
     </select>
 
 	<!-- 신청 리스트 + 이벤트 정보 -->
-    <select id="selectAllApplicationsWithEvent" resultType="com.human.dalligo.vo.LshApplyListVO">
+	<select id="selectAllApplicationsWithEvent"
+		resultType="com.human.dalligo.vo.LshApplyListVO">
 		SELECT
-			ta.apply_id AS applyId,
-			ta.user_id AS userId,
-			e.title AS title,
-			t.start_city AS startCity,
-			t.end_city AS endCity,
-			e.start_date AS date,
-			t.current_people AS applyCount,
-			ta.status AS status
-		FROM trip_applications ta
-		JOIN trips t ON ta.event_id = t.event_id
-		JOIN event e ON t.event_id = e.id
-		ORDER BY ta.apply_id DESC
+			t.start_city as startCity,
+			t.end_city as endCity,
+			t.trip_date as date,
+			t.current_people as applyCount,
+			e.title as title,
+			t.status as status
+		FROM trips t
+		JOIN event e ON e.id = t.event_id;
 	</select>
+
 
 	<!-- userId + eventId 기준 Trip 조회 -->
     <select id="selectTripByUserAndEvent" 
@@ -140,13 +138,13 @@
         WHERE event_id = #{eventId}
         LIMIT 1
     </select>
-	
+
 	<!-- 신청한 것 취소할 때 -->
 	<delete id="deleteTripApplication">
 		DELETE FROM trip_applications
 		WHERE event_id = #{eventId} AND user_id = #{userId}
 	</delete>
-	
+
 	<!-- 신청 상태만 '신청'→'취소' 같은 식으로 변경 -->
 	<update id="updateApplicationStatus">
 		UPDATE trip_applications
@@ -154,7 +152,7 @@
 		WHERE user_id = #{userId}
 		AND event_id = #{eventId}
 	</update>
-	
+
 	<!-- trip_applications 테이블에 튶플 생성시 trips테이블의 current_people를 업데이트함 -->
 	<update id="updateCurrentPeople">
 		UPDATE trips
