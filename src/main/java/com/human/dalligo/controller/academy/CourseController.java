@@ -103,7 +103,6 @@ public class CourseController {
 		  model.addAttribute("user", loginUser); 
 	  }
 	  
-	 //.addAttribute("user", loginUser);	  
 	  model.addAttribute("historyList", historyList);
 	  model.addAttribute("tvo", trainervo);	  
 	  model.addAttribute("monStr", monStr);
