@@ -34,8 +34,7 @@ private final CourseDAO coursedao;
 		
 	}
 	
-	//S3 업로드
-	
+	//S3 업로드	
 	public String s3upload(MultipartFile prphotoFile) throws IOException{
 		
 		String fileName = System.currentTimeMillis() + "_" + prphotoFile.getOriginalFilename();
@@ -51,8 +50,6 @@ private final CourseDAO coursedao;
 				prphotoFile.getInputStream(),
 				metadata
 		);
-
-		// 업로드된 파일 URL 반환
 		return amazonS3.getUrl(bucketName, fileName).toString();
 	}
 	

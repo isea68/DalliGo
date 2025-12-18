@@ -149,15 +149,22 @@
 	
 	<h2 class="page-title">강사회원가입</h2>
 
-    <div  class="container">      
+    <div  class="container">  
+		
+		<div th:if="${errorMsg}" 
+		     style="color:red; margin-bottom:10px; font-weight:bold;">
+		    [[${errorMsg}]]
+		</div>
+    
 	
-        <form action="/trainerRegister" 
+        <form action="/training/trainerRegister" 
 			method="post"
 			enctype="multipart/form-data" 
 			class="expert-register" 
-			onsubmit="return checkDuplicateId()">
-            
-            <input type="text" class="text" name="trainerId" id="trainerId" placeholder="아이디" required>
+			onsubmit="return checkDuplicateId()">            
+            <input type="text" class="text" name="trainerId" id="trainerId" 
+					placeholder="아이디" required >
+	
             <input type="password" class="text" name="password" placeholder="비밀번호" required>
             <input type="text" class="text" name="name" placeholder="이름" required>
 			<!--사진 업로드-->
@@ -176,7 +183,10 @@
 			var id =document.getElementById('trainerId').value.trim();
 			if(id==="") return false;
 			
-			var oldId =["tr11","tr22","tr33","tr44","tr55","tr66","tr77","tr88","tr99"]
+			var oldId =["tr11","tr22","tr33","tr44","tr55",
+			"tr66","tr77","tr88","tr99","aaa","kim123","ryo","csi"
+			,"kim","1","Test12","lsh","admin1","kjs","leesh","dk","asd","Test","dd","ㅁㅁㅁ"]
+			
 			if(oldId.includes(id)) {
 				alert ("이미 존재하는 아이디입니다");
 				return false;			

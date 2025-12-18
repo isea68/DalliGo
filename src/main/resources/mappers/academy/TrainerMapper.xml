@@ -41,7 +41,12 @@
 	
 	</select>
 	
-	
+		<select id="getBySelectTrainerId" resultMap="trainerMap" parameterType="String" >
+		select *
+		from rrtrainer
+		where trainerId= #{trainerId}
+		
+	</select>
 
 
 </mapper>

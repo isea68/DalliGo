@@ -172,7 +172,7 @@
 							<p>트레이너 : <span th:text ="${tvo.name+'강사님'}"> </span>	</p>
 							<p>수강시작 : <span th:text ="${cId.startDate}"> </span></p>	
 							<p>수강장소 : <span th:text ="${cId.place}"></span> </p>	
-							<p>수강료 : <span th:text ="${cId.price+'원'}"></span></p>	
+							<p>수강료 :  <span th:text ="${cId.price+'원'}"></span></p>	
 							</div>						
 						<button id="modalConfirm" th:if="${!isGuest}">확인</button>
 					</div>
@@ -195,10 +195,7 @@
 						</li>
 					</ul>
 					
-			<!--		<a th:href="@{/trainer/ad/del/{id}(id=${cId.id}, token=${cId.deleteToken})}">
-								    <button> 강좌삭제</button>					
-					</a>-->
-					
+							
 				</div>
 
 			</div>

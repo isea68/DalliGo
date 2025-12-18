@@ -33,23 +33,30 @@ public class TrainerService {
 		trainerdao.insert(trainervo);
 	}
 		
+	//S3에 업로드한 파일의 URL을 문자열로 반화하는 메서드
 	public String s3upload(MultipartFile photoFile) throws IOException{
 		
+		//원본파일명+현재시간붙여서 새로운 파일명 생성--> 파일명 중복방지
 		String fileName = System.currentTimeMillis() + "_" + photoFile.getOriginalFilename();
 
+		//S3에 전달할 파일의 메타데이터 객체 생성
 		ObjectMetadata metadata = new ObjectMetadata();
+		
+		//업로드할 파일의 크기 설정
 		metadata.setContentLength(photoFile.getSize());
+		
+		//파일의 타입(MIME 타입, 예: image/png) 설정
 		metadata.setContentType(photoFile.getContentType());
 
-		// 업로드
+		// S3에 업로드
 		amazonS3.putObject(
-				bucketName,
-				fileName,
-				photoFile.getInputStream(),
-				metadata
+				bucketName,       //버킷이름
+				fileName,			//S3에 저장될 파일이름
+				photoFile.getInputStream(), //업로드할 파일 데이터
+				metadata   // 파일 정보 (메타데이터)
 		);
 
-		// 업로드된 파일 URL 반환
+		// 업로드된 파일에 접근가능한 URL을 문자열로 반환
 		return amazonS3.getUrl(bucketName, fileName).toString();
 	}
 	
@@ -76,6 +83,21 @@ public class TrainerService {
 		return tvo;
 	}
 
+	
+	 // 1. 강사 존재 여부 체크
+	public void registerTrainer(TrainerVO vo) {
+
+	    // 1. 강사 존재 여부 체크
+	    TrainerVO existTrainer =
+	            trainerdao.selectByTrainerId(vo.getTrainerId());
+	    if (existTrainer != null) {
+	        throw new IllegalStateException("ALREADY_TRAINER");
+	    }
+	    // 2. 가입 처리
+	    trainerdao.insert(vo);
+	}
+
+	
 	
 
 }

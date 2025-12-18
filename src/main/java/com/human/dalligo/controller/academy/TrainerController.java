@@ -2,6 +2,7 @@ package com.human.dalligo.controller.academy;
 
 import java.io.IOException;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -43,8 +44,9 @@ public class TrainerController {
 	  //강사회원가입---------------------------------------------
 	  @PostMapping("/trainerRegister")
 	  public String registerTrainer(@ModelAttribute TrainerVO trainervo,
-			  @RequestParam("photoFile") MultipartFile photoFile
-			  ) throws IOException {
+			  @RequestParam("photoFile") MultipartFile photoFile, 
+			  Model model   ) throws IOException {  
+		  		  
 		  if(!photoFile.isEmpty()) {
 			  
 		  //1. 파일 저장 경로
@@ -56,12 +58,29 @@ public class TrainerController {
 		  //3. DB에 저장할 경로 설정
 		  trainervo.setPhotoOri(oriname) ;
 		  trainervo.setPhotoNew(s3Url);
+		  
+		//4. 서비스/DAO 호출해서 DB저장	
+		  trainerservice.insert(trainervo);	
+		  return "redirect:/academy";  
 		  }
 		  
-		  //4. 서비스/DAO 호출해서 DB저장	  
-		  trainerservice.insert(trainervo);	  
-		  return "redirect:/academy";  
-	  } 	  
+
+		  // 2. 가입 처리 + 중복 체크
+		    try {
+		        trainerservice.registerTrainer(trainervo);
+		        return "redirect:/academy";
+
+		    } catch (IllegalStateException e) {
+
+		        if ("ALREADY_TRAINER".equals(e.getMessage())) {
+		            model.addAttribute("errorMsg", "이미 등록된 강사입니다.");
+		            model.addAttribute("isGuest", false);
+		        }
+		        return "trainerRegister";
+		    }			 	  
+
+	  
+	  }
 	  
 	  
 	  // 강사로그인-->목적지가 2군데 (강좌등록시/강사페이지볼때) 판별하는 기능

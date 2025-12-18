@@ -44,6 +44,11 @@ public class TrainerDAO {
 		return   sqlsession.selectOne(Mapper+".selectAll");
 		
 	}
+
+	public TrainerVO selectByTrainerId(String trainerId) {
+		
+		return sqlsession.selectOne(Mapper+".getBySelectTrainerId", trainerId);
+	}
 	
 
 }
