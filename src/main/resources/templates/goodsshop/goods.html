@@ -6,7 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 	<style>
-		
+		body {
+			margin-top: 80px;
+		}
 
 		
 
@@ -15,10 +17,11 @@
 		}
 
 		table {
-			border: solid 1px black;
-			width: 150px;
-			float: left;
-			margin-right: 10px;
+		    margin-top: 20px;   /* header와 거리 */
+		    border: 1px solid black;
+		    width: 150px;
+		    float: left;
+		    margin-right: 10px;
 		}
 
 		select {
@@ -28,6 +31,7 @@
 
 		#goodslist {
 		    margin-left: 180px;
+			margin-top: 20px;
 		    width: calc(100% - 180px);
 		    display: flex;
 		    flex-wrap: wrap;
@@ -208,7 +212,8 @@
 
 		<div th:replace="fragment/header :: headerDiv"></div>
 		
-	
+		<input type="hidden" id="isLogin"
+		       th:value="${session.loginUser != null}">
 	
 		<nav class="store-nav">
 			<div id="loginArea">
@@ -372,9 +377,11 @@
 					</div>
 
 					<div style="display: flex; justify-content: flex-end;">
-						<button class="add-to-cart-btn" th:data-id="${goods.goodsId}" th:data-name="${goods.goodsName}"
-							th:data-price="${goods.goodsPrice}">
-							담기
+						<button class="add-to-cart-btn"
+						        th:data-id="${goods.goodsId}"
+						        th:data-name="${goods.goodsName}"
+						        th:data-price="${goods.goodsPrice}">
+						    담기
 						</button>
 					</div>
 
@@ -418,23 +425,32 @@
 			}
 		});
 
-		// "담기" 버튼 이벤트 등록
+		const isLogin = document.getElementById("isLogin").value === "true";
+
 		document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
-			btn.addEventListener("click", () => {
-				const id = btn.dataset.id;
-				const name = btn.dataset.name;
-				const price = parseInt(btn.dataset.price);
+		    btn.addEventListener("click", () => {
 
-				let item = cart.find(x => x.id === id);
+		        // 🔴 로그인 안 된 경우
+		        if (!isLogin) {
+		            alert("로그인 후 이용해주세요.");
+		            return;
+		        }
 
-				if (item) {
-					item.qty++;
-				} else {
-					cart.push({id, name, price, qty: 1});
-				}
+		        // ✅ 로그인 된 경우
+		        const id = btn.dataset.id;
+		        const name = btn.dataset.name;
+		        const price = parseInt(btn.dataset.price);
 
-				alert("장바구니에 담았습니다!");
-			});
+		        let item = cart.find(x => x.id === id);
+
+		        if (item) {
+		            item.qty++;
+		        } else {
+		            cart.push({ id, name, price, qty: 1 });
+		        }
+
+		        alert("장바구니에 담았습니다!");
+		    });
 		});
 
 		// 장바구니 목록 출력

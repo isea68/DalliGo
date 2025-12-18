@@ -7,10 +7,9 @@
 	<title>관리자 - 달리Go</title>
 	<style>
 		body {
-			font-family: Arial, sans-serif;
-			padding: 20px;
-			background-color: #f5f5f5;
-		}
+				    margin: 0;
+				    padding-top: 80px; /* header 높이만큼 */
+				}
 
 		header {
 			display: flex;
@@ -159,84 +158,83 @@
 </head>
 
 <body>
-		<div th:replace="fragment/header :: headerDiv"></div>
-		<form th:action="@{/store/admin/topGoods}" method="post" onsubmit="return topGoodsAlert();">
-		    <div style="margin-bottom:20px; display:flex; align-items:center; gap:15px;">
-		        
-		        <label>TOP1:
-		            <select name="top1">
-		                <option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" 
-		                        th:text="${goods.goodsName}" th:selected="${goods.topRank == 1}">
-		                    상품명
-		                </option>
-		            </select>
-		        </label>
+	<div th:replace="fragment/header :: headerDiv"></div>
+	<form th:action="@{/store/admin/topGoods}" method="post" onsubmit="return topGoodsAlert();">
+		<div style="margin-bottom:20px; display:flex; align-items:center; gap:15px;">
 
-		        <label>TOP2:
-		            <select name="top2">
-		                <option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" 
-		                        th:text="${goods.goodsName}" th:selected="${goods.topRank == 2}">
-		                    상품명
-		                </option>
-		            </select>
-		        </label>
+			<label>TOP1:
+				<select name="top1">
+					<option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" th:text="${goods.goodsName}"
+						th:selected="${goods.topRank == 1}">
+						상품명
+					</option>
+				</select>
+			</label>
 
-		        <label>TOP3:
-		            <select name="top3">
-		                <option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" 
-		                        th:text="${goods.goodsName}" th:selected="${goods.topRank == 3}">
-		                    상품명
-		                </option>
-		            </select>
-		        </label>
+			<label>TOP2:
+				<select name="top2">
+					<option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" th:text="${goods.goodsName}"
+						th:selected="${goods.topRank == 2}">
+						상품명
+					</option>
+				</select>
+			</label>
 
-		        <!-- TOP 상품 적용 버튼 -->
-		        <button type="submit" class="modal-btn" style="margin-left:10px;">TOP 상품 적용</button>
-				<!-- 상품 등록 버튼 -->
-				<button type="button" id="floatingAddBtn"
-						                style="padding:10px 15px; background:rgb(0, 128, 64); color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
-						            상품 등록
-						        </button>
+			<label>TOP3:
+				<select name="top3">
+					<option th:each="goods : ${goodsList}" th:value="${goods.goodsId}" th:text="${goods.goodsName}"
+						th:selected="${goods.topRank == 3}">
+						상품명
+					</option>
+				</select>
+			</label>
 
-		        <!-- 주문 내역 보기 버튼 -->
-		        <button type="button"
-		                onclick="location.href='/store/admin/orders'" 
-		                style="padding:10px 15px; background:#005ec4; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
-		            주문 내역 보기
-		        </button>
+			<!-- TOP 상품 적용 버튼 -->
+			<button type="submit" class="modal-btn" style="margin-left:10px;">TOP 상품 적용</button>
+			<!-- 상품 등록 버튼 -->
+			<button type="button" id="floatingAddBtn"
+				style="padding:10px 15px; background:rgb(0, 128, 64); color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+				상품 등록
+			</button>
 
-		       
-		        
-		    </div>
-		</form>
+			<!-- 주문 내역 보기 버튼 -->
+			<button type="button" onclick="location.href='/store/admin/orders'"
+				style="padding:10px 15px; background:#005ec4; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">
+				주문 내역 보기
+			</button>
 
 
-		<div id="goodsContainer">
-			<!-- 상품 반복 출력 -->
-			<div class="goodsCard" th:each="goods : ${goodsList}">
-				<img th:src="${goods.goodsImage}" alt="상품 이미지">
-				<p><strong>이름:</strong> <span th:text="${goods.goodsName}"></span></p>
-				<p><strong>브랜드:</strong> <span th:text="${goods.goodsBrand}"></span></p>
-				<p><strong>가격:</strong> <span
-						th:text="${#numbers.formatDecimal(goods.goodsPrice,0,'COMMA',0,'POINT')} + '원'"></span></p>
-				<p><strong>수량:</strong> <span th:text="${goods.goodsQuantity}"></span></p>
-				<p><strong>태그:</strong> <span th:text="${goods.goodsTag}"></span></p>
-				<p><strong>설명:</strong> <span th:text="${goods.goodsInfo}"></span></p>
 
-				<!-- 수정 버튼 -->
-				<button type="button" class="admin-btn edit-btn" th:data-id="${goods.goodsId}"
-					th:data-name="${goods.goodsName}" th:data-brand="${goods.goodsBrand}"
-					th:data-price="${goods.goodsPrice}" th:data-quantity="${goods.goodsQuantity}"
-					th:data-tag="${goods.goodsTag}" th:data-image="${goods.goodsImage}"
-					th:data-info="${goods.goodsInfo}" onclick="openEditModal(this)">수정</button>
-
-				<!-- 삭제 버튼 (form 중첩 제거) -->
-				<form th:action="@{/store/admin/delete}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?')">
-				    <input type="hidden" name="goodsId" th:value="${goods.goodsId}">
-				    <button type="submit" class="admin-btn delete-btn">삭제</button>
-				</form>
-			</div>
 		</div>
+	</form>
+
+
+	<div id="goodsContainer">
+		<!-- 상품 반복 출력 -->
+		<div class="goodsCard" th:each="goods : ${goodsList}">
+			<img th:src="${goods.goodsImage}" alt="상품 이미지">
+			<p><strong>이름:</strong> <span th:text="${goods.goodsName}"></span></p>
+			<p><strong>브랜드:</strong> <span th:text="${goods.goodsBrand}"></span></p>
+			<p><strong>가격:</strong> <span
+					th:text="${#numbers.formatDecimal(goods.goodsPrice,0,'COMMA',0,'POINT')} + '원'"></span></p>
+			<p><strong>수량:</strong> <span th:text="${goods.goodsQuantity}"></span></p>
+			<p><strong>태그:</strong> <span th:text="${goods.goodsTag}"></span></p>
+			<p><strong>설명:</strong> <span th:text="${goods.goodsInfo}"></span></p>
+
+			<!-- 수정 버튼 -->
+			<button type="button" class="admin-btn edit-btn" th:data-id="${goods.goodsId}"
+				th:data-name="${goods.goodsName}" th:data-brand="${goods.goodsBrand}"
+				th:data-price="${goods.goodsPrice}" th:data-quantity="${goods.goodsQuantity}"
+				th:data-tag="${goods.goodsTag}" th:data-image="${goods.goodsImage}" th:data-info="${goods.goodsInfo}"
+				onclick="openEditModal(this)">수정</button>
+
+			<!-- 삭제 버튼 (form 중첩 제거) -->
+			<form th:action="@{/store/admin/delete}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?')">
+				<input type="hidden" name="goodsId" th:value="${goods.goodsId}">
+				<button type="submit" class="admin-btn delete-btn">삭제</button>
+			</form>
+		</div>
+	</div>
 
 
 
