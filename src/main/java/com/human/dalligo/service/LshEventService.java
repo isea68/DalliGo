@@ -24,6 +24,14 @@ public class LshEventService {
 		return eventDAO.selectOne(id);
 	}
 
+	public int getTotalEventCount() {
+		return eventDAO.getTotalEventCount();
+	}
+	
+	public List<LshEventVO> getEventList(int offset, int size) {
+        return eventDAO.selectEventList(offset, size);
+    }
+
 //	public int addEvent(LshEventVO vo) {
 //		return eventDAO.insert(vo);
 //	}

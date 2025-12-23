@@ -13,7 +13,7 @@
         <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
         <result property="distance" column="distance"/>
         <result property="price" column="price"/>
-        <result property="org" column="org"/>
+        <result property="organizer" column="org"/>
         <result property="regUrl" column="reg_url"/>
         <result property="description" column="description"/>
         <result property="inDate" column="in_date" jdbcType="TIMESTAMP"/>
@@ -43,7 +43,7 @@
         INSERT INTO event (title, location, start_date, end_date,
                             distance, price, org, reg_url, description, in_date, total)
         VALUES (#{title}, #{location}, #{startDate}, #{endDate},
-                #{distance}, #{price}, #{org}, #{regUrl}, #{description}, NOW(),
+                #{distance}, #{price}, #{organizer}, #{regUrl}, #{description}, NOW(),
                 #{total});
     </insert>
 
@@ -60,5 +60,28 @@
         FROM event
         WHERE id = #{id}
     </select>
+    
+    <!-- 전체 개수 -->
+	<select id="getTotalEventCount" resultType="int">
+		SELECT COUNT(*)
+		FROM event
+	</select>
+
+	<!-- 페이징 목록 -->
+	<select id="selectEventList"
+		parameterType="map"
+		resultMap="EventMap">
+
+		SELECT
+			id,
+    		title,
+    		start_date,
+    		location,
+    		org
+		FROM event
+		ORDER BY start_date DESC
+		LIMIT #{offset}, #{size}
+	</select>
+
 
 </mapper>

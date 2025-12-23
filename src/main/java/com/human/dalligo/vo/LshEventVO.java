@@ -13,7 +13,7 @@ public class LshEventVO {
 	private java.time.LocalDateTime endDate;
 	private String distance;
 	private java.math.BigDecimal price;
-	private String org;
+	private String organizer;
 	private String regUrl;
 	private String description;
 	private java.time.LocalDateTime inDate;

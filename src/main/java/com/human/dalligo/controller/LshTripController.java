@@ -333,15 +333,26 @@ public class LshTripController {
 
                 List docs = (List) body.get("documents");
                 if (docs != null && !docs.isEmpty()) {
+
                     Map first = (Map) docs.get(0);
                     Map road = (Map) first.get("road_address");
                     Map addr = (Map) first.get("address");
-                    Map target = (road != null) ? road : addr;
+
+                    Map target = null;
+
+                    // 1️⃣ road_address 우선 (x, y 둘 다 있을 때만)
+                    if (road != null && road.get("x") != null && road.get("y") != null) {
+                        target = road;
+                    }
+                    // 2️⃣ 없으면 address 사용
+                    else if (addr != null && addr.get("x") != null && addr.get("y") != null) {
+                        target = addr;
+                    }
 
                     if (target != null) {
                         return Map.of(
-                            "lat", Double.parseDouble((String) target.get("y")),
-                            "lng", Double.parseDouble((String) target.get("x"))
+                            "lat", Double.parseDouble(target.get("y").toString()),
+                            "lng", Double.parseDouble(target.get("x").toString())
                         );
                     }
                 }

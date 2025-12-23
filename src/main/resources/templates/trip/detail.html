@@ -113,8 +113,8 @@
 
 <body>
 
-<!-- fragment/header.html을 그대로 적용 -->
-<header th:replace="fragment/header :: headerDiv"></header>
+<!-- fragment/header.html을 그대로 적용 & Thymeleaf 3.x → 4.x 넘어가면서 문법이 바뀔 예정 : ~{ } 추가 -->
+<header th:replace="~{fragment/header :: headerDiv}"></header>
 
 <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=43652f0566b534bd3247a96af0d13514&libraries=services"></script>
 
@@ -371,12 +371,10 @@ function openMapModal(type) {
         const mapContainer = document.getElementById("map");
 
         // ✅ 이미 생성된 routeMap 재사용
-        if (!routeMap) {
-            routeMap = new kakao.maps.Map(mapContainer, {
-                center: new kakao.maps.LatLng(37.5665, 126.9780),
-                level: 5
-            });
-        }
+		routeMap = new kakao.maps.Map(mapContainer, {
+		    center: new kakao.maps.LatLng(37.5665, 126.9780),
+		    level: 5
+		});
 
         const geocoder = new kakao.maps.services.Geocoder();
 
@@ -397,6 +395,18 @@ function openMapModal(type) {
 	
 function closeMapModal() {
     document.getElementById("mapModal").style.display = "none";
+	
+	// ✅ 1. 지도/경로 완전 제거
+	if (routePolyline) {
+	    routePolyline.setMap(null);
+	    routePolyline = null;
+	}
+
+    routeMap = null;
+
+   // ✅ 2. DOM 초기화 (중요)
+   const mapContainer = document.getElementById("map");
+   mapContainer.innerHTML = "";
 }
 </script>
 

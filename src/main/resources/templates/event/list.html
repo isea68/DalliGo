@@ -41,7 +41,7 @@
 
 <body>
 
-<header th:replace="fragment/header :: headerDiv"></header>
+<header th:replace="~{fragment/header :: headerDiv}"></header>
 
 <div class="page-container">
 
@@ -67,13 +67,13 @@
     </thead>
 
     <tbody>
-      <tr th:each="e, iterStat : ${events}">
-        <td th:text="${iterStat.index + 1}"></td>
+      <tr th:each="e, iterStat : ${eventList}">
+        <td th:text="${iterStat.index + 1 + (pageVO.page - 1) * pageVO.size}"></td>
 
         <td>
 		  <!-- 로그인 상태 -->
 		  <a th:if="${isLogin}"
-		     th:href="@{/events/{eventId}/trips(eventId=${e.id})}"
+		     th:href="@{/events/{id}/trips(id=${e.id})}"
 		     style="text-decoration:none; color:#007bff; font-weight:bold;"
 		     onmouseover="this.style.color='#800080';"
 		     onmouseout="this.style.color='#007bff';"
@@ -98,10 +98,44 @@
         <td th:text="${e.startDate.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm'))}">
         </td>
 
-        <td th:text="${e.org}"></td>
+        <td th:text="${e.organizer}"></td>
       </tr>
     </tbody>
   </table>
+  
+  <!-- 페이징 -->
+  <div style="margin-top:20px;">
+
+      <!-- 이전 -->
+      <a th:if="${pageVO.prev}"
+         th:href="@{/events(page=${pageVO.startPage - 1})}"
+         style="margin-right:10px;">
+          ◀
+      </a>
+
+      <!-- 페이지 번호 -->
+      <span th:each="i : ${#numbers.sequence(pageVO.startPage, pageVO.endPage)}">
+          <a th:if="${i != pageVO.page}"
+             th:href="@{/events/(page=${i})}"
+             th:text="${i}"
+             style="margin:0 5px; text-decoration:none; color:#007bff;">
+          </a>
+
+          <strong th:if="${i == pageVO.page}"
+                  th:text="${i}"
+                  style="margin:0 5px; color:#000;">
+          </strong>
+      </span>
+
+      <!-- 다음 -->
+      <a th:if="${pageVO.next}"
+         th:href="@{/events(page=${pageVO.endPage + 1})}"
+         style="margin-left:10px;">
+          ▶
+      </a>
+
+  </div>
+
 
 </div>
 
