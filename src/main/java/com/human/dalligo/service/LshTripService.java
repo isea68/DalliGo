@@ -179,7 +179,12 @@ public class LshTripService {
         LshTripVO updated = tripDAO.getTripByEvent(eventId);
 
         // 상태 계산
-        String newStatus = computeStatus(updated.getTripDate(), updated.getCurrentPeople());
+        int count = tripDAO.countApplicationsByEvent(eventId);
+        tripDAO.updateCurrentPeople(eventId, count);
+
+        String newStatus = computeStatus(updated.getTripDate(), count);
+        tripDAO.updateTripStatus(eventId, newStatus);
+
 
         // trips 테이블 상태 업데이트
         tripDAO.updateTripStatus(eventId, newStatus);
@@ -187,10 +192,6 @@ public class LshTripService {
         // application 상태 저장
         tripDAO.updateApplicationStatus(userId, eventId, "신청");
         
-        // ★ 여기 추가!!
-        int count = tripDAO.countApplicationsByEvent(eventId);
-        tripDAO.updateCurrentPeople(eventId, count);
-
         return 1;
     }
     
@@ -213,7 +214,20 @@ public class LshTripService {
     public boolean cancelApplication(int eventId, String userId) {
         int rows = tripDAO.deleteTripApplication(eventId, userId);
         // rows > 0 이면 삭제 성공
-        return rows > 0;
+        if (rows == 0) return false;
+        
+     // 최신 인원수
+        int count = tripDAO.countApplicationsByEvent(eventId);
+        tripDAO.updateCurrentPeople(eventId, count);
+
+        // 상태 재계산
+        LshTripVO trip = tripDAO.getTripByEvent(eventId);
+        if (trip != null) {
+            String status = computeStatus(trip.getTripDate(), count);
+            tripDAO.updateTripStatus(eventId, status);
+        }
+
+        return true;
     }
     
     public int getCurrentPeople(int eventId) {
@@ -274,7 +288,19 @@ public class LshTripService {
 
     /** 신청 목록 조회 */
     public List<LshApplyListVO> getAllApplicationsWithEventInfo() {
-        return tripDAO.selectAllApplicationsWithEvent();
+    	List<LshApplyListVO> list = tripDAO.selectAllApplicationsWithEvent();
+
+        for (LshApplyListVO vo : list) {
+
+            Timestamp tripDate = vo.getDate();          // 일정
+            int currentPeople = vo.getApplyCount();     // 신청 인원
+
+            String recalculatedStatus = computeStatus(tripDate, currentPeople);
+
+            vo.setStatus(recalculatedStatus);            // ⭐ 덮어쓰기
+        }
+
+        return list;
     }
     
     // trip_applications 테이블에 튶플 생성시 trips테이블의 current_people를 업데이트함
