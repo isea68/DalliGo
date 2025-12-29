@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
+import com.human.dalligo.dao.LshTripDAO;
 import com.human.dalligo.service.LshDistanceService;
 import com.human.dalligo.service.LshEventService;
 import com.human.dalligo.service.LshTripService;
@@ -43,7 +44,8 @@ import lombok.RequiredArgsConstructor;
 @Controller
 @RequiredArgsConstructor
 public class LshTripController {
-
+	
+	private final LshTripDAO tripDAO;
     private final LshTripService tripService;
     private final LshEventService eventService;
     private final LshDistanceService distanceService;
@@ -72,6 +74,19 @@ public class LshTripController {
         // Trip 없으면 자동 생성
         if (trip == null) {
             trip = tripService.createTripFromEvent(event, loginUser.getUserId());
+        } else {
+            // distance 갱신
+            String startCity1 = tripService.extractCity(loginUser.getAddress());
+            String endCity = tripService.extractCity(event.getLocation());
+
+            Integer distanceKm = distanceService.getDistance(startCity1, endCity);
+            BigDecimal distance = distanceKm != null ? BigDecimal.valueOf(distanceKm) : BigDecimal.ZERO;
+            trip.setDistance(distance);
+
+            int cost = tripService.calculateCost(distance);
+            trip.setCost(cost);
+
+            tripDAO.updateTrip(trip); // DB 반영
         }
 
         model.addAttribute("event", event);
@@ -108,28 +123,33 @@ public class LshTripController {
         LshTripVO trip = tripService.getTripById(tripId);
         model.addAttribute("trip", trip);
 
-        // 1) 주소에서 도시 추출
-        String startCity = trip.getStartCity(); // 또는 trip.getStart_address()
-        String endCity   = trip.getEndCity();   // 또는 trip.getEvent_location()
+        String startCity = tripService.extractCity(trip.getStartCity());
+        String endCity   = tripService.extractCity(trip.getEndCity());
 
-        startCity = tripService.extractCity(startCity);
-        endCity   = tripService.extractCity(endCity);
+        // 거리 계산 및 cost 계산
+        BigDecimal distance;
+        int cost;
 
-        // 2) 콘솔 확인용 로그
-        System.out.println("=== 거리 계산 ===");
-        System.out.println("출발지: " + startCity);
-        System.out.println("도착지: " + endCity);
+        if (startCity.equals(endCity)) {
+            distance = BigDecimal.ZERO;
+            cost = 0;
+        } else {
+            Integer distKm = distanceService.getDistance(startCity, endCity);
+            distance = (distKm == null || distKm <= 0) ? BigDecimal.ZERO : BigDecimal.valueOf(distKm);
+            cost = tripService.calculateCost(distance);
+            if ("제주".equals(startCity) || "제주".equals(endCity)) cost += 110_000;
+        }
 
-        // 3) DB에서 거리 조회
-        Integer distance = distanceService.getDistance(startCity, endCity);
+        trip.setDistance(distance);
+        trip.setCost(cost);
+        tripDAO.updateTrip(trip);
 
-        System.out.println("거리(km): " + distance);
-
-        // 4) 화면 전달
         model.addAttribute("distance", distance);
+        model.addAttribute("cost", cost);
 
-        return "trip/detail";
+        return "trip/detail"; // <- 반드시 필요
     }
+
 
 
     /** 이벤트 신청 */
@@ -168,9 +188,22 @@ public class LshTripController {
 
         int applied = tripService.applyToEvent(eventId, userId);
 
-        res.put("ok", applied);
-        res.put("message", applied>0 ? "신청이 완료되었습니다." : "이미 신청하셨습니다.");
-        res.put("currentPeople", tripService.getCurrentPeople(eventId)); // count(*) 기반
+       // ✅ 핵심 수정 부분 : applyToTrip 서비스 메소드로부터 신청일자를 판단하여 리턴 -> 컨트롤러는 해석용으로 필요함
+        if (applied == 1) {
+            res.put("ok", true);
+            res.put("message", "신청이 완료되었습니다.");
+        } else if (applied == -1) {
+            res.put("ok", false);
+            res.put("message", "이미 신청하셨습니다.");
+        } else if (applied == -2) {
+            res.put("ok", false);
+            res.put("message", "신청 불가합니다. 이미 지난 대회입니다.");
+        } else {
+            res.put("ok", false);
+            res.put("message", "신청 처리 중 오류가 발생했습니다.");
+        }
+
+        res.put("currentPeople", tripService.getCurrentPeople(eventId));
         return res;
     }
 
@@ -236,18 +269,34 @@ public class LshTripController {
     
     @Value("${kakao.rest.api-key}")
     private String kakaoRestApiKey;
-    
+
     @GetMapping("/kakao/route")
     @ResponseBody
     public Map<String, Object> getRoute(
             @RequestParam("start") String start,
             @RequestParam("end") String end) {
 
-    	// 1️⃣ 출발 / 도착 좌표 구하기
+        // 1️⃣ 출발 / 도착 좌표
         Map<String, Double> startCoord = getCoordinate(start);
         Map<String, Double> endCoord   = getCoordinate(end);
 
-        // 2️⃣ Directions API 호출
+        // 2️⃣ 출발지 == 도착지 → 지도보기(마커만)
+        if (startCoord.get("lat").equals(endCoord.get("lat")) &&
+            startCoord.get("lng").equals(endCoord.get("lng"))) {
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("sameLocation", true);
+            result.put("center", Map.of(
+                "lat", startCoord.get("lat"),
+                "lng", startCoord.get("lng")
+            ));
+            result.put("points", List.of());   // 경로 없음
+            result.put("distance", 0);
+
+            return result;
+        }
+
+        // 3️⃣ 출발지 ≠ 도착지 → 기존 Directions API 로직 그대로
         String url = String.format(
             "https://apis-navi.kakaomobility.com/v1/directions" +
             "?origin=%f,%f&destination=%f,%f&priority=RECOMMEND",
@@ -257,15 +306,13 @@ public class LshTripController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
-
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         ResponseEntity<Map> response =
-        		restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+                restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
 
         Map<String, Object> body = response.getBody();
 
-        // 3️⃣ 응답 파싱
         Map<String, Object> route =
             (Map<String, Object>) ((List<?>) body.get("routes")).get(0);
 
@@ -290,8 +337,8 @@ public class LshTripController {
             }
         }
 
-        // 4️⃣ 프론트로 보낼 데이터 구성
         Map<String, Object> result = new HashMap<>();
+        result.put("sameLocation", false);
         result.put("distance", distance);
         result.put("points", points);
         result.put("center", Map.of(
@@ -304,11 +351,8 @@ public class LshTripController {
     
     private Map<String, Double> getCoordinate(String query) {
 
-        //System.out.println("KAKAO KEY = [" + kakaoRestApiKey + "]");
-
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
-        //headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
@@ -316,7 +360,7 @@ public class LshTripController {
 
         for (String q : candidates) {
             try {
-            	String encoded = q;
+                String encoded = q;
 
                 /* 1️⃣ Address API */
                 String addressUrl =
@@ -331,29 +375,28 @@ public class LshTripController {
                 Map body = response.getBody();
                 System.out.println("ADDRESS TRY [" + q + "] => " + body);
 
-                List docs = (List) body.get("documents");
-                if (docs != null && !docs.isEmpty()) {
+                if (body != null) {
+                    List docs = (List) body.get("documents");
+                    if (docs != null && !docs.isEmpty()) {
 
-                    Map first = (Map) docs.get(0);
-                    Map road = (Map) first.get("road_address");
-                    Map addr = (Map) first.get("address");
+                        Map first = (Map) docs.get(0);
+                        Map road = (Map) first.get("road_address");
+                        Map addr = (Map) first.get("address");
 
-                    Map target = null;
+                        Map target = null;
 
-                    // 1️⃣ road_address 우선 (x, y 둘 다 있을 때만)
-                    if (road != null && road.get("x") != null && road.get("y") != null) {
-                        target = road;
-                    }
-                    // 2️⃣ 없으면 address 사용
-                    else if (addr != null && addr.get("x") != null && addr.get("y") != null) {
-                        target = addr;
-                    }
+                        if (road != null && road.get("x") != null && road.get("y") != null) {
+                            target = road;
+                        } else if (addr != null && addr.get("x") != null && addr.get("y") != null) {
+                            target = addr;
+                        }
 
-                    if (target != null) {
-                        return Map.of(
-                            "lat", Double.parseDouble(target.get("y").toString()),
-                            "lng", Double.parseDouble(target.get("x").toString())
-                        );
+                        if (target != null) {
+                            return Map.of(
+                                "lat", Double.parseDouble(target.get("y").toString()),
+                                "lng", Double.parseDouble(target.get("x").toString())
+                            );
+                        }
                     }
                 }
 
@@ -370,13 +413,15 @@ public class LshTripController {
                 body = response.getBody();
                 System.out.println("KEYWORD TRY [" + q + "] => " + body);
 
-                docs = (List) body.get("documents");
-                if (docs != null && !docs.isEmpty()) {
-                    Map first = (Map) docs.get(0);
-                    return Map.of(
-                        "lat", Double.parseDouble((String) first.get("y")),
-                        "lng", Double.parseDouble((String) first.get("x"))
-                    );
+                if (body != null) {
+                    List docs = (List) body.get("documents");
+                    if (docs != null && !docs.isEmpty()) {
+                        Map first = (Map) docs.get(0);
+                        return Map.of(
+                            "lat", Double.parseDouble(first.get("y").toString()),
+                            "lng", Double.parseDouble(first.get("x").toString())
+                        );
+                    }
                 }
 
             } catch (Exception e) {
@@ -387,6 +432,7 @@ public class LshTripController {
 
         throw new RuntimeException("좌표 변환 실패: " + query);
     }
+
 
 
 

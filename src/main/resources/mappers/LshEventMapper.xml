@@ -73,15 +73,53 @@
 		resultMap="EventMap">
 
 		SELECT
-			id,
-    		title,
-    		start_date,
-    		location,
-    		org
+		id,
+		title,
+		start_date,
+		location,
+		org
 		FROM event
 		ORDER BY start_date DESC
 		LIMIT #{offset}, #{size}
 	</select>
-
+	
+	<!-- 검색 결과 개수 -->
+    <select id="getTotalEventCountWithSearch"
+            parameterType="string"
+            resultType="int">
+        SELECT COUNT(*)
+        FROM event
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+           OR location LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+	
+	<!-- 검색 목록 -->
+	<select id="selectEvents" parameterType="map" resultMap="EventMap">
+		SELECT
+			id,
+        	title,
+        	location,
+        	start_date,
+        	end_date,
+        	distance,
+        	price,
+        	org,
+        	reg_url,
+        	description,
+        	in_date,
+        	total
+		FROM event
+		<where>
+			<if test="keyword != null and keyword != ''">
+				(
+				title LIKE CONCAT('%', #{keyword}, '%')
+				OR location LIKE CONCAT('%', #{keyword}, '%')
+				OR org LIKE CONCAT('%', #{keyword}, '%')
+				)
+			</if>
+		</where>
+		ORDER BY start_date DESC
+		LIMIT #{size} OFFSET #{offset}
+	</select>
 
 </mapper>

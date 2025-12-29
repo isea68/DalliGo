@@ -1,42 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>대회 목록</title>
+<meta charset="UTF-8">
+<title>대회 목록</title>
 
-  <!-- detail.html과 동일한 페이지용 CSS -->
-  <style>
-      body {
-          font-family: Arial, sans-serif;
-          line-height: 1.6;
-          margin: 0;
-          padding: 0;
-          text-align: center;
-      }
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
 
-      /* 페이지 전체 콘텐츠 영역 */
-      .page-container {
-          max-width: 900px;
-          margin: 30px auto;
-          padding: 0 20px;
-      }
+    .page-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
 
-      table {
-          margin: 20px auto;
-          border-collapse: collapse;
-          width: 80%;
-      }
+    table {
+        margin: 20px auto;
+        border-collapse: collapse;
+        width: 80%;
+    }
 
-      th, td {
-          padding: 10px;
-          border: 1px solid #aaa;
-          text-align: center;
-      }
+    th, td {
+        padding: 10px;
+        border: 1px solid #aaa;
+        text-align: center;
+    }
 
-      h1 {
-          margin-top: 30px;
-      }
-  </style>
+    h1 {
+        margin-top: 30px;
+    }
+
+    .search-box {
+        width: 80%;
+        margin: 10px auto;
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    #keyword {
+        width: 220px;
+        padding: 6px 8px;
+    }
+</style>
 </head>
 
 <body>
@@ -46,98 +57,149 @@
 <div class="page-container">
 
 <!-- 제목 + 버튼 -->
-  <div style="width:80%; margin:0 auto; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <h1 style="margin:0;">대회 목록</h1>
+<div style="width:80%; margin:0 auto; display:flex; justify-content:space-between; align-items:center;">
+    <h1 style="margin:0;">대회 목록</h1>
 
-      <a th:href="@{/trip/list}" 
-         style="text-decoration:none; color:#007bff; font-weight:bold; font-size:20px;">
-          신청현황 보기
-      </a>
-	  </div>
-	  
-  <table>
-    <thead>
-      <tr>
-        <th>No</th>
-        <th>대회명</th>
-        <th>대회장소</th>
-        <th>일정</th>
-        <th>대회기관</th>
-      </tr>
-    </thead>
+    <a th:href="@{/trip/list}"
+       style="text-decoration:none; color:#007bff; font-weight:bold; font-size:20px;">
+        신청현황 보기
+    </a>
+</div>
 
-    <tbody>
-      <tr th:each="e, iterStat : ${eventList}">
-        <td th:text="${iterStat.index + 1 + (pageVO.page - 1) * pageVO.size}"></td>
+<!-- 🔍 검색 영역 -->
+<div class="search-box">
+    <input type="text" id="keyword" placeholder="대회명 검색">
+    <button onclick="searchEvents()">검색</button>
+</div>
 
-        <td>
-		  <!-- 로그인 상태 -->
-		  <a th:if="${isLogin}"
-		     th:href="@{/events/{id}/trips(id=${e.id})}"
-		     style="text-decoration:none; color:#007bff; font-weight:bold;"
-		     onmouseover="this.style.color='#800080';"
-		     onmouseout="this.style.color='#007bff';"
-		     th:text="${e.title}">
-		  </a>
+<table>
+<thead>
+<tr>
+    <th>No</th>
+    <th>대회명</th>
+    <th>대회장소</th>
+    <th>일정</th>
+    <th>대회기관</th>
+</tr>
+</thead>
 
-		  <!-- 비회원 -->
-		  <a th:if="${!isLogin}"
-		     href="#"
-		     style="text-decoration:none; color:#007bff; font-weight:bold;"
-		     onclick="alert('로그인 후 이용 가능한 서비스입니다.'); return false;"
-		     onmouseover="this.style.color='#800080';"
-		     onmouseout="this.style.color='#007bff';"
-		     th:text="${e.title}">
-		  </a>
+<tbody id="eventTableBody">
+<tr th:each="e, iterStat : ${eventList}">
+    <td th:text="${iterStat.index + 1 + (pageVO.page - 1) * pageVO.size}"></td>
 
-        </td>
+    <td>
+        <a th:if="${isLogin}"
+           th:href="@{/events/{id}/trips(id=${e.id})}"
+           style="text-decoration:none; color:#007bff; font-weight:bold;"
+           th:text="${e.title}">
+        </a>
 
-        <td th:text="${e.location}"></td>
+        <a th:if="${!isLogin}"
+           href="#"
+           onclick="alert('로그인 후 이용 가능한 서비스입니다.'); return false;"
+           style="text-decoration:none; color:#007bff; font-weight:bold;"
+           th:text="${e.title}">
+        </a>
+    </td>
 
-        <!-- 날짜 포맷 -->
-        <td th:text="${e.startDate.format(T(java.time.format.DateTimeFormatter).ofPattern('yyyy-MM-dd HH:mm'))}">
-        </td>
+    <td th:text="${e.location}"></td>
+    <td th:text="${e.startDate.format(T(java.time.format.DateTimeFormatter)
+                    .ofPattern('yyyy-MM-dd HH:mm'))}"></td>
+    <td th:text="${e.organizer}"></td>
+</tr>
+</tbody>
+</table>
 
-        <td th:text="${e.organizer}"></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  <!-- 페이징 -->
-  <div style="margin-top:20px;">
+<!-- ================= 일반 목록 페이징 ================= -->
+<div id="normalPaging" style="margin-top:20px;"> <!-- ★ 수정 -->
+    <a th:if="${pageVO.prev}"
+       th:href="@{/events(page=${pageVO.startPage - 1})}">
+        ◀
+    </a>
 
-      <!-- 이전 -->
-      <a th:if="${pageVO.prev}"
-         th:href="@{/events(page=${pageVO.startPage - 1})}"
-         style="margin-right:10px;">
-          ◀
-      </a>
+    <span th:each="i : ${#numbers.sequence(pageVO.startPage, pageVO.endPage)}">
+        <a th:if="${i != pageVO.page}"
+           th:href="@{/events(page=${i})}"
+           th:text="${i}"
+           style="margin:0 5px;">
+        </a>
 
-      <!-- 페이지 번호 -->
-      <span th:each="i : ${#numbers.sequence(pageVO.startPage, pageVO.endPage)}">
-          <a th:if="${i != pageVO.page}"
-             th:href="@{/events/(page=${i})}"
-             th:text="${i}"
-             style="margin:0 5px; text-decoration:none; color:#007bff;">
-          </a>
+        <strong th:if="${i == pageVO.page}"
+                th:text="${i}"
+                style="margin:0 5px;">
+        </strong>
+    </span>
 
-          <strong th:if="${i == pageVO.page}"
-                  th:text="${i}"
-                  style="margin:0 5px; color:#000;">
-          </strong>
-      </span>
+    <a th:if="${pageVO.next}"
+       th:href="@{/events(page=${pageVO.endPage + 1})}">
+        ▶
+    </a>
+</div>
 
-      <!-- 다음 -->
-      <a th:if="${pageVO.next}"
-         th:href="@{/events(page=${pageVO.endPage + 1})}"
-         style="margin-left:10px;">
-          ▶
-      </a>
-
-  </div>
-
+<!-- ================= 검색 결과 하단 ================= -->
+<div id="searchFooter" style="margin-top:20px; display:none;"> <!-- ★ 수정 -->
+    <button onclick="window.history.go(-1)">앞페이지</button>
+    <button onclick="goToList()">대회 목록 돌아가기</button>
+</div>
 
 </div>
+
+<!-- ================= JS ================= -->
+<script>
+let currentPage = 1;
+
+// ★ 검색 전용 함수
+function searchEvents(page = 1) {
+    currentPage = page;
+    const keyword = document.getElementById("keyword").value;
+
+    fetch(`/events/search?page=${page}&keyword=${encodeURIComponent(keyword)}`)
+        .then(res => res.json())
+        .then(data => {
+            renderTable(data.list);
+
+            // ★ 검색 상태로 전환
+            document.getElementById("normalPaging").style.display = "none";
+            document.getElementById("searchFooter").style.display = "block";
+        })
+        .catch(err => console.error(err));
+}
+
+// ★ 테이블 렌더링
+function renderTable(list) {
+    const tbody = document.getElementById("eventTableBody");
+    tbody.innerHTML = "";
+
+    list.forEach((event, index) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>
+                    <a href="/events/${event.id}/trips"
+                       style="text-decoration:none; color:#007bff; font-weight:bold;">
+                       ${event.title}
+                    </a>
+                </td>
+                <td>${event.location ?? ""}</td>
+                <td>${event.startDate ?? ""}</td>
+                <td>${event.organizer ?? ""}</td>
+            </tr>
+        `;
+    });
+}
+
+// ★ 목록 복귀
+function goToList() {
+    location.href = "/events";
+}
+
+// ★ 검색 이전 상태로 복귀
+function backToPrevious() {
+    // 현재 페이지를 새로고침 → 검색 전 상태 복원
+    location.reload();
+}
+
+</script>
 
 </body>
 </html>

@@ -31,11 +31,45 @@ public class LshTripService {
     private final LshUserService userService;
     private final LshDistanceService distanceService;
 
-    /** 이벤트별 Trip (첫 번째 Trip 반환) */
+    /** 이벤트별 Trip (첫 번째 Trip 반환) -> DB 거리 테이블을 기준으로 강제로 재계산 */
     public LshTripVO getTripByEvent(int eventId) {
-    	// DAO에 getTripByEvent가 있으므로 직접 호출 
-    	return tripDAO.getTripByEvent(eventId);
+        LshTripVO trip = tripDAO.getTripByEvent(eventId);
+        if (trip == null) return null;
+
+        // startCity, endCity null 처리
+        String startCity = trip.getStartCity();
+        String endCity = trip.getEndCity();
+        if (startCity == null) startCity = "서울";
+        if (endCity == null) endCity = "서울";
+
+        // ⭐ 출발지와 도착지가 같으면 거리 0, 비용 0 처리
+        BigDecimal distance;
+        int cost;
+        if (startCity.equals(endCity)) {
+            distance = BigDecimal.ZERO;
+            cost = 0;
+        } else {
+            Integer distKm = distanceService.getDistance(startCity, endCity);
+            if (distKm == null || distKm <= 0) {
+                distance = BigDecimal.ZERO;
+                cost = 0;
+            } else {
+                distance = BigDecimal.valueOf(distKm);
+                cost = calculateCost(distance);
+                if ("제주".equals(startCity) || "제주".equals(endCity)) {
+                    cost += 110_000;
+                }
+            }
+        }
+
+        // 거리, 비용 DB 반영
+        trip.setDistance(distance);
+        trip.setCost(cost);
+        tripDAO.updateTrip(trip);
+
+        return trip;
     }
+
     
     // 거리 업데이트 : trip객체에 distance를 같이 넘겨야 함
     public LshTripVO getTripById(int tripId) {
@@ -84,25 +118,40 @@ public class LshTripService {
         trip.setEndCity(endCity);
         //trip.setEndCity(extractCity(event.getLocation()));
 
-        // ★ 여기에 거리/비용 계산 추가 ★
-        Integer distKm = distanceService.getDistance(startCity, endCity);
-        // Integer → BigDecimal 변환하여 trip에 저장
-        BigDecimal distance = BigDecimal.valueOf(distKm);
+        // ★ 거리 / 비용 계산 ★
+        BigDecimal distance;
+        int cost;
+
+        // ✅ 출발지 == 도착지 처리
+        if (startCity.equals(endCity)) {
+            distance = BigDecimal.ZERO;
+            cost = 0;
+        } else {
+            Integer distKm = distanceService.getDistance(startCity, endCity);
+
+            if (distKm == null || distKm == 0) {
+                distance = BigDecimal.ZERO;
+                cost = 0;
+            } else {
+                distance = BigDecimal.valueOf(distKm);
+                cost = calculateCost(distance);
+
+                // 제주 예외 처리 (단 한 번만!)
+                if ("제주".equals(startCity) || "제주".equals(endCity)) {
+                    cost += 110_000;
+                }
+            }
+        }
+
         trip.setDistance(distance);
-        
+        trip.setCost(cost);
+
         // 로그 확인용
         System.out.println("=== 거리 계산 ===");
         System.out.println("출발지: " + startCity);
         System.out.println("도착지: " + endCity);
         System.out.println("거리: " + distance);
-
-
-        int cost = calculateCost(distance);
-        // 제주 예외 처리: start 또는 end가 제주면 한 번만 추가
-        if ("제주".equals(startCity) || "제주".equals(endCity)) {
-            cost += 110_000;
-        }
-        trip.setCost(cost);
+        System.out.println("비용: " + cost);
         
         trip.setCurrentPeople(0);
         
@@ -153,7 +202,7 @@ public class LshTripService {
 
     /** 요금 계산 */
     public int calculateCost(BigDecimal distance) {
-        if (distance == null) return 28000;
+        if (distance == null || distance.compareTo(BigDecimal.ZERO) == 0) return 0;
         double km = distance.doubleValue()*2; // 왕복처리
         if (km <= 100) return 28000;
         if (km <= 300) return 40000;
@@ -167,6 +216,11 @@ public class LshTripService {
         // eventId 기반으로 trip 조회
         LshTripVO trip = tripDAO.getTripByEvent(eventId);
         if (trip == null) return 0;
+        
+       //  🔥 날짜 검증 (추가된 핵심 로직)
+        if (!isApplyable(trip.getTripDate())) {
+            return -2; // 신청 불가 (지난 대회)
+        }
 
         // INSERT
         LshApplyVO app = new LshApplyVO();
@@ -178,23 +232,32 @@ public class LshTripService {
         // 최신값 조회
         LshTripVO updated = tripDAO.getTripByEvent(eventId);
 
-        // 상태 계산
-        String newStatus = computeStatus(updated.getTripDate(), updated.getCurrentPeople());
-
-        // trips 테이블 상태 업데이트
+        // 최신 인원수 계산
+        int count = tripDAO.countApplicationsByEvent(eventId);
+        tripDAO.updateCurrentPeople(eventId, count);
+        
+        // 상태 계산 및 반영
+        String newStatus = computeStatus(updated.getTripDate(), count);
         tripDAO.updateTripStatus(eventId, newStatus);
 
         // application 상태 저장
         tripDAO.updateApplicationStatus(userId, eventId, "신청");
         
-        // ★ 여기 추가!!
-        int count = tripDAO.countApplicationsByEvent(eventId);
-        tripDAO.updateCurrentPeople(eventId, count);
-
         return 1;
     }
     
- // ----- 신청: 중복 체크 후 insert (event 기준) -----
+    private boolean isApplyable(Timestamp tripDate) {
+        if (tripDate == null) return false;
+
+        LocalDate today = LocalDate.now();
+        LocalDate eventDay = tripDate.toLocalDateTime().toLocalDate();
+
+        // 오늘 이후만 신청 가능
+        return today.isBefore(eventDay);
+    }
+
+    
+    // ----- 신청: 중복 체크 후 insert (event 기준) -----
     @Transactional
     public int applyToEvent(int eventId, String userId) {
         // 1) 중복 체크
@@ -213,7 +276,20 @@ public class LshTripService {
     public boolean cancelApplication(int eventId, String userId) {
         int rows = tripDAO.deleteTripApplication(eventId, userId);
         // rows > 0 이면 삭제 성공
-        return rows > 0;
+        if (rows == 0) return false;
+        
+     // 최신 인원수
+        int count = tripDAO.countApplicationsByEvent(eventId);
+        tripDAO.updateCurrentPeople(eventId, count);
+
+        // 상태 재계산
+        LshTripVO trip = tripDAO.getTripByEvent(eventId);
+        if (trip != null) {
+            String status = computeStatus(trip.getTripDate(), count);
+            tripDAO.updateTripStatus(eventId, status);
+        }
+
+        return true;
     }
     
     public int getCurrentPeople(int eventId) {
@@ -222,7 +298,7 @@ public class LshTripService {
 
     /** 도시명 추출 */
     public String extractCity(String address) {
-        if (address == null || address.isEmpty()) return "수원";
+        if (address == null || address.isEmpty()) return "서울";
 
         // 1) 광역시 / 특별시 / 특별자치시 / 특별자치도
         String[] cityPrefixes = {
@@ -269,12 +345,24 @@ public class LshTripService {
         }
 
         // 기본 fallback
-        return "수원";
+        return "서울";
     }
 
     /** 신청 목록 조회 */
     public List<LshApplyListVO> getAllApplicationsWithEventInfo() {
-        return tripDAO.selectAllApplicationsWithEvent();
+    	List<LshApplyListVO> list = tripDAO.selectAllApplicationsWithEvent();
+
+        for (LshApplyListVO vo : list) {
+
+            Timestamp tripDate = vo.getDate();          // 일정
+            int currentPeople = vo.getApplyCount();     // 신청 인원
+
+            String recalculatedStatus = computeStatus(tripDate, currentPeople);
+
+            vo.setStatus(recalculatedStatus);            // ⭐ 덮어쓰기
+        }
+
+        return list;
     }
     
     // trip_applications 테이블에 튶플 생성시 trips테이블의 current_people를 업데이트함
