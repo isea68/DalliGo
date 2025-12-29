@@ -28,6 +28,20 @@ public class LshEventService {
 		return eventDAO.getTotalEventCount();
 	}
 	
+	public int getTotalEventCount(String keyword) {
+	    if (keyword == null || keyword.isBlank()) {
+	        return eventDAO.getTotalEventCount();   // 기존 메소드 재사용
+	    }
+	    return eventDAO.getTotalEventCountWithSearch(keyword);
+	}
+
+	
+	public List<LshEventVO> getEventListWithSearch(
+	        int offset, int size, String keyword) {
+	    return eventDAO.selectEvents(offset, size, keyword);
+	}
+
+	
 	public List<LshEventVO> getEventList(int offset, int size) {
         return eventDAO.selectEventList(offset, size);
     }

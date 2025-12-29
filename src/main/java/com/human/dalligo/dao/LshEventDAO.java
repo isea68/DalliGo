@@ -22,5 +22,13 @@ public interface LshEventDAO {
 		@Param("offset") int offset,
 		@Param("size") int size
 	);
+	
+	int getTotalEventCountWithSearch(@Param("keyword") String keyword);
+	
+	List<LshEventVO> selectEvents(
+	    @Param("offset") int offset,
+	    @Param("size") int size,
+	    @Param("keyword") String keyword
+	);
 
 }

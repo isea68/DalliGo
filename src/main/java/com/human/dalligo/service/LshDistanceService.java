@@ -14,6 +14,13 @@ public class LshDistanceService {
     private final LshDistanceDAO distanceDAO;
 
     public Integer getDistance(String startCity, String endCity) {
+    	
+    	// 🔥 DB 조회 직전 정규화
+        startCity = normalizeForDB(startCity);
+        endCity   = normalizeForDB(endCity);
+        
+        System.out.println("▶ 거리조회 startCity = [" + startCity + "]");
+        System.out.println("▶ 거리조회 endCity   = [" + endCity + "]");
 
         // 1) 동일 도시면 0km
         if (startCity.equals(endCity)) {
@@ -31,6 +38,14 @@ public class LshDistanceService {
         // 4) BigDecimal → int 변환
         return vo.getDistance().intValue();
     }
+    
+    private String normalizeForDB(String city) {
+        if (city == null) return null;
+
+        return city.trim()
+                   .replace("시", "");
+    }
+
 
 }
 
